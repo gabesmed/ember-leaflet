@@ -12,8 +12,8 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _parentLayer: null,
   _childLayers: [],
 
-  childLayers: Ember.computed(function() {
-    return this._childLayers; }).property(),
+  // childLayers: Ember.computed(function() {
+  //   return this._childLayers; }).property(),
   
   layer: Ember.computed(function() {
     return this._layer; }).property(),
@@ -50,7 +50,6 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     this._destroyChildLayers();
     this.propertyWillChange('layer');
     this.get('parentLayer')._layer.removeLayer(this._layer);
-    this._layer.destroy();
     this._layer = null;
     this.propertyDidChange('layer');
   },

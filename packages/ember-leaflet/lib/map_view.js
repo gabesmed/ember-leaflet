@@ -12,7 +12,6 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
   didInsertElement: function() {
     this._super();
     this._createLayer();
-    this.setInitialViewArea();
   },
 
   willDestroyElement: function() {
@@ -23,12 +22,13 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
     if(this._layer) { return; }
     this._layer = L.map(this.get('elementId'), this.get('options'));
     this._createChildLayers();
+    this.setInitialViewArea();
   },
 
   _destroyLayer: function() {
     if(!this._layer) { return; }
     this._destroyChildLayers();
-    this._layer.destroy();
+    this._layer.remove();
     this._layer = null;
   },
 

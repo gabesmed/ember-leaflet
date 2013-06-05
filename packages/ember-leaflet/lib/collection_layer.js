@@ -18,36 +18,58 @@ EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend({
 
   init: function() {
     this._super();
-    this.contentDidChange();
+    this._setupContent();
+  },
+
+  willDestroy: function() {
+    this._teardownContent();
+    this._super();
   },
 
   contentWillChange: Ember.beforeObserver(function() {
-    if(get(this, 'content')) {
-      get(this, 'content').removeArrayObserver(this); }
+    this._destroyChildLayers();
+    this._teardownContent();
   }, 'content'),
 
   contentDidChange: Ember.observer(function() {
-    if(get(this, 'content')) {
-      get(this, 'content').addArrayObserver(this); }
+    this._setupContent();
+    this._createChildLayers();
   }, 'content'),
 
+  _setupContent: function() {
+    if(get(this, 'content')) { get(this, 'content').addArrayObserver(this); }
+  },
+
+  _teardownContent: function() {
+    if(get(this, 'content')) { 
+      get(this, 'content').removeArrayObserver(this); }
+  },
+
   arrayWillChange: function(array, idx, removedCount, addedCount) {
-    var removedLayers = array.slice(idx, idx + removedCount);
-    this._childLayers.slice(idx, idx + removedCount).invoke('_destroyLayer');
+    var removedObjects = array.slice(idx, idx + removedCount);
+    var removeLayers = this._childLayers.slice(idx, idx + removedCount);
+    removeLayers.invoke('_destroyLayer');
+    removeLayers.invoke('destroy');
     this._childLayers.splice(idx, removedCount);
   },
 
   arrayDidChange: function(array, idx, removedCount, addedCount) {
     var addedObjects = array.slice(idx, idx + addedCount), self = this;
-    this._childLayers.slice.apply(this, ([idx, 0]
-      .concat(addedObjects.map(function(obj) {
-        return self._layerForObject(obj);
-      }))));
+    var addedLayers = addedObjects.map(function(obj) {
+      return self._layerForObject(obj);
+    });
+    var args = [idx, 0].concat(addedLayers);
+    this._childLayers.splice.apply(this._childLayers, args);
   },
 
   _createLayer: function() {
     this._layer = get(this, 'parentLayer')._layer;
     this._createChildLayers();
+  },
+
+  _destroyLayer: function() {
+    this._destroyChildLayers();
+    this._layer = null;
   },
 
   _createChildLayers: function() {

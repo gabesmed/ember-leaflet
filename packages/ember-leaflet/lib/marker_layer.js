@@ -11,7 +11,7 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
   content: null,
   options: null,
 
-  location: Ember.required(Function),
+  location: Ember.computed.alias('content.location'),
 
   locationDidChange: Ember.observer(function() {
     if(get(this, 'location') && !this._layer) {
@@ -19,7 +19,7 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
     } else if(this._layer && !get(this, 'location')) {
       this._destroyLayer();
     } else {
-      var oldLatLng = this._layer.getLatLng();
+      var oldLatLng = this._layer && this._layer.getLatLng();
       var newLatLng = get(this, 'location');
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         this._layer.setLatLng(newLatLng);
