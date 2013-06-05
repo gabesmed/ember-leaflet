@@ -80,6 +80,12 @@ App.MarkerClusterLayer = EmberLeaflet.Layer.extend({
     }
 });
 
+App.MapWithClusteredMarkersView = EmberLeaflet.MapView.extend({
+    options: {maxZoom: 19, minZoom: 0, attributionControl: false},
+    childLayers: [
+        App.TileLayer,
+        App.MarkerClusterLayer]
+});
 ```
 
 ## Build It
