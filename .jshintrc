@@ -3,6 +3,8 @@
         "define",
         "console",
         "Ember",
+        "L",
+        "EmberLeaflet",
         "DS",
         "Handlebars",
         "Metamorph",
