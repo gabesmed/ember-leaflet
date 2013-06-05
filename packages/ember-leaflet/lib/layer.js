@@ -1,5 +1,12 @@
 var fmt = Ember.String.fmt;
 
+/**
+  `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
+  wrapper of Leaflet layers, including instantiating child and parent layers.
+ 
+  @class LayerMixin
+  @namespace EmberLeaflet
+*/
 EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _layer: null,
   _parentLayer: null,

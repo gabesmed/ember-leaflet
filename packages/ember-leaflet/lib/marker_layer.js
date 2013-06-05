@@ -1,7 +1,11 @@
 var get = Ember.get;
 
 /**
-Marker
+  `EmberLeaflet.MarkerLayer` is a leaflet marker.
+ 
+  @class MarkerLayer
+  @namespace EmberLeaflet
+  @extends EmberLeaflet.Layer
 */
 EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
   content: null,

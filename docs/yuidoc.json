@@ -1,11 +1,11 @@
 {
-  "name": "Ember.ListView Documentation",
-  "description": "An efficient incremental rendering list view for large lists.",
+  "name": "EmberLeaflet Documentation",
+  "description": "Ember + Leaflet = Mapping fun!",
   "version": "0.0.1",
-  "url": "https://github.com/emberjs/list-view",
+  "url": "https://github.com/gabesmed/ember-leaflet",
   "options": {
     "paths": [
-      "../packages/list-view/lib"
+      "../packages/ember-leaflet/lib"
     ],
     "exclude": "vendor",
     "outdir": "./build"

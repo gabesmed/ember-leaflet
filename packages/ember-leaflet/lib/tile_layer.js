@@ -1,5 +1,12 @@
 var get = Ember.get;
 
+/**
+  `EmberLeaflet.TileLayer` is a tile set.
+ 
+  @class TileLayer
+  @namespace EmberLeaflet
+  @extends EmberLeaflet.Layer
+*/
 EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
   tileUrl: null,
   options: {},

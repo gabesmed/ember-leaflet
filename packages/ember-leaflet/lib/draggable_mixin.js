@@ -1,7 +1,11 @@
 var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
 
 /**
-DraggableMixin
+  `EmberLeaflet.DraggableMixin` adds drag and drop functionality to
+  `EmberLeaflet.MarkerLayer` classes.
+ 
+  @class DraggableMixin
+  @namespace EmberLeaflet
 */
 EmberLeaflet.DraggableMixin = Ember.Mixin.create({
   isDragging: true,

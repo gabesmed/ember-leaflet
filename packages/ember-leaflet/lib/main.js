@@ -1,3 +1,9 @@
+/**
+Ember Leaflet
+
+@module ember-leaflet
+*/
+
 require("ember-leaflet/core");
 require("ember-leaflet/layer");
 

@@ -1,7 +1,13 @@
 var get = Ember.get;
 
 /**
-CollectionLayer
+  `EmberLeaflet.CollectionLayer` is the equivalent of `Ember.CollectionView`
+  for DOM views -- it observes the `content` array for updates and maintains
+  a list of child layers associated with the content array.
+ 
+  @class CollectionLayer
+  @namespace EmberLeaflet
+  @extends EmberLeaflet.Layer
 */
 EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend({
   content: [],

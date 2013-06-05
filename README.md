@@ -76,7 +76,7 @@ App.MarkerClusterLayer = EmberLeaflet.Layer.extend({
     options: {disableClusteringAtZoom: 16, showCoverageOnHover: false},
     childLayers: [App.MarkerCollectionLayer],
     _newLayer: function() {
-        return new L.MarkerClusterGroup(get(this, 'options'));
+        return new L.MarkerClusterGroup(this.get('options'));
     }
 });
 
