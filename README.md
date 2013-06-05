@@ -59,6 +59,29 @@ App.MarkerCollectionLayer.reopenClass({
 });
 ```
 
+Create your own tile layers:
+
+``` javascript
+App.TileLayer = EmberLeaflet.Layer.extend({
+    _newLayer: function() {
+        return L.TileJSON.createTileLayer(myTileJson);
+    }  
+});
+```
+
+Incorporate other leaflet layer classes:
+
+``` javascript
+App.MarkerClusterLayer = EmberLeaflet.Layer.extend({
+    options: {disableClusteringAtZoom: 16, showCoverageOnHover: false},
+    childLayers: [App.MarkerCollectionLayer],
+    _newLayer: function() {
+        return new L.MarkerClusterGroup(get(this, 'options'));
+    }
+});
+
+```
+
 ## Build It
 
 1. `git clone https://github.com/gabesmed/ember-leaflet.git`
