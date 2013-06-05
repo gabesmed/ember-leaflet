@@ -1,7 +1,9 @@
+var get = Ember.get;
+
 EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
-  tilejson: null,
+  tileUrl: null,
+  options: {},
   _newLayer: function() {
-    Ember.assert("Must have tilejson", !!this.get('tilejson'));
-    return L.TileJSON.createTileLayer(this.get('tilejson'));
+    return L.tileLayer(get(this, 'tileUrl'), get(this, 'options'));
   }
 });
