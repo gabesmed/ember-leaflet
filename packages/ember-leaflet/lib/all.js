@@ -1,0 +1,2 @@
+EmberLeaflet = Ember.Namespace.create();
+
