@@ -37,29 +37,34 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
   },
   
   _setEventHandlers: function() {
-    var self = this;
-    this._layer.on('zoomend', this._onZoomEnd = function(e) {
-      self.set('zoom', e.target.getZoom());
-    });
-    this._layer.on('movestart', this._onMoveStart = function(e) {
-      self.set('isMoving', true);
-    });
-    this._layer.on('moveend', this._onMoveEnd = function(e) {
-      self.set('isMoving', false);
-    });
-    this._layer.on('move', this._onMove = function(e) {
-      var newCenter = e.target.getCenter();
-      self.set('center', [newCenter.lat,newCenter.lng]);
-    });
+    this._layer.on('zoomend', this._onZoomEnd, this);
+    this._layer.on('movestart', this._onMoveStart, this);
+    this._layer.on('moveend', this._onMoveEnd, this);
+    this._layer.on('move', this._onMove, this);
   },
 
   _unsetEventHandlers: function() {
-    this._layer.off('zoomend', this._onZoomEnd);
-    this._layer.off('movestart', this._onMoveStart);
-    this._layer.off('moveend', this._onMoveEnd);
-    this._layer.off('move', this._onMove);
-    this._onZoomEnd = null;
-    this._onMoveStart = this._onMoveStart = this._onMove = null;
+    this._layer.off('zoomend', this._onZoomEnd, this);
+    this._layer.off('movestart', this._onMoveStart, this);
+    this._layer.off('moveend', this._onMoveEnd, this);
+    this._layer.off('move', this._onMove, this);
+  },
+
+  _onZoomEnd: function(e) {
+    this.set('zoom', e.target.getZoom());
+  },
+
+  _onMoveStart: function(e) {
+    this.set('isMoving', true);
+  },
+
+  _onMoveEnd: function(e) {
+    this.set('isMoving', false);
+  },
+
+  _onMove: function(e) {
+    var newCenter = e.target.getCenter();
+    this.set('center', [newCenter.lat, newCenter.lng]);    
   },
 
   setInitialViewArea: function() {
