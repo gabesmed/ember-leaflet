@@ -8,6 +8,7 @@
 */
 EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
   options: {attributionControl: false},
+  isMoving: false,
 
   didInsertElement: function() {
     this._super();
@@ -20,32 +21,7 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
 
   _createLayer: function() {
     if(this._layer) { return; }
-    
-    /*
-     * Queue zoom transitions
-     */
-    if (L.DomUtil.TRANSITION) {
-        L.Map.addInitHook(function() {
-            L.DomEvent.on(this._mapPane, L.DomUtil.TRANSITION_END, function() {
-                var zoom = this._zoomActions.shift();
-                if (zoom !== undefined) {
-                    this.setZoom(zoom);
-                }
-            }, this);
-        });
-    }
-    
-    L.Map.include(!L.DomUtil.TRANSITION ? {} : {
-        _zoomActions : [],
-        queueZoom : function(zoom) {
-            if (this._animatingZoom) {
-                this._zoomActions.push(zoom);
-            } else {
-                this.setZoom(zoom);
-            }
-        }
-    });
-    
+        
     this._layer = L.map(this.get('elementId'), this.get('options'));
     this._setEventHandlers();
     this._createChildLayers();
@@ -55,25 +31,35 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
   _destroyLayer: function() {
     if(!this._layer) { return; }
     this._destroyChildLayers();
+    this._unsetEventHandlers();
     this._layer.remove();
     this._layer = null;
   },
   
-  _setEventHandlers: function(){
+  _setEventHandlers: function() {
     var self = this;
-    this._layer.on('zoomend', function(e) {
+    this._layer.on('zoomend', this._onZoomEnd = function(e) {
       self.set('zoom', e.target.getZoom());
     });
-    this._layer.on('movestart', function(e) {
-      self.set('moving', true);
+    this._layer.on('movestart', this._onMoveStart = function(e) {
+      self.set('isMoving', true);
     });
-    this._layer.on('moveend', function(e) {
-      self.set('moving', false);
+    this._layer.on('moveend', this._onMoveEnd = function(e) {
+      self.set('isMoving', false);
     });
-    this._layer.on('move', function(e) {
+    this._layer.on('move', this._onMove = function(e) {
       var newCenter = e.target.getCenter();
       self.set('center', [newCenter.lat,newCenter.lng]);
     });
+  },
+
+  _unsetEventHandlers: function() {
+    this._layer.off('zoomend', this._onZoomEnd);
+    this._layer.off('movestart', this._onMoveStart);
+    this._layer.off('moveend', this._onMoveEnd);
+    this._layer.off('move', this._onMove);
+    this._onZoomEnd = null;
+    this._onMoveStart = this._onMoveStart = this._onMove = null;
   },
 
   setInitialViewArea: function() {
@@ -81,16 +67,16 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
     this._layer.setView(this.get('center'), this.get('zoom'));
   },
 
-  zoomDidChange: function(){
+  zoomDidChange: Ember.observer(function() {
     if(!this._layer || !this.get('zoom')) { return; }
     this._layer.queueZoom(this.get('zoom'));
-  }.observes('zoom'),
+  }, 'zoom'),
   
-  centerDidChange: function(){
+  centerDidChange: Ember.observer(function() {
     if(!this._layer || !this.get('center')) { return; }
     var center = this.get('center');
-    if (!this.get('moving')) {
+    if (!this.get('isMoving')) {
       this._layer.panTo(this.get('center'));
     }
-  }.observes('center')
+  }, 'center')
 });

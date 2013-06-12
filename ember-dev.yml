@@ -10,3 +10,5 @@ testing_suites:
     - "package=all&dist=build&nojshint=true"
 testing_packages:
   - ember-leaflet
+testing_additional_requires:
+    - leaflet
