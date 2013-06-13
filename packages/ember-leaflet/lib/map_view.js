@@ -8,10 +8,9 @@
 */
 
 var DEFAULT_CENTER = L.latLng(40.713282, -74.006978);
-function createDefaultTileLayer() {
-  return L.tileLayer(
-    'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png');  
-}
+var DEFAULT_TILE_URL = 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png';
+
+function createDefaultTileLayer() { return L.tileLayer(DEFAULT_TILE_URL); }
 
 EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
   options: {},
@@ -41,13 +40,18 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
     this._addEventListeners();
     this._createChildLayers();
     if(!this._childLayers.length) {
-      this._layer.addLayer(createDefaultTileLayer());
+      this._defaultChildLayer = createDefaultTileLayer();
+      this._layer.addLayer(this._defaultChildLayer);
     }    
   },
 
   _destroyLayer: function() {
     if(!this._layer) { return; }
     this._destroyChildLayers();
+    if(this._defaultChildLayer) {
+      this._layer.removeLayer(this._defaultChildLayer);
+      this._defaultChildLayer = null;
+    }
     this._removeEventListeners();
     this._layer.remove();
     this._layer = null;

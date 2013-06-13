@@ -1,15 +1,10 @@
 require('ember-leaflet/~tests/test_helper');
 
-var view, f,
-  helper = window.helper,
-  locationsEqual = window.locationsEqual;
+var view, f, locationsEqual = window.locationsEqual;
 
 module("EmberLeaflet.MapView", {
   setup: function() {
-    view = EmberLeaflet.MapView.create({
-      center: window.locations.nyc,
-      zoom: 16
-    });
+    view = EmberLeaflet.MapView.create({});
     Ember.run(function() {
       view.appendTo('#qunit-fixture');
     });
@@ -23,12 +18,18 @@ module("EmberLeaflet.MapView", {
 
 test("map DOM should be created", function() {
   ok(view.$().hasClass('leaflet-container'));
-  ok(view.$().hasClass('ember-view'));
+  equal(view.$('.leaflet-map-pane').length, 1);
 });
 
 test("leaflet object should be created", function() {
   ok(view._layer);
   ok(view._layer._loaded);
+  equal(view.get('element')._leaflet, true);
+});
+
+test("leaflet object should have default settings", function() {
+  equal(view.get('zoom'), 16);
+  locationsEqual(view.get('center'), window.locations.nyc);
 });
 
 test("center and zoom are set on Ember object", function() {
@@ -63,4 +64,18 @@ test("change map center updates object", function() {
 test("change map zoom updates object", function() {
   view._layer.setZoom(17);
   equal(view.get('zoom'), 17);
+});
+
+test("default tile layer created", function() {
+  equal(view._childLayers.length, 0);
+  equal(view._defaultChildLayer._map, view._layer);
+  equal(view._defaultChildLayer._url, 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png');
+});
+
+test("_destroyLayer cleans up", function() {
+  Ember.run(function() {
+    view._destroyLayer();
+  });
+  equal(view.$('.leaflet-map-pane').length, 0);
+  equal(view.get('element')._leaflet, undefined);
 });

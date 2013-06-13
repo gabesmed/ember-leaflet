@@ -95,4 +95,22 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   }
 });
 
+/**
+  `EmberLeaflet.Layer` is a convenience object for those who prefer
+  creating layers with `EmberLeaflet.Layer.extend(...)` rather than
+  `Ember.Object.extend(EmberLeaflet.LayerMixin, ...)`.
+ 
+  @class Layer
+  @namespace EmberLeaflet
+*/
 EmberLeaflet.Layer = Ember.Object.extend(EmberLeaflet.LayerMixin, {});
+
+/**
+  `EmberLeaflet.EmptyLayer` is a null layer mostly for testing.
+ 
+  @class EmptyLayer
+  @namespace EmberLeaflet
+*/
+EmberLeaflet.EmptyLayer = EmberLeaflet.Layer.extend({
+  _newLayer: function() { return L.layerGroup([]); }
+});

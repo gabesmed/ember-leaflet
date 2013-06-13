@@ -6,7 +6,23 @@ This is a work in progress. More tests and functionality coming soon.
 
 ## Usage
 
-A simple map:
+A simple map in Ember - only one line of code!
+
+``` javascript
+App.MapView = EmberLeaflet.MapView.extend({});
+```
+
+Specify center and zoom and other options
+
+``` javascript
+App.MapView = EmberLeaflet.MapView.extend({
+    center: L.latLng(40.713282, -74.006978),
+    zoom: 18,
+    options: {maxZoom: 19, minZoom: 0}    
+});
+```
+
+Customize tiles:
 
 ``` javascript
 App.TileLayer = EmberLeaflet.TileLayer.extend({
@@ -15,12 +31,11 @@ App.TileLayer = EmberLeaflet.TileLayer.extend({
 });
 
 App.MapView = EmberLeaflet.MapView.extend({
-    options: {maxZoom: 19, minZoom: 0, attributionControl: false},
     childLayers: [App.TileLayer]
 });
 ```
 
-Adding markers:
+Add some markers:
 
 ``` javascript
 App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
@@ -32,7 +47,6 @@ App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
 });
 
 App.MapWithMarkersView = EmberLeaflet.MapView.extend({
-    options: {maxZoom: 19, minZoom: 0, attributionControl: false},
     childLayers: [
         App.TileLayer,
         App.MarkerCollectionLayer]
@@ -81,7 +95,6 @@ App.MarkerClusterLayer = EmberLeaflet.Layer.extend({
 });
 
 App.MapWithClusteredMarkersView = EmberLeaflet.MapView.extend({
-    options: {maxZoom: 19, minZoom: 0, attributionControl: false},
     childLayers: [
         App.TileLayer,
         App.MarkerClusterLayer]
