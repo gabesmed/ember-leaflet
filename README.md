@@ -73,6 +73,18 @@ App.MapWithBoundMarkersController = Ember.ArrayController.extend({
 });
 ```
 
+Add functionality to marker class with mixins.
+
+``` javascript
+App.DraggableMarker = EmberLeaflet.MarkerLayer.extend(
+    EmberLeaflet.DraggableMixin, {});
+
+App.MarkerWithPopup = EmberLeaflet.MarkerLayer.extend(
+        EmberLeaflet.PopupMixin, {
+    popupContent: Ember.computed.alias('content.title'),
+    popupOptions: {offset: L.point(0, -36)}
+});
+```
 
 Customizing marker class:
 
