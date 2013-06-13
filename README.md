@@ -40,10 +40,9 @@ Add some markers:
 ``` javascript
 App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
     content: [
-        {location: L.latLng(42, 14)},
-        {location: L.latLng(43, 13)},
-        {location: L.latLng(44, 12)}
-    ]
+        {location: L.latLng(40.713282, -74.006978)},
+        {location: L.latLng(40.713465, -74.006753)},
+        {location: L.latLng(40.713873, -74.006404)}]
 });
 
 App.MapWithMarkersView = EmberLeaflet.MapView.extend({
@@ -68,7 +67,11 @@ App.MarkerLayer = EmberLeaflet.MarkerLayer.extend({
     }.property()
 });
 
-App.MarkerCollectionLayer.reopenClass({
+App.TitledMarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
+    content: [
+        {location: L.latLng(40.713282, -74.006978), title: 'Gas'},
+        {location: L.latLng(40.713465, -74.006753), title: 'Café'},
+        {location: L.latLng(40.713873, -74.006404), title: 'ATM'}],
     itemLayerClass: App.MarkerLayer
 });
 ```
@@ -111,7 +114,7 @@ App.MapWithClusteredMarkersView = EmberLeaflet.MapView.extend({
 ## Running unit tests
 
 Run ```bundle exec rackup``` and open [http://localhost:9292](http://localhost:9292) in a browser.
- 
+
 ## Thanks
 
 * Thanks to the contributors to [emberjs/list-view](https://github.com/emberjs/list-view), from whom I cribbed this project skeleton.
