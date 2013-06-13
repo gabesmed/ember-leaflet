@@ -56,9 +56,9 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
 
   _createChildLayers: function() {
     Ember.assert(
-      "%@ layer must support adding objects.".fmt(this.toString()),
+      fmt("%@ layer must support adding objects.", this.toString()),
       (typeof this._layer.addLayer === 'function' ||
-        !this._childLayers.length));
+      !this._childLayers.length));
     var childLayerClasses = this.get('childLayers') || [], self = this;
     this._childLayers = childLayerClasses.map(function(layerClass) {
       return self._createChildLayer(layerClass);

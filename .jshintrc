@@ -20,6 +20,7 @@
         "raises",
         "throws",
         "deepEqual",
+        "locationsEqual",
         "start",
         "stop",
         "ok",

@@ -1,0 +1,9 @@
+#qunit-fixture {
+    position: static;
+    display: none;
+}
+
+#qunit-fixture .leaflet-container {
+    width: 400px;
+    height: 300px;
+}

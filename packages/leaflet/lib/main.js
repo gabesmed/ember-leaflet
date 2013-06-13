@@ -8244,7 +8244,6 @@ L.PosAnimation = L.Class.extend({
 L.Map.include({
 
     setView: function (center, zoom, options) {
-
         zoom = this._limitZoom(zoom);
         center = L.latLng(center);
         options = options || {};
@@ -8420,7 +8419,6 @@ if (L.DomUtil.TRANSITION) {
     L.Map.addInitHook(function () {
         // zoom transitions run with the same duration for all layers, so if one of transitionend events
         // happens after starting zoom animation (propagating to the map pane), we know that it ended globally
-
         L.DomEvent.on(this._mapPane, L.DomUtil.TRANSITION_END, this._catchTransitionEnd, this);
     });
 }
@@ -8434,7 +8432,6 @@ L.Map.include(!L.DomUtil.TRANSITION ? {} : {
     },
 
     _tryAnimatedZoom: function (center, zoom, options) {
-
         if (this._animatingZoom) { return true; }
 
         options = options || {};
@@ -8462,7 +8459,6 @@ L.Map.include(!L.DomUtil.TRANSITION ? {} : {
     },
 
     _animateZoom: function (center, zoom, origin, scale, delta) {
-
         this._animatingZoom = true;
 
         // put transform transition on all layers with leaflet-zoom-animated class
@@ -8487,7 +8483,6 @@ L.Map.include(!L.DomUtil.TRANSITION ? {} : {
     },
 
     _onZoomTransitionEnd: function () {
-
         this._animatingZoom = false;
 
         L.DomUtil.removeClass(this._mapPane, 'leaflet-zoom-anim');

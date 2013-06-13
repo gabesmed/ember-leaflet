@@ -1,5 +1,9 @@
 /*globals ENV QUnit EmberDev */
 
+// Add leaflet css
+document.write(unescape('%3Clink rel="stylesheet" type="text/css" media="screen" href="/lib/testing.css"%3E%3C/link%3E'));
+document.write(unescape('%3Clink rel="stylesheet" type="text/css" media="screen" href="/lib/leaflet/leaflet.css"%3E%3C/link%3E'));
+
 (function() {
   window.Ember = {
     testing: true
