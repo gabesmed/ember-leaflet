@@ -12,7 +12,7 @@ A simple map in Ember - only one line of code!
 App.MapView = EmberLeaflet.MapView.extend({});
 ```
 
-Specify center and zoom and other options
+Specify center, zoom and options:
 
 ``` javascript
 App.MapView = EmberLeaflet.MapView.extend({
@@ -51,6 +51,28 @@ App.MapWithMarkersView = EmberLeaflet.MapView.extend({
         App.MarkerCollectionLayer]
 });
 ```
+
+Bind to a controller, and markers are added, removed, and moved based on their content binding.
+
+``` javascript
+App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
+    contentBinding: 'controller'
+});
+
+App.MapWithBoundMarkersView = EmberLeaflet.MapView.extend({
+    childLayers: [
+        App.TileLayer,
+        App.MarkerCollectionLayer]
+});
+
+App.MapWithBoundMarkersController = Ember.ArrayController.extend({
+    content: [
+        {location: L.latLng(40.713282, -74.006978)},
+        {location: L.latLng(40.713465, -74.006753)},
+        {location: L.latLng(40.713873, -74.006404)}]
+});
+```
+
 
 Customizing marker class:
 
