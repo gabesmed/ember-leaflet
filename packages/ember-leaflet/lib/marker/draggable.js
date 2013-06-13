@@ -11,11 +11,11 @@ EmberLeaflet.DraggableMixin = Ember.Mixin.create({
   isDragging: true,
   isDraggable: true,
 
-  dragstart: function() {
+  _onDragStart: function() {
     set(this, 'isDragging', true);
   },
 
-  dragend: function() {
+  _onDragEnd: function() {
     setProperties(this, {
       location: this._layer.getLatLng(),
       isDragging: false
@@ -33,14 +33,14 @@ EmberLeaflet.DraggableMixin = Ember.Mixin.create({
 
   layerWillChange: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
-    this._layer.off('dragstart', this.dragstart, this);
-    this._layer.off('dragend', this.dragend, this);
+    this._layer.off('dragstart', this._onDragStart, this);
+    this._layer.off('dragend', this._onDragEnd, this);
   }, 'layer'),
 
   layerDidChange: Ember.observer(function() {
     if(!this._layer) { return; }
-    this._layer.on('dragstart', this.dragstart, this);
-    this._layer.on('dragend', this.dragend, this);
+    this._layer.on('dragstart', this._onDragStart, this);
+    this._layer.on('dragend', this._onDragEnd, this);
     this.propertyDidChange('isDraggable');
   }, 'layer')
 

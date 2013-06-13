@@ -2,7 +2,7 @@
 
 Ember + Leaflet = Fun with maps!
 
-This is a work in progress. More tests and functionality coming soon.
+This is a work in progress. More tests and functionality coming soon. See docs and examples at [the github page](http://gabesmed.github.io/ember-leaflet/).
 
 ## Usage
 

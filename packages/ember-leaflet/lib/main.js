@@ -7,11 +7,13 @@ Ember Leaflet
 require("ember-leaflet/core");
 require("ember-leaflet/layer");
 
-require("ember-leaflet/map_view");
+require("ember-leaflet/map");
 
-require("ember-leaflet/tile_layer");
-require("ember-leaflet/collection_layer");
+require("ember-leaflet/tile");
+require("ember-leaflet/collection");
 
-require("ember-leaflet/draggable_mixin");
-require("ember-leaflet/marker_layer");
-require("ember-leaflet/marker_collection_layer");
+require("ember-leaflet/marker/draggable");
+require("ember-leaflet/marker/popup");
+require("ember-leaflet/marker/marker");
+
+require("ember-leaflet/marker_collection/marker_collection");
