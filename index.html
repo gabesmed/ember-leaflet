@@ -97,7 +97,9 @@
 
         <script type="text/x-handlebars" data-template-name="index">
             <h3>Leaflet map <small>Zoom, Pan the map or drag the markers!</small></h3>
-            {{view App.MapView id="map" zoomBinding="zoom" centerBinding="center"}}
+            {{log view}}
+            {{log controller}}
+            {{view App.MapView id="map" zoomBinding="zoom" centerBinding="center" childLayersBinding="layers"}}
             <h3>Ember controls <small>Change the values and check the map above!</small></h3>
             <div class="row-fluid">
                 <div class="span5">
@@ -136,7 +138,7 @@
                     <div class="form">
                         <div class="control-group">
                             <label class="control-label" for="inputS">Markers</label>
-                            {{#each s in supermarkets}}
+                            {{#each m in markers.content}}
                                 <div class="controls">
                                     <div class="input-append">
                                       {{view Ember.TextField valueBinding="s.name" classNames="input-mini" data-toggle="tooltip" title="Popup binding"}}
@@ -150,20 +152,20 @@
                                        
                                         <ul class="dropdown-menu">
                                             {{#each i in icons}}
-                                                <li><a href="#" {{action changeIcon s i.icon}}>{{i.label}}</a></li>
+                                                <li><a href="#" {{action changeIcon m i.icon}}>{{i.label}}</a></li>
                                             {{/each}}
                                         </ul>
                                         
                                     </div>
-                                      <a href="#" {{bindAttr class="s.draggable::active :btn"}} type="button" {{action lock s}}
+                                      <a href="#" {{bindAttr class="m.draggable::active :btn"}} type="button" {{action lock m}}
                                         data-toggle="tooltip" title="Toggle dragging and highlight">
-                                          <i {{bindAttr class="s.draggable:icon-lock:icon-unlock"}} ></i>
+                                          <i {{bindAttr class="m.draggable:icon-lock:icon-unlock"}} ></i>
                                       </a>
-                                      <a href="#" class="btn ttip" {{action centerMarker s}}
+                                      <a href="#" class="btn ttip" {{action centerMarker m}}
                                         data-toggle="tooltip" title="Center map on this marker">
                                           <i  class="icon-screenshot"></i>
                                       </a>
-                                      <button class="btn btn-danger" type="button"{{action remove s}}
+                                      <button class="btn btn-danger" type="button"{{action remove m}}
                                         data-toggle="tooltip" title="Delete marker"><i  class="icon-remove icon-white"></i></button>
                                     </div>
                                 </div>
@@ -276,7 +278,7 @@
         <script src="js/libs/ember.js"></script>
         <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
         <script src="js/libs/leaflet.awesome-markers.min.js"></script>
-        <script src="js/libs/ember-leaflet.js"></script>
+        <script src="../dist/modules/ember-leaflet.js"></script>
         <script src="js/app.js"></script>
     </body>
 </html>

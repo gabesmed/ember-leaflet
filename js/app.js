@@ -30,9 +30,38 @@ App.IndexView = Ember.View.extend({
 /**
  * 
  */
+
+App.TileLayer = EmberLeaflet.TileLayer.extend({
+    tileUrl : 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+    options : {
+        attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }
+});
+App.MapView = EmberLeaflet.MapView.extend({
+    options : {
+        maxZoom : 19,
+        minZoom : 0,
+        attributionControl : true,
+    }
+}); 
+
+/**
+ * 
+ */
 App.IndexController = Ember.Controller.extend({
     zoom: 15,
     center: L.latLng(41.276387375928984, -8.371624946594238),
+    markers : EmberLeaflet.MarkerCollectionLayer.create({
+      content: [
+            {location: [41.276081,-8.356861]},
+            {location: [41.276081,-8.366861]},
+            {location: [41.276081, -8.376861]},
+            {location: [41.276081, -8.386861]}
+          ]
+    }),
+    layers: function(){
+      return [App.TileLayer, this.markers]
+    }.property(),
     latitude : function(key, value){
       // getter
       if (arguments.length === 1) {
@@ -56,41 +85,52 @@ App.IndexController = Ember.Controller.extend({
       }
     }.property('center'),
     zoomIn: function() {
-        console.log(this.get('zoom'));
         this.incrementProperty('zoom');
     },
     zoomOut: function() {
-        console.log(this.get('zoom'));
         this.decrementProperty('zoom');
-    }
-});
-
-/**
- * 
- */
-
-App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
-    content: [
-        {location: [41.276081,-8.356861]},
-        {location: [41.276081,-8.366861]},
-        {location: [41.276081, -8.376861]},
-        {location: [41.276081, -8.386861]}
-    ]
-});
-
-App.TileLayer = EmberLeaflet.TileLayer.extend({
-    tileUrl : 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-    options : {
-        attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }
-});
-App.MapView = EmberLeaflet.MapView.extend({
-    options : {
-        maxZoom : 19,
-        minZoom : 0,
-        attributionControl : true,
     },
-    childLayers : [
-        App.TileLayer
-    ]
-}); 
+    remove : function(m) {
+        this.get('markers.content').removeObject(m);
+    },
+    icons:[
+        {
+            label: 'Supermarket',
+            icon: L.AwesomeMarkers.icon({
+                icon : 'shopping-cart',
+                color : 'blue'
+            }),
+        },
+        {
+            label: 'Rocket!',
+            icon:L.AwesomeMarkers.icon({
+                icon : 'rocket',
+                color : 'orange'
+            })
+        },
+        {
+            label: 'Fire! Fire!',
+            icon:L.AwesomeMarkers.icon({
+                icon : 'fire-extinguisher',
+                color : 'red'
+            })
+        },
+        {
+            label: 'Let\'s play!',
+            icon:L.AwesomeMarkers.icon({
+                icon : 'gamepad',
+                color : 'cadetblue'
+            })
+        },
+        {
+            label: 'Ember',
+            icon:L.AwesomeMarkers.icon({
+                icon : 'fire',
+                color : 'green'
+            })
+        }
+    ],
+    changeIcon : function(m, icon){
+        m.set('icon',icon);
+    }
+});
