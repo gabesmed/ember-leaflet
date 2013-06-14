@@ -1,3 +1,5 @@
+require("ember-leaflet/collection/observe_content");
+
 var get = Ember.get, forEach = Ember.EnumerableUtils.forEach;
 
 /**
@@ -9,7 +11,8 @@ var get = Ember.get, forEach = Ember.EnumerableUtils.forEach;
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend({
+EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend(
+    EmberLeaflet.ObserveContentArrayMixin, {
   content: [],
 
   itemLayerClass: Ember.computed(function() {
@@ -26,36 +29,15 @@ EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend({
     this._super();
   },
 
-  contentWillChange: Ember.beforeObserver(function() {
-    this._destroyChildLayers();
-    this._teardownContent();
-  }, 'content'),
-
-  contentDidChange: Ember.observer(function() {
-    this._setupContent();
-    this._createChildLayers();
-  }, 'content'),
-
-  _setupContent: function() {
-    if(get(this, 'content')) { get(this, 'content').addArrayObserver(this); }
-  },
-
-  _teardownContent: function() {
-    if(get(this, 'content')) { 
-      get(this, 'content').removeArrayObserver(this); }
-  },
-
   arrayWillChange: function(array, idx, removedCount, addedCount) {
-    var removedObjects = array.slice(idx, idx + removedCount), self = this;
-    forEach(removedObjects, function(obj) {
-      self._removeObject(obj);
-    });
+    for(var i = idx; i < idx + removedCount; i++) {
+      this._removeObject(array.objectAt(i));
+    }
   },
 
   arrayDidChange: function(array, idx, removedCount, addedCount) {
-    var addedObjects = array.slice(idx, idx + addedCount), self = this;
     for(var i = idx; i < idx + addedCount; i++) {
-      this._addObject(array[i], i);
+      this._addObject(array.objectAt(i), i);
     }
   },
 

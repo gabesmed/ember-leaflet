@@ -16,8 +16,8 @@ EmberLeaflet.HashLayer = EmberLeaflet.CollectionLayer.extend({
 
   _compareLocations: function(loc1, loc2) {
     if(!loc1 || !loc2) { return false; }
-    if(loc1.lat !== loc2.lat) { return false; }
-    if(loc1.lng !== loc2.lng) { return false; }
+    if(loc1.lat.toFixed(6) !== loc2.lat.toFixed(6)) { return false; }
+    if(loc1.lng.toFixed(6) !== loc2.lng.toFixed(6)) { return false; }
     return true;
   },
 
