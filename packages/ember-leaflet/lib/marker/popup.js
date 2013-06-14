@@ -9,7 +9,7 @@ var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
 */
 EmberLeaflet.PopupMixin = Ember.Mixin.create({
   popupContent: 'default popup content',
-  popupOptions: {},
+  popupOptions: {offset: L.point(0, -36)},
   
   _onClick: function(e) {
     this._popup
