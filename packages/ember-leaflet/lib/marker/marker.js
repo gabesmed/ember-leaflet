@@ -11,6 +11,10 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
   content: null,
   options: null,
 
+  /**
+  Should override this binding with a reference to the location property
+  of the content object.
+  */
   location: Ember.computed.alias('content.location'),
 
   locationDidChange: Ember.observer(function() {
