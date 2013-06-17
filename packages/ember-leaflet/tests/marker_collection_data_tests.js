@@ -8,7 +8,11 @@ var view, collection, parent, content,
 module("EmberLeaflet.MarkerCollectionLayer with Ember Data", {
   setup: function() {
 
-    Adapter = DS.Adapter.extend();
+    Adapter = DS.Adapter.extend({
+      updateRecord: function(store, type, record) {
+        this.didUpdateRecord(store, type, record);
+      }     
+    });
     Adapter.registerTransform('latlng', {
       deserialize: function(v) { return v; },
       serialize: function(v) { return v; }
@@ -123,6 +127,30 @@ test("changing record's location updates marker", function() {
   });
   locationsEqual(collection._childLayers[0].get('location'), locs.paris);
   locationsEqual(collection._childLayers[0]._layer.getLatLng(), locs.paris);
+});
+
+test("marker change persists with transaction commit", function() {
+  Ember.run(function() {
+    App.POI.find('nyc').set('location', [locs.paris.lng, locs.paris.lat]);
+  });
+  Ember.run(function() {
+    store.get('defaultTransaction').commit();
+  });
+  locationsEqual(collection._childLayers[0].get('location'), locs.paris);
+  locationsEqual(collection._childLayers[0]._layer.getLatLng(), locs.paris);
+});
+
+test("marker change rolled back with transaction", function() {
+  Ember.run(function() {
+    App.POI.find('nyc').set('location', [locs.paris.lng, locs.paris.lat]);
+  });
+  locationsEqual(collection._childLayers[0].get('location'), locs.paris);
+  locationsEqual(collection._childLayers[0]._layer.getLatLng(), locs.paris);
+  Ember.run(function() {
+    store.get('defaultTransaction').rollback();
+  });
+  locationsEqual(collection._childLayers[0].get('location'), locs.nyc);
+  locationsEqual(collection._childLayers[0]._layer.getLatLng(), locs.nyc);
 });
 
 test("nullifying record's location removes marker", function() {
