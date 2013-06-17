@@ -1,16 +1,31 @@
 var get = Ember.get, set = Ember.set;
 
+/**
+Convert a L.LatLng object to a [lat, lng] array.
+*/
 function latLngArrayFromLatLng(latLng) {
   return latLng ? [latLng.lat, latLng.lng] : null; }
 
+/**
+Convert a L.LatLng object to a [lng, lat] array.
+*/
 function lngLatArrayFromLatLng(latLng) {
   return latLng ? [latLng.lng, latLng.lat] : null; }
 
-function latLngFromLatLngArray(latLngArray) {
-  return latLngArray ? L.latLng(latLngArray[0], latLngArray[1]) : null; }
+/**
+Convert a [lat, lng] array to an L.LatLng object. If LatLng is passed in,
+pass it through.
+*/
+function latLngFromLatLngArray(arr) {
+  return arr ? (arr.lat ? arr : L.latLng(arr[0], arr[1])) : null; }
 
-function latLngFromLngLatArray(lngLatArray) {
-  return lngLatArray ? L.latLng(lngLatArray[1], lngLatArray[0]) : null; }
+/**
+Convert a [lng, lat] array to an L.LatLng object. If LatLng is passed in,
+pass it through.
+*/
+function latLngFromLngLatArray(arr) {
+  return arr ? (arr.lat ? arr : L.latLng(arr[1], arr[0])) : null; }
+
 
 EmberLeaflet.convert = {
   latLngArrayFromLatLng: latLngArrayFromLatLng,

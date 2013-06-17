@@ -1,5 +1,9 @@
 var fmt = Ember.String.fmt;
 
+var childLayersProperty = Ember.computed(function() {
+  return this._childLayers;
+}).property();
+
 /**
   `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
   wrapper of Leaflet layers, including instantiating child and parent layers.
@@ -12,36 +16,41 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _parentLayer: null,
   _childLayers: [],
 
-  // childLayers: Ember.computed(function() {
-  //   return this._childLayers; }).property(),
-  
-  layer: Ember.computed(function() {
-    return this._layer; }).property(),
+  /**
+    @private
 
-  parentLayer: Ember.computed(function() {
-    return this._parentLayer; }).property(),
+    Reference to parent layer. Never set directly.
+
+    @property childLayers
+    @type Array
+    @default []
+  */
+  parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
+
+  /**
+    @private
+
+    Array of child views. You should never edit this array directly.
+
+    @property childLayers
+    @type Array
+    @default []
+  */
+  childLayers: childLayersProperty,
+  
+  layer: Ember.computed(function() { return this._layer; }).property(),
 
   _newLayer: Ember.required(Function),
 
-  parentLayerWillChange: Ember.beforeObserver(function() {
-    if(this.get('parentLayer')) { this._destroyLayer(); }
-  }, 'parentLayer'),
-
-  parentLayerDidChange: Ember.observer(function() {
-    if(this.get('parentLayer')) { this._createLayer(); }
-  }, 'parentLayer'),
-
   _createLayer: function() {
     Ember.assert("Layer must not already be created.", !this._layer);
-    Ember.assert("Layer must have a parent", !!this.get('parentLayer'));
+    Ember.assert("Layer must have a parent", !!this._parentLayer);
     Ember.assert("Parent layer must be in leaflet.",
-      !!this.get('parentLayer')._layer);
+      !!this._parentLayer._layer);
     this.propertyWillChange('layer');
     this._layer = this._newLayer();
+    this._parentLayer._layer.addLayer(this._layer);
     this.propertyDidChange('layer');
-    Ember.assert("Layer must have Leaflet methods.",
-      typeof this._layer.onAdd === 'function');
-    this.get('parentLayer')._layer.addLayer(this._layer);
     this._createChildLayers();
   },
 
@@ -49,7 +58,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     Ember.assert("Layer must exist.", !!this._layer);
     this._destroyChildLayers();
     this.propertyWillChange('layer');
-    this.get('parentLayer')._layer.removeLayer(this._layer);
+    this._parentLayer._layer.removeLayer(this._layer);
     this._layer = null;
     this.propertyDidChange('layer');
   },
@@ -63,6 +72,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     this._childLayers = childLayerClasses.map(function(layerClass) {
       return self._createChildLayer(layerClass);
     });
+    Ember.defineProperty(this, 'childLayers', childLayersProperty);
   },
 
   _createChildLayer: function(layerClass, options) {
@@ -82,7 +92,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     } else if (layerType === 'class'){
       layerInstance = layerClass.create(options);
     }
-    layerInstance.propertyDidChange('parentLayer');
+    layerInstance._createLayer();
     return layerInstance;
   },
 

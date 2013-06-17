@@ -41,6 +41,14 @@ EmberLeaflet.DraggableMixin = Ember.Mixin.create({
     if(!this._layer) { return; }
     this._layer.on('dragstart', this._onDragStart, this);
     this._layer.on('dragend', this._onDragEnd, this);
-    this._updateDraggability();
+
+    // Add a notification for layer changing on the onAdd function.
+    var oldAdd = this._layer.onAdd, self = this;
+    this._layer.onAdd = function() {
+      self.propertyWillChange('layer');
+      oldAdd.apply(this, arguments);
+      self.propertyDidChange('layer');
+    };
   }, 'layer')
+
 });

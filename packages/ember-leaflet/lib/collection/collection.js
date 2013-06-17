@@ -55,7 +55,7 @@ EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend(
   },
 
   _createLayer: function() {
-    this._layer = get(this, 'parentLayer')._layer;
+    this._layer = this._parentLayer._layer;
     this._createChildLayers();
   },
 
@@ -66,12 +66,11 @@ EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend(
 
 
   _createChildLayers: function() {
-    if(!get(this, 'parentLayer')._layer) { return; }
-    var self = this;
+    if(!this._parentLayer._layer) { return; }
     this._childLayers = [];
     forEach(get(this, 'content'), function(obj) {
-      self._addObject(obj);
-    });
+      this._addObject(obj);
+    }, this);
   },
 
   _addObject: function(obj, index) {
