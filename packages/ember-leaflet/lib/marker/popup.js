@@ -31,18 +31,17 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     delete this._popup;
   },
 
-  layerWillChange: Ember.beforeObserver(function() {
+  _removePopupObservers: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
     this._layer.off('click', this._onClickOpenPopup, this);
     this._layer.off('dragstart', this._onDragStartClosePopup, this);
     this._destroyPopup();
   }, 'layer'),
 
-  layerDidChange: Ember.observer(function() {
+  _addPopupObservers: Ember.observer(function() {
     if(!this._layer) { return; }
     this._createPopup();
     this._layer.on('click', this._onClickOpenPopup, this);
     this._layer.on('dragstart', this._onDragStartClosePopup, this);
   }, 'layer')
-
 });

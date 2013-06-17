@@ -8,7 +8,7 @@ var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
   @namespace EmberLeaflet
 */
 EmberLeaflet.DraggableMixin = Ember.Mixin.create({
-  isDragging: true,
+  isDragging: false,
   isDraggable: true,
 
   _onDragStart: function() {
@@ -22,7 +22,7 @@ EmberLeaflet.DraggableMixin = Ember.Mixin.create({
     });
   },
 
-  isDraggableDidChange: Ember.observer(function() {
+  _updateDraggability: Ember.observer(function() {
     if(!this._layer || !this._layer._map) { return; }
     if(get(this, 'isDraggable')) {
       this._layer.dragging.enable();
@@ -31,17 +31,16 @@ EmberLeaflet.DraggableMixin = Ember.Mixin.create({
     }
   }, 'isDraggable'),
 
-  layerWillChange: Ember.beforeObserver(function() {
+  _removeDraggableObservers: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
     this._layer.off('dragstart', this._onDragStart, this);
     this._layer.off('dragend', this._onDragEnd, this);
   }, 'layer'),
 
-  layerDidChange: Ember.observer(function() {
+  _addDraggableObservers: Ember.observer(function() {
     if(!this._layer) { return; }
     this._layer.on('dragstart', this._onDragStart, this);
     this._layer.on('dragend', this._onDragEnd, this);
-    this.propertyDidChange('isDraggable');
+    this._updateDraggability();
   }, 'layer')
-
 });

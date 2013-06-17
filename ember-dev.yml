@@ -11,4 +11,5 @@ testing_suites:
 testing_packages:
   - ember-leaflet
 testing_additional_requires:
+    - ember-data
     - leaflet
