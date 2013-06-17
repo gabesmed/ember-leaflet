@@ -19,7 +19,8 @@ window.locations = {
 };
 
 // Disable transitions
-L.DomUtil.TRANSITION = null;
-L.DomUtil.TRANSITION_END = null;
+L.DomUtil.TRANSITION = '';
+L.DomUtil.TRANSITION_END = '';
+window.L_DISABLE_3D = true;
 
 L.Icon.Default.imagePath = '/testpath';

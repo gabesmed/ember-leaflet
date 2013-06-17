@@ -24,7 +24,7 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
     } else if(this._layer && !newLatLng) {
       this._destroyLayer();
     } else {
-      var oldLatLng = this._layer.getLatLng();
+      var oldLatLng = this._layer && this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         this._layer.setLatLng(newLatLng);
       }
@@ -39,6 +39,16 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
     if(this._layer || !get(this, 'location')) { return; }
     this._super();
     this._layer.content = get(this, 'content');
+
+    // Add a notification for layer changing on the onAdd function.
+    var oldAdd = this._layer.onAdd, self = this;
+    this._layer.onAdd = function() {
+      console.log('onAdd');
+      self.propertyWillChange('layer');
+      oldAdd.apply(this, arguments);
+      self.propertyDidChange('layer');
+    };
+    this.notifyPropertyChange('layer');
   },
 
   _destroyLayer: function() {
