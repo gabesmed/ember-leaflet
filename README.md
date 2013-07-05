@@ -1,8 +1,10 @@
 # EmberLeaflet [![Build Status](https://secure.travis-ci.org/gabesmed/ember-leaflet.png?branch=master)](http://travis-ci.org/gabesmed/ember-leaflet)
 
-Ember + Leaflet = Fun with maps!
+## Ember + Leaflet = Fun with maps!
 
-This is a work in progress. More tests and functionality coming soon. See docs and examples at [the github page](http://gabesmed.github.io/ember-leaflet/).
+EmberLeaflet aims to make working with Leaflet layers in your Ember app as easy and composable as DOM views are with Ember's View classes.
+
+Wherever possible, the design is analogous to Ember's View, CollectionView and ContainerView architecture. EmberLeaflet provides functionality for maps, tile layers, markers, polylines and geometry, popups, and is extensible to include any other Leaflet functionality you might desire.
 
 ## Usage
 
