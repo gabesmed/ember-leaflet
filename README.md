@@ -2,7 +2,7 @@
 
 ## Ember + Leaflet = Fun with maps!
 
-EmberLeaflet aims to make working with Leaflet layers in your Ember app as *easy, declarative and composable* as Ember's View classes make working with DOM elements.
+EmberLeaflet aims to make working with Leaflet layers in your Ember app as **easy, declarative and composable** as Ember's View classes make working with DOM elements.
 
 Wherever possible, the design is analogous to Ember's View, CollectionView and ContainerView architecture. EmberLeaflet provides functionality for maps, tile layers, markers, polylines and geometry, and popups. It provides hooks wherever possible for easy extensibility into more custom Leaflet behavior.
 
