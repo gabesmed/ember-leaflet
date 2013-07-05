@@ -12,24 +12,53 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   popupOptions: {offset: L.point(0, -36)},
   
   _onClickOpenPopup: function(e) {
-    this._popup
-      .setLatLng(e.latlng)
-      .setContent(this.get('popupContent'))
-      .openOn(this._layer._map);
+    this.openPopup();
   },
 
   _onDragStartClosePopup: function(e) {
-    this._layer._map.closePopup();
+    this.closePopup();
   },
 
+  openPopup: function() {
+    this.willOpenPopup();
+    this._popup
+      .setLatLng(this._layer.getLatLng())
+      .setContent(this.get('popupContent'))
+      .openOn(this._layer._map);
+    this.didOpenPopup();    
+  },
+
+  closePopup: function() {
+    this.willClosePopup();
+    this._layer._map.closePopup();
+    this.didClosePopup();    
+  },
+
+  willOpenPopup: Ember.K,
+  didOpenPopup: Ember.K,
+
+  willClosePopup: Ember.K,
+  didClosePopup: Ember.K,
+
+  willCreatePopup: Ember.K,
+  didCreatePopup: Ember.K,
+
+  willDestroyPopup: Ember.K,
+  didDestroyPopup: Ember.K,
+
   _createPopup: function() {
+    this.willCreatePopup();
     this._popup = L.popup(this.get('popupOptions'));
+    this.didCreatePopup();
   },
 
   _destroyPopup: function() {
     if(!this._popup) { return; }
-    if(this._popup._map) { this._layer._map.closePopup(); }
+    this.willDestroyPopup();
+    if(this._popup._map && this._layer && this._layer._map) {
+      this._layer._map.closePopup(); }
     this._popup = null;
+    this.didDestroyPopup();
   },
 
   _removePopupObservers: Ember.beforeObserver(function() {

@@ -43,7 +43,6 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
     // Add a notification for layer changing on the onAdd function.
     var oldAdd = this._layer.onAdd, self = this;
     this._layer.onAdd = function() {
-      console.log('onAdd');
       self.propertyWillChange('layer');
       oldAdd.apply(this, arguments);
       self.propertyDidChange('layer');

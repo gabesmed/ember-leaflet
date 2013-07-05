@@ -42,25 +42,39 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
 
   _newLayer: Ember.required(Function),
 
+  willCreateLayer: Ember.K,
+  didCreateLayer: Ember.K,
+
+  willDestroyLayer: Ember.K,
+  didDestroyLayer: Ember.K,
+
   _createLayer: function() {
     Ember.assert("Layer must not already be created.", !this._layer);
     Ember.assert("Layer must have a parent", !!this._parentLayer);
     Ember.assert("Parent layer must be in leaflet.",
       !!this._parentLayer._layer);
+    this.willCreateLayer();
     this.propertyWillChange('layer');
     this._layer = this._newLayer();
     this._parentLayer._layer.addLayer(this._layer);
     this.propertyDidChange('layer');
+    this.didCreateLayer();
     this._createChildLayers();
   },
 
   _destroyLayer: function() {
     Ember.assert("Layer must exist.", !!this._layer);
     this._destroyChildLayers();
+    this.willDestroyLayer();
     this.propertyWillChange('layer');
-    this._parentLayer._layer.removeLayer(this._layer);
+    try {
+      this._parentLayer._layer.removeLayer(this._layer);
+    } catch(err) {
+      Ember.Logger.warn("Error removing layer on " + this.constructor);
+    }
     this._layer = null;
     this.propertyDidChange('layer');
+    this.didDestroyLayer();
   },
 
   _createChildLayers: function() {
