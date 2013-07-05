@@ -12,21 +12,9 @@ var get = Ember.get, forEach = Ember.EnumerableUtils.forEach;
   @extends EmberLeaflet.Layer
 */
 EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend(
-    /*Ember.MutableArray, */
+    Ember.MutableArray, 
     EmberLeaflet.ObserveContentArrayMixin, {
   content: [],
-
-  // replace: function(idx, removedCount, addedLayers) {
-  //   this.arrayContentWillChange(idx, removedCount, addedLayers);
-  // },
-
-  // objectAt: function(idx) {
-  //   return this._childLayers[idx];
-  // },
-
-  // length: Ember.computed(function() {
-  //   return this._childLayers.length;
-  // }),
 
   itemLayerClass: Ember.computed(function() {
     throw new Error("itemLayerClass must be defined.");

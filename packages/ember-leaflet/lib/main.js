@@ -8,6 +8,7 @@ require("ember-leaflet/core");
 require("ember-leaflet/utils");
 
 require("ember-leaflet/layer");
+require("ember-leaflet/container");
 
 require("ember-leaflet/map");
 
