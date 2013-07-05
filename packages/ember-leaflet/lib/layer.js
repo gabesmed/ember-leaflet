@@ -1,9 +1,5 @@
 var fmt = Ember.String.fmt;
 
-var childLayersProperty = Ember.computed(function() {
-  return this._childLayers;
-}).property();
-
 /**
   `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
   wrapper of Leaflet layers, including instantiating child and parent layers.
@@ -14,6 +10,7 @@ var childLayersProperty = Ember.computed(function() {
 EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _layer: null,
   _parentLayer: null,
+  isVirtual: false, 
   _childLayers: [],
 
   /**
@@ -26,17 +23,6 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     @default []
   */
   parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
-
-  /**
-    @private
-
-    Array of child views. You should never edit this array directly.
-
-    @property childLayers
-    @type Array
-    @default []
-  */
-  childLayers: childLayersProperty,
   
   layer: Ember.computed(function() { return this._layer; }).property(),
 
@@ -54,68 +40,29 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     Ember.assert("Parent layer must be in leaflet.",
       !!this._parentLayer._layer);
     this.willCreateLayer();
-    this.propertyWillChange('layer');
-    this._layer = this._newLayer();
-    this._parentLayer._layer.addLayer(this._layer);
-    this.propertyDidChange('layer');
+    if(!this.isVirtual) {
+      this.propertyWillChange('layer');
+      this._layer = this._newLayer();
+      this._parentLayer._layer.addLayer(this._layer);
+      this.propertyDidChange('layer');
+    }
     this.didCreateLayer();
-    this._createChildLayers();
   },
 
   _destroyLayer: function() {
-    Ember.assert("Layer must exist.", !!this._layer);
-    this._destroyChildLayers();
     this.willDestroyLayer();
-    this.propertyWillChange('layer');
-    try {
-      this._parentLayer._layer.removeLayer(this._layer);
-    } catch(err) {
-      Ember.Logger.warn("Error removing layer on " + this.constructor);
+    if(!this.isVirtual) {
+      Ember.assert("Layer must exist.", !!this._layer);
+      this.propertyWillChange('layer');
+      try {
+        this._parentLayer._layer.removeLayer(this._layer);
+      } catch(err) {
+        Ember.Logger.warn("Error removing layer on " + this.constructor);
+      }
+      this._layer = null;
+      this.propertyDidChange('layer');
     }
-    this._layer = null;
-    this.propertyDidChange('layer');
     this.didDestroyLayer();
-  },
-
-  _createChildLayers: function() {
-    Ember.assert(
-      fmt("%@ layer must support adding objects.", this.toString()),
-      (typeof this._layer.addLayer === 'function' ||
-      !this._childLayers.length));
-    var childLayerClasses = this.get('childLayers') || [], self = this;
-    this._childLayers = childLayerClasses.map(function(layerClass) {
-      return self._createChildLayer(layerClass);
-    });
-    Ember.defineProperty(this, 'childLayers', childLayersProperty);
-  },
-
-  _createChildLayer: function(layerClass, options) {
-    options = Ember.$.extend({
-      controller: this.get('controller'),
-      _parentLayer: this
-    }, options || {});
-    var layerInstance;
-    var layerType = Ember.typeOf(layerClass);
-    Ember.assert(
-      fmt("layerClass %@ must be an Ember instance or class.",
-        layerClass ? layerClass.toString() : '<undefined>'),
-        layerType === 'instance' || layerType === 'class');
-    if(layerType === 'instance') {
-      layerInstance = layerClass;
-      layerInstance.setProperties(options);
-    } else if (layerType === 'class'){
-      layerInstance = layerClass.create(options);
-    }
-    layerInstance._createLayer();
-    return layerInstance;
-  },
-
-  _destroyChildLayers: function() {
-    this._childLayers.forEach(function(layer) {
-      layer._destroyLayer();
-      layer.destroy();
-    });
-    this._childLayers = [];
   }
 });
 

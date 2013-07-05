@@ -4,7 +4,7 @@
  
   @class MapView
   @namespace EmberLeaflet
-  @extends EmberLeaflet.LayerMixin
+  @extends EmberLeaflet.ContainerLayerMixin
 */
 
 var DEFAULT_CENTER = L.latLng(40.713282, -74.006978);
@@ -12,7 +12,7 @@ var DEFAULT_TILE_URL = 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{
 
 function createDefaultTileLayer() { return L.tileLayer(DEFAULT_TILE_URL); }
 
-EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
+EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   options: {},
   center: DEFAULT_CENTER,
   zoom: 16,
@@ -35,19 +35,23 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
       this.get('center'), !!this.get('center'));
     Ember.assert("Zoom must be set before creating map, was " + 
       this.get('zoom'), !!this.get('zoom'));
+    this.willCreateLayer();
+    this.propertyWillChange('layer');
     this._layer = L.map(this.get('elementId'), this.get('options'));
     this._layer.setView(this.get('center'), this.get('zoom'));
     this._addEventListeners();
-    this._createChildLayers();
+    this.propertyDidChange('layer');
+    this.didCreateLayer();
     if(!this._childLayers.length) {
       this._defaultChildLayer = createDefaultTileLayer();
       this._layer.addLayer(this._defaultChildLayer);
-    }    
+    }
   },
 
   _destroyLayer: function() {
+    this.willDestroyLayer();
+    this.propertyWillChange('layer');
     if(!this._layer) { return; }
-    this._destroyChildLayers();
     if(this._defaultChildLayer) {
       this._layer.removeLayer(this._defaultChildLayer);
       this._defaultChildLayer = null;
@@ -55,6 +59,8 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.LayerMixin, {
     this._removeEventListeners();
     this._layer.remove();
     this._layer = null;
+    this.propertyDidChange('layer');
+    this.didDestroyLayer();
   },
   
   _addEventListeners: function() {

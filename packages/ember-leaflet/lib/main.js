@@ -14,7 +14,6 @@ require("ember-leaflet/map");
 
 require("ember-leaflet/tile");
 
-require("ember-leaflet/collection/observe_content");
 require("ember-leaflet/collection/collection");
 require("ember-leaflet/collection/hash");
 

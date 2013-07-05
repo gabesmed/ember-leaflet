@@ -1,5 +1,6 @@
-require("ember-leaflet/collection/observe_content");
 require("ember-leaflet/geometry/geometry");
+
+var get = Ember.get;
 
 /**
   `EmberLeaflet.ArrayGeometryLayer` is a base geometry on the map that
@@ -10,15 +11,26 @@ require("ember-leaflet/geometry/geometry");
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend(
-    EmberLeaflet.ObserveContentArrayMixin, {
+EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
   init: function() {
     this._super();
-    this._setupContent();
+    this._contentDidChange();
   },
 
-  willDestroy: function() {
-    this._teardownContent();
-    this._super();
-  }
+  destroy: function() {
+    if (!this._super()) { return; }
+    var content = get(this, 'content');
+    if(content) { content.removeArrayObserver(this); }
+    return this;
+  },
+
+  _contentWillChange: Ember.beforeObserver(function() {
+    var content = get(this, 'content');
+    if(content) { content.removeArrayObserver(this); }
+  }, 'content'),
+
+  _contentDidChange: Ember.observer(function() {
+    var content = get(this, 'content');
+    if(content) { content.addArrayObserver(this); }
+  }, 'content')
 });

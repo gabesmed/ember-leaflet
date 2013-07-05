@@ -1,5 +1,3 @@
-require("ember-leaflet/collection/observe_content");
-
 var get = Ember.get, forEach = Ember.EnumerableUtils.forEach;
 
 /**
@@ -11,72 +9,68 @@ var get = Ember.get, forEach = Ember.EnumerableUtils.forEach;
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.CollectionLayer = EmberLeaflet.Layer.extend(
-    Ember.MutableArray, 
-    EmberLeaflet.ObserveContentArrayMixin, {
+EmberLeaflet.CollectionLayer = EmberLeaflet.ContainerLayer.extend({
   content: [],
+  isVirtual: true, 
 
   itemLayerClass: Ember.computed(function() {
     throw new Error("itemLayerClass must be defined.");
   }).property(),
 
-  init: function() {
-    this._super();
-    this._setupContent();
+  didCreateLayer: function() {
+    this._childLayers = Ember.A();
+    this._contentDidChange();
+    var content = get(this, 'content');
+    if(content) { content.addArrayObserver(this); }
   },
 
-  willDestroy: function() {
-    this._teardownContent();
-    this._super();
+  willDestroyLayer: function() {
+    var content = get(this, 'content');
+    if(content) { content.removeArrayObserver(this); }
+    this._contentWillChange();
   },
+
+  _contentWillChange: Ember.beforeObserver(function() {
+    var content = get(this, 'content');
+    if(content) { content.removeArrayObserver(this); }
+    var len = content ? get(content, 'length') : 0;
+    this.arrayWillChange(content, 0, len);
+  }, 'content'),
+
+  _contentDidChange: Ember.observer(function() {
+    var content = get(this, 'content');
+    if(content) { content.addArrayObserver(this); }
+    var len = content ? get(content, 'length') : 0;
+    this.arrayDidChange(content, 0, null, len);    
+  }, 'content'),
 
   arrayWillChange: function(array, idx, removedCount, addedCount) {
     for(var i = idx; i < idx + removedCount; i++) {
-      this._removeObject(array.objectAt(i));
+      this.objectWasRemoved(array.objectAt(i));
     }
   },
 
   arrayDidChange: function(array, idx, removedCount, addedCount) {
     for(var i = idx; i < idx + addedCount; i++) {
-      this._addObject(array.objectAt(i), i);
+      this.objectWasAdded(array.objectAt(i), i);
     }
   },
 
-  _createLayer: function() {
-    this._layer = this._parentLayer._layer;
-    this._createChildLayers();
-  },
-
-  _destroyLayer: function() {
-    this._destroyChildLayers();
-    this._layer = null;
-  },
-
-
-  _createChildLayers: function() {
-    if(!this._parentLayer._layer) { return; }
-    this._childLayers = [];
-    forEach(get(this, 'content'), function(obj) {
-      this._addObject(obj);
-    }, this);
-  },
-
-  _addObject: function(obj, index) {
+  objectWasAdded: function(obj, index) {
     if(index === undefined) { index = this._childLayers.length; }
-    var childLayer = this._createChildLayer(get(this, 'itemLayerClass'), {
+    var childLayer = this.createChildLayer(get(this, 'itemLayerClass'), {
       content: obj
     });
-    this._childLayers.splice.call(this._childLayers, index, 0, childLayer);
+    this.replace(index, 0, [childLayer]);
   },
 
-  _removeObject: function(obj) {
+  objectWasRemoved: function(obj) {
     var layer;
     for(var i = 0, l = this._childLayers.length; i < l; i++) {
       layer = this._childLayers[i];
       if(layer.get('content') === obj) {
-        layer._destroyLayer();
+        this.replace(i, 1, []);
         layer.destroy();
-        this._childLayers.splice(i, 1);
         return;
       }
     }

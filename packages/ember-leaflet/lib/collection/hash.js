@@ -41,7 +41,7 @@ EmberLeaflet.HashLayer = EmberLeaflet.CollectionLayer.extend({
     return index === -1 ? null : this._childLayers[index];
   },
 
-  _addObject: function(obj) {
+  objectWasAdded: function(obj) {
     var childLayer = this._getChildLayerByObject(obj),
         itemLayerClass = get(this, 'itemLayerClass'),
         hashByProperty = get(this, 'hashByProperty'),
@@ -56,7 +56,7 @@ EmberLeaflet.HashLayer = EmberLeaflet.CollectionLayer.extend({
     }
   },
 
-  _removeObject: function(obj) {
+  objectWasRemvoed: function(obj) {
     var layer;
     for(var i = 0, l = this._childLayers.length; i < l; i++) {
       layer = this._childLayers[i];

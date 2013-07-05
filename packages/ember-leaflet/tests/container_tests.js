@@ -28,6 +28,7 @@ test("child layers are instantiated and added", function() {
 
 test("child layers are added to leaflet map", function() {
   equal(view._childLayers.length, 2);
+  equal(view.get('length'), 2, "view should instantiate length");
   equal(view._childLayers[0]._layer._map, view._layer);
   equal(view._childLayers[1]._layer._map, view._layer);
 });
@@ -37,4 +38,18 @@ test("child layers are destroyed on removal", function() {
     view._destroyLayer();    
   });
   equal(view._childLayers.length, 0);
+  equal(view.get('length'), 0, 'length property should be updated.');
+});
+
+test("add child layers by adding to ContainerLayer", function() {
+  view.pushObject(EmberLeaflet.EmptyLayer.extend({aNumber: 3}));
+  equal(view._childLayers.length, 3);
+  equal(view.get('length'), 3);
+});
+
+test("remove child layers by removing from ContainerLayer", function() {
+  view.removeObject(view._childLayers[0]);
+  equal(view._childLayers.length, 1);
+  equal(view.get('length'), 1);
+  equal(view._childLayers[0].get('aNumber'), 2);
 });
