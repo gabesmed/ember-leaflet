@@ -4,22 +4,14 @@ EmberLeaflet aims to make working with Leaflet layers in your Ember app as **eas
 
 Wherever possible, the design is analogous to Ember's View, CollectionView and ContainerView architecture. EmberLeaflet provides functionality for maps, tile layers, markers, polylines and geometry, and popups. It provides hooks wherever possible for easy extensibility into more custom Leaflet behavior.
 
+Full docs and live examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet).
+
 ## Usage
 
 A simple map in Ember - only one line of code!
 
 ``` javascript
 App.MapView = EmberLeaflet.MapView.extend({});
-```
-
-Specify center, zoom and options:
-
-``` javascript
-App.MapView = EmberLeaflet.MapView.extend({
-    center: L.latLng(40.713282, -74.006978),
-    zoom: 18,
-    options: {maxZoom: 19, minZoom: 0}    
-});
 ```
 
 Customize tiles:
@@ -32,23 +24,6 @@ App.TileLayer = EmberLeaflet.TileLayer.extend({
 
 App.MapView = EmberLeaflet.MapView.extend({
     childLayers: [App.TileLayer]
-});
-```
-
-Add some markers:
-
-``` javascript
-App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
-    content: [
-        {location: L.latLng(40.713282, -74.006978)},
-        {location: L.latLng(40.713465, -74.006753)},
-        {location: L.latLng(40.713873, -74.006404)}]
-});
-
-App.MapWithMarkersView = EmberLeaflet.MapView.extend({
-    childLayers: [
-        App.TileLayer,
-        App.MarkerCollectionLayer]
 });
 ```
 
@@ -110,33 +85,7 @@ App.TitledMarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
 });
 ```
 
-Create your own tile layers:
-
-``` javascript
-App.TileLayer = EmberLeaflet.Layer.extend({
-    _newLayer: function() {
-        return L.TileJSON.createTileLayer(myTileJson);
-    }  
-});
-```
-
-Incorporate other leaflet layer classes:
-
-``` javascript
-App.MarkerClusterLayer = EmberLeaflet.Layer.extend({
-    options: {disableClusteringAtZoom: 16, showCoverageOnHover: false},
-    childLayers: [App.MarkerCollectionLayer],
-    _newLayer: function() {
-        return new L.MarkerClusterGroup(this.get('options'));
-    }
-});
-
-App.MapWithClusteredMarkersView = EmberLeaflet.MapView.extend({
-    childLayers: [
-        App.TileLayer,
-        App.MarkerClusterLayer]
-});
-```
+More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet)
 
 ## Build It
 
@@ -154,4 +103,3 @@ Run ```bundle exec rackup``` and open [http://localhost:9292](http://localhost:9
 * Thanks to the contributors to [emberjs/list-view](https://github.com/emberjs/list-view), from whom I cribbed this project skeleton.
 * Thanks to everyone who makes Ember a joy to work with!
 * Thanks to the makers of Leaflet, hooray for maps!
-* Thanks to `miguelcobain`, whose [ember-leaflet library](https://github.com/miguelcobain/ember-leaflet) was the inspiration to polish and publish this one.

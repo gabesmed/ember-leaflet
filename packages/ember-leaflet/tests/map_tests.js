@@ -67,9 +67,26 @@ test("change map zoom updates object", function() {
 });
 
 test("default tile layer created", function() {
-  equal(view._childLayers.length, 0);
-  equal(view._defaultChildLayer._map, view._layer);
-  equal(view._defaultChildLayer._url, 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png');
+  equal(view._childLayers.length, 1, "should be created");
+  equal(Ember.typeOf(view._childLayers[0]), "instance",
+    "should be instantiated");
+  ok(EmberLeaflet.TileLayer.detectInstance(view._childLayers[0]),
+    "should be an EmberLeaflet.TileLayer");
+  equal(view._childLayers[0]._layer._map, view._layer,
+    "should be added to map");
+  equal(view._childLayers[0]._layer._url, 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png',
+    "should have tileUrl set");
+});
+
+test("don't create default layer if childLayers is set", function() {
+  var secondView = EmberLeaflet.MapView.create({childLayers: []});
+  Ember.run(function() {
+    secondView.appendTo('#qunit-fixture');
+  });
+  equal(secondView._childLayers.length, 0);
+  Ember.run(function() {
+    secondView.destroy();      
+  });  
 });
 
 test("_destroyLayer cleans up", function() {

@@ -14,3 +14,7 @@ EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
     return L.tileLayer(get(this, 'tileUrl'), get(this, 'options'));
   }
 });
+
+EmberLeaflet.DefaultTileLayer = EmberLeaflet.TileLayer.extend({
+  tileUrl: 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png'
+});

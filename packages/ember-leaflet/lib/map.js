@@ -8,9 +8,6 @@
 */
 
 var DEFAULT_CENTER = L.latLng(40.713282, -74.006978);
-var DEFAULT_TILE_URL = 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png';
-
-function createDefaultTileLayer() { return L.tileLayer(DEFAULT_TILE_URL); }
 
 EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   options: {},
@@ -19,6 +16,13 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   
   isMoving: false,
   isZooming: false,
+
+  init: function() {
+    this._super();
+    if(this.get('childLayers') === undefined) {
+      this.set('childLayers', [EmberLeaflet.DefaultTileLayer]);
+    }
+  },
 
   didInsertElement: function() {
     this._super();
@@ -42,10 +46,6 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
     this._addEventListeners();
     this.propertyDidChange('layer');
     this.didCreateLayer();
-    if(!this._childLayers.length) {
-      this._defaultChildLayer = createDefaultTileLayer();
-      this._layer.addLayer(this._defaultChildLayer);
-    }
   },
 
   _destroyLayer: function() {
