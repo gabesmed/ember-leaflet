@@ -12,7 +12,8 @@ Wherever possible, the design is analogous to Ember's View, CollectionView and C
 
 A simple map in Ember - only two lines of code!
 
-{% ember_app simpleMap %}
+{% assign ember_app = "simpleMap" %}
+{% include ember_app.liquid %}
 
 ``` javascript
 SimpleMapApp = Ember.Application.create();
@@ -22,7 +23,8 @@ SimpleMapApp.IndexView =
 
 Specify center, zoom and options:
 
-{% ember_app centeredMap %}
+{% assign ember_app = "centeredMap" %}
+{% include ember_app.liquid %}
 
 ``` javascript
 CenteredMapApp = Ember.Application.create();
@@ -36,7 +38,8 @@ CenteredMapApp.IndexView =
 
 Customize tiles:
 
-{% ember_app customTiles %}
+{% assign ember_app = "customTiles" %}
+{% include ember_app.liquid %}
 
 ``` javascript
 CustomTilesApp = Ember.Application.create();
@@ -57,7 +60,8 @@ CustomTilesApp.IndexView =
 
 Add some markers:
 
-{% ember_app markers %}
+{% assign ember_app = "markers" %}
+{% include ember_app.liquid %}
 
 ``` javascript
 MarkersApp = Ember.Application.create();
@@ -80,7 +84,8 @@ MarkersApp.IndexView =
 
 Bind to a controller, and markers are added, removed, and moved based on their content binding.
 
-{% ember_app boundMarkers %}
+{% assign ember_app = "boundMarkers" %}
+{% include ember_app.liquid %}
 
 ``` javascript
 BoundMarkersApp = Ember.Application.create();
