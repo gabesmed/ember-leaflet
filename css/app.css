@@ -1,0 +1,20 @@
+.leaflet-container { height: 10em; }
+
+#simpleMap .leaflet-container { height: 10em; }
+#centeredMap .leaflet-container { height: 12em; }
+#customTiles .leaflet-container { height: 22em; }
+#markers .leaflet-container { height: 24em; }
+#boundMarkers .leaflet-container { height: 24em; }
+
+@media print, screen and (min-width: 720px) {
+    .ember-application {
+        width: 40%;
+        float: right;
+    }
+    .highlight {
+        float: left;
+        width: 58%;
+    }
+
+    p, h2, h1 { clear:both; }
+}

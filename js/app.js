@@ -1,136 +1,57 @@
-$('body').tooltip({
-    selector : 'a[rel="tooltip"], [data-toggle="tooltip"]'
+// SimpleMap
+SimpleMapApp = Ember.Application.create({rootElement: '#simpleMap'});
+SimpleMapApp.IndexView = EmberLeaflet.MapView.extend({});
+
+// CenteredMap
+CenteredMapApp = Ember.Application.create({rootElement: '#centeredMap'});
+CenteredMapApp.IndexView = EmberLeaflet.MapView.extend({
+    center: L.latLng(40.713282, -74.006978),
+    zoom: 18,
+    options: {maxZoom: 19, minZoom: 0}
 });
 
-Ember.TextSupport.reopen({
-  attributeBindings: ['data-toggle','title'],
-  didInsertElement:function(){
-      this.$().tooltip();
-  }
-})
-
-App = Ember.Application.create({
-    rootElement : "#application"
+// CustomTiles
+CustomTilesApp = Ember.Application.create({rootElement: '#customTiles'});
+CustomTilesApp.TileLayer = EmberLeaflet.TileLayer.extend({
+    tileUrl: 'http://{s}.tile.cloudmade.com/8ee2a50541944fb9bcedded5165f09d9/{styleId}/256/{z}/{x}/{y}.png',
+    options: {key: 'API-key', styleId: 997}
+});
+CustomTilesApp.IndexView = EmberLeaflet.MapView.extend({
+    childLayers: [CustomTilesApp.TileLayer]
 });
 
-App.Router = Ember.Router.extend({
-    location : Ember.Location.create({
-        implementation : 'none'
-    })
+// Markers
+MarkersApp = Ember.Application.create({rootElement: '#markers'});
+MarkersApp.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
+    content: [
+        {location: L.latLng(40.713282, -74.006978)},
+        {location: L.latLng(40.713465, -74.006753)},
+        {location: L.latLng(40.713873, -74.006404)}]
 });
 
-App.IndexView = Ember.View.extend({
-    didInsertElement : function() {
-        $('body').tooltip({
-            selector : 'a[rel="tooltip"], [data-toggle="tooltip"]'
-        });
-    }
+MarkersApp.IndexView = EmberLeaflet.MapView.extend({
+    childLayers: [
+        EmberLeaflet.DefaultTileLayer,
+        MarkersApp.MarkerCollectionLayer]
 });
 
-/**
- * 
- */
+//BoundMarkers
+BoundMarkersApp = Ember.Application.create({rootElement: '#boundMarkers'});
+BoundMarkersApp.MarkerCollectionLayer =
+  EmberLeaflet.MarkerCollectionLayer.extend({
+    contentBinding: 'controller'
+  });
 
-App.TileLayer = EmberLeaflet.TileLayer.extend({
-    tileUrl : 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-    options : {
-        attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }
-});
-App.MapView = EmberLeaflet.MapView.extend({
-    options : {
-        maxZoom : 19,
-        minZoom : 0,
-        attributionControl : true,
-    }
-}); 
-
-/**
- * 
- */
-App.IndexController = Ember.Controller.extend({
-    zoom: 15,
-    center: L.latLng(41.276387375928984, -8.371624946594238),
-    markers : EmberLeaflet.MarkerCollectionLayer.create({
-      content: [
-            {location: [41.276081,-8.356861]},
-            {location: [41.276081,-8.366861]},
-            {location: [41.276081, -8.376861]},
-            {location: [41.276081, -8.386861]}
-          ]
-    }),
-    layers: function(){
-      return [App.TileLayer, this.markers]
-    }.property(),
-    latitude : function(key, value){
-      // getter
-      if (arguments.length === 1) {
-        return this.get('center').lat;
-      // setter
-      } else {
-        this.set('center', L.latLng(value,this.get('center').lng));
-  
-        return value;
-      }
-    }.property('center'),
-    longitude : function(key,value){
-      // getter
-      if (arguments.length === 1) {
-        return this.get('center').lng;
-      // setter
-      } else {
-        this.set('center', L.latLng(this.get('center').lat,value));
-  
-        return value;
-      }
-    }.property('center'),
-    zoomIn: function() {
-        this.incrementProperty('zoom');
-    },
-    zoomOut: function() {
-        this.decrementProperty('zoom');
-    },
-    remove : function(m) {
-        this.get('markers.content').removeObject(m);
-    },
-    icons:[
-        {
-            label: 'Supermarket',
-            icon: L.AwesomeMarkers.icon({
-                icon : 'shopping-cart',
-                color : 'blue'
-            }),
-        },
-        {
-            label: 'Rocket!',
-            icon:L.AwesomeMarkers.icon({
-                icon : 'rocket',
-                color : 'orange'
-            })
-        },
-        {
-            label: 'Fire! Fire!',
-            icon:L.AwesomeMarkers.icon({
-                icon : 'fire-extinguisher',
-                color : 'red'
-            })
-        },
-        {
-            label: 'Let\'s play!',
-            icon:L.AwesomeMarkers.icon({
-                icon : 'gamepad',
-                color : 'cadetblue'
-            })
-        },
-        {
-            label: 'Ember',
-            icon:L.AwesomeMarkers.icon({
-                icon : 'fire',
-                color : 'green'
-            })
-        }
-    ],
-    changeIcon : function(m, icon){
-        m.set('icon',icon);
-    }
-});
+BoundMarkersApp.IndexView =
+  EmberLeaflet.MapView.extend({
+    childLayers: [
+      EmberLeaflet.DefaultTileLayer,
+      BoundMarkersApp.MarkerCollectionLayer]
+  });
+BoundMarkersApp.IndexController =
+  Ember.ArrayController.extend({
+    content: [
+      {location: L.latLng(40.713282, -74.006978)},
+      {location: L.latLng(40.713465, -74.006753)},
+      {location: L.latLng(40.713873, -74.006404)}]
+  });
