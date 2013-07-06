@@ -12,7 +12,7 @@ Wherever possible, the design is analogous to Ember's View, CollectionView and C
 
 A simple map in Ember - only two lines of code!
 
-{% assign ember_app = "simpleMap" %}
+{% assign ember_app = "simpleMap" %} 
 {% include ember_app.liquid %}
 
 ``` javascript
