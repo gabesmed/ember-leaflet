@@ -1,6 +1,8 @@
 // SimpleMap
 SimpleMapApp = Ember.Application.create({rootElement: '#simpleMap'});
-SimpleMapApp.IndexView = EmberLeaflet.MapView.extend({});
+SimpleMapApp.IndexView = EmberLeaflet.MapView.extend({
+  options: {zoomControl: false}
+});
 
 // CenteredMap
 CenteredMapApp = Ember.Application.create({rootElement: '#centeredMap'});
