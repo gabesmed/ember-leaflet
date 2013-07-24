@@ -38,3 +38,9 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
   }
 
 });
+
+EmberLeaflet.PolygonLayer = EmberLeaflet.PolylineLayer.extend({
+  _newLayer: function() {
+    return L.polygon(get(this, 'locations'), get(this, 'options'));
+  }
+});
