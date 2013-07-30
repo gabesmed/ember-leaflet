@@ -4,7 +4,7 @@ var content, polyline, PolylineClass, view,
   locationsEqual = window.locationsEqual,
   locations = window.locations;
 
-module("EmberLeaflet.MarkerLayer", {
+module("EmberLeaflet.PolylineLayer", {
   setup: function() {
     content = Ember.A([locations.chicago, locations.sf, locations.nyc]);
     PolylineClass = EmberLeaflet.PolylineLayer.extend({});
@@ -37,6 +37,14 @@ test("locations match", function() {
   locationsEqual(locationLatLngs[0], locations.chicago);
   locationsEqual(locationLatLngs[1], locations.sf);
   locationsEqual(locationLatLngs[2], locations.nyc);
+});
+
+test("replace content updates polyline", function() {
+  polyline.set('content', Ember.A([locations.paris]));
+  equal(polyline.get('locations').length, 1);
+  equal(polyline._layer.getLatLngs().length, 1);
+  locationsEqual(polyline.get('locations')[0], locations.paris);
+  locationsEqual(polyline._layer.getLatLngs()[0], locations.paris);
 });
 
 test("remove location from content updates polyline", function() {
