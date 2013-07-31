@@ -25,10 +25,10 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
     return L.polyline(get(this, 'locations'), get(this, 'options'));
   },
 
-  locationsDidChange: Ember.computed(function() {
+  locationsDidChange: Ember.observer(function() {
     if(!this._layer) { return; }
     this._layer.setLatLngs(this.get('locations'));    
-  }).property('locations'),
+  }, 'locations'),
 
   arrayWillChange: function(array, idx, removedCount, addedCount) {},
 

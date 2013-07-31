@@ -60,13 +60,13 @@ test("add location to content updates polyline", function() {
 });
 
 test("move location in content moves polyline", function() {
-  content.set('2', locations.paris);
+  content.replace(2, 1, locations.paris);
   locationsEqual(polyline.get('locations')[2], locations.paris);
   locationsEqual(polyline._layer.getLatLngs()[2], locations.paris);
 });
 
 test("nullify location in content updates polyline", function() {
-  content.set('2', null);
+  content.replace(2, 1, null);
   equal(polyline.get('locations.length'), 2);
   equal(polyline._layer.getLatLngs().length, 2);
 });
