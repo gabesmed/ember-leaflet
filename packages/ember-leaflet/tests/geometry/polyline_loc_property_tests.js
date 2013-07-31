@@ -4,10 +4,16 @@ var content, polyline, PolylineClass, view,
   locationsEqual = window.locationsEqual,
   locations = window.locations;
 
-module("EmberLeaflet.PolylineLayer", {
+module("EmberLeaflet.PolylineLayer with location property", {
   setup: function() {
-    content = Ember.A([locations.chicago, locations.sf, locations.nyc]);
-    PolylineClass = EmberLeaflet.PolylineLayer.extend({});
+    content = Ember.A([
+      Ember.Object.create({where: locations.chicago}),
+      Ember.Object.create({where: locations.sf}),
+      Ember.Object.create({where: locations.nyc})
+    ]);
+    PolylineClass = EmberLeaflet.PolylineLayer.extend({
+      locationProperty: 'where'
+    });
     polyline = PolylineClass.create({
       content: content
     });
@@ -40,7 +46,7 @@ test("locations match", function() {
 });
 
 test("replace content updates polyline", function() {
-  polyline.set('content', Ember.A([locations.paris]));
+  polyline.set('content', Ember.A([{where: locations.paris}]));
   equal(polyline.get('locations').length, 1);
   equal(polyline._layer.getLatLngs().length, 1);
   locationsEqual(polyline.get('locations')[0], locations.paris);
@@ -54,13 +60,15 @@ test("remove location from content updates polyline", function() {
 });
 
 test("add location to content updates polyline", function() {
-  content.pushObject(locations.paris);
+  content.pushObject({where: locations.paris});
   equal(polyline._layer.getLatLngs().length, content.length);
   equal(polyline.get('locations').length, content.length);
+  locationsEqual(polyline.get('locations')[3], locations.paris);
+  locationsEqual(polyline._layer.getLatLngs()[3], locations.paris);
 });
 
 test("move location in content moves polyline", function() {
-  content.replace(2, 1, locations.paris);
+  content.replace(2, 1, {where: locations.paris});
   locationsEqual(polyline.get('locations')[2], locations.paris);
   locationsEqual(polyline._layer.getLatLngs()[2], locations.paris);
 });
