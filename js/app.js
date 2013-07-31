@@ -23,37 +23,67 @@ CustomTilesApp.IndexView = EmberLeaflet.MapView.extend({
 });
 
 // Markers
-MarkersApp = Ember.Application.create({rootElement: '#markers'});
-MarkersApp.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
-    content: [
-        {location: L.latLng(40.713282, -74.006978)},
-        {location: L.latLng(40.713465, -74.006753)},
-        {location: L.latLng(40.713873, -74.006404)}]
-});
-
-MarkersApp.IndexView = EmberLeaflet.MapView.extend({
-    childLayers: [
-        EmberLeaflet.DefaultTileLayer,
-        MarkersApp.MarkerCollectionLayer]
-});
-
-//BoundMarkers
-BoundMarkersApp = Ember.Application.create({rootElement: '#boundMarkers'});
-BoundMarkersApp.MarkerCollectionLayer =
+Markers = Ember.Application.create({rootElement: '#markers'});
+Markers.MarkerCollectionLayer =
   EmberLeaflet.MarkerCollectionLayer.extend({
     contentBinding: 'controller'
   });
 
-BoundMarkersApp.IndexView =
+Markers.IndexView =
+  EmberLeaflet.MapView.extend({
+    center: L.latLng(40.7189000170401, -73.9944648742675),
+    zoom: 14,
+    childLayers: [
+      EmberLeaflet.DefaultTileLayer,
+      Markers.MarkerCollectionLayer]
+  });
+Markers.IndexController =
+  Ember.ArrayController.extend({
+    content: [
+      {location: L.latLng(40.714704, -74.000108)},
+      {location: L.latLng(40.714639, -73.989551)},
+      {location: L.latLng(40.721372, -73.991611)}]
+  });
+
+// Rad Markers
+RadMarkersApp = Ember.Application.create({rootElement: '#radMarkers'});
+RadMarkersApp.MarkerLayer =
+  EmberLeaflet.MarkerLayer.extend(
+    EmberLeaflet.DraggableMixin,
+    EmberLeaflet.PopupMixin, {
+  popupContentBinding: 'content.title'
+});
+
+RadMarkersApp.MarkerCollectionLayer =
+  EmberLeaflet.MarkerCollectionLayer.extend({
+    content: [
+      {location: L.latLng(40.712728, -74.006014), title: 'City Hall'}],
+    itemLayerClass: RadMarkersApp.MarkerLayer
+  });
+
+RadMarkersApp.IndexView =
   EmberLeaflet.MapView.extend({
     childLayers: [
       EmberLeaflet.DefaultTileLayer,
-      BoundMarkersApp.MarkerCollectionLayer]
-  });
-BoundMarkersApp.IndexController =
-  Ember.ArrayController.extend({
-    content: [
-      {location: L.latLng(40.713282, -74.006978)},
-      {location: L.latLng(40.713465, -74.006753)},
-      {location: L.latLng(40.713873, -74.006404)}]
-  });
+      RadMarkersApp.MarkerCollectionLayer]});
+
+// ClusteredApp
+ClusteredApp = Ember.Application.create({rootElement: '#clustered'});
+ClusteredApp.MarkerClusterLayer = EmberLeaflet.ContainerLayer.extend({
+    childLayers: [EmberLeaflet.MarkerCollectionLayer.extend({
+      content: [
+        {location: L.latLng(40.714704, -74.000108)},
+        {location: L.latLng(40.714639, -73.989551)},
+        {location: L.latLng(40.721372, -73.991611)}]})],
+    _newLayer: function() {
+        return new L.MarkerClusterGroup();
+    }
+});
+
+ClusteredApp.IndexView =
+  EmberLeaflet.MapView.extend({
+    center: L.latLng(40.7189000170401, -73.9944648742675),
+    zoom: 13,
+    childLayers: [
+      EmberLeaflet.DefaultTileLayer,
+      ClusteredApp.MarkerClusterLayer]});

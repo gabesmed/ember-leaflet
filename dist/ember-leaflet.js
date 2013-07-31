@@ -1,4 +1,4 @@
-// Last commit: bf94a1e (2013-07-06 12:44:53 -0400)
+// Last commit: b62eb29 (2013-07-30 20:50:28 -0700)
 
 
 (function() {
@@ -969,18 +969,26 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
     return L.polyline(get(this, 'locations'), get(this, 'options'));
   },
 
-  locationsDidChange: Ember.computed(function() {
+  locationsDidChange: Ember.observer(function() {
     if(!this._layer) { return; }
-    this._layer.setLatLngs(this.get('locations'));    
-  }).property('locations'),
+    this._layer.setLatLngs(get(this, 'locations'));    
+  }, 'locations'),
 
-  arrayWillChange: function(array, idx, removedCount, addedCount) {},
+  /* On any change to the array, just update the entire leaflet path,
+  as it reprocesses the whole thing anyway. */
+  arrayWillChange: function(array, idx, removedCount, addedCount) {
+    this.propertyWillChange('locations');
+  },
 
   arrayDidChange: function(array, idx, removedCount, addedCount) {
-    if(!this._layer) { return; }
-    this._layer.setLatLngs(this.get('locations'));
+    this.propertyDidChange('locations');
   }
+});
 
+EmberLeaflet.PolygonLayer = EmberLeaflet.PolylineLayer.extend({
+  _newLayer: function() {
+    return L.polygon(get(this, 'locations'), get(this, 'options'));
+  }
 });
 
 })();
