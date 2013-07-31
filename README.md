@@ -8,81 +8,29 @@ Full docs and live examples at [gabesmed.github.io/ember-leaflet](http://gabesme
 
 ## Usage
 
-A simple map in Ember - only one line of code!
+Creating a map is just one line of code!
 
 ``` javascript
-App.MapView = EmberLeaflet.MapView.extend({});
+App.AMapView = EmberLeaflet.MapView.extend({});
 ```
 
-Customize tiles:
+Create layers and bind content declaratively in idiomatic Ember.
 
 ``` javascript
-App.TileLayer = EmberLeaflet.TileLayer.extend({
-    tileUrl: 'http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png',
-    options: {key: 'API-key', styleId: 997}
-});
-
-App.MapView = EmberLeaflet.MapView.extend({
-    childLayers: [App.TileLayer]
-});
-```
-
-Bind to a controller, and markers are added, removed, and moved based on their content binding.
-
-``` javascript
-App.MarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
-    contentBinding: 'controller'
-});
-
-App.MapWithBoundMarkersView = EmberLeaflet.MapView.extend({
+App.AnotherMapView = EmberLeaflet.MapView.extend({
     childLayers: [
         App.TileLayer,
-        App.MarkerCollectionLayer]
-});
-
-App.MapWithBoundMarkersController = Ember.ArrayController.extend({
-    content: [
-        {location: L.latLng(40.713282, -74.006978)},
-        {location: L.latLng(40.713465, -74.006753)},
-        {location: L.latLng(40.713873, -74.006404)}]
+        EmberLeaflet.MarkerCollectionLayer.extend({
+            contentBinding: 'controller'
+        })]
 });
 ```
 
-Add functionality to marker class with mixins.
+Functionality is added to classes with mixins.
 
 ``` javascript
 App.DraggableMarker = EmberLeaflet.MarkerLayer.extend(
     EmberLeaflet.DraggableMixin, {});
-
-App.MarkerWithPopup = EmberLeaflet.MarkerLayer.extend(
-        EmberLeaflet.PopupMixin, {
-    popupContent: Ember.computed.alias('content.title'),
-    popupOptions: {offset: L.point(0, -36)}
-});
-```
-
-Customizing marker class:
-
-``` javascript
-App.MarkerLayer = EmberLeaflet.MarkerLayer.extend({
-    icon: L.DivIcon.extend({
-        iconSize: [40, 40]
-    }),
-    options: function() {
-        return {
-            html: this.get('content.title'),
-            icon: this.get('icon')
-        };
-    }.property()
-});
-
-App.TitledMarkerCollectionLayer = EmberLeaflet.MarkerCollectionLayer.extend({
-    content: [
-        {location: L.latLng(40.713282, -74.006978), title: 'Gas'},
-        {location: L.latLng(40.713465, -74.006753), title: 'Café'},
-        {location: L.latLng(40.713873, -74.006404), title: 'ATM'}],
-    itemLayerClass: App.MarkerLayer
-});
 ```
 
 More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet)
