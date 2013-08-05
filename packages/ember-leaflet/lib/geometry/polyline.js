@@ -21,7 +21,7 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
       locations = locations.mapProperty(get(this, 'locationProperty')); }
     locations = locations.filter(function(i) { return !!i; });
     return locations;
-  }).property('content', 'locationProperty').volatile(),
+  }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 
   _newLayer: function() {
     return L.polyline(get(this, 'locations'), get(this, 'options'));
