@@ -26,8 +26,7 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
 
   destroy: function() {
     this._contentWillChange();
-    if (!this._super()) { return; }
-    return this;
+    return this._super();
   },
 
   _contentWillChange: Ember.beforeObserver(function() {
