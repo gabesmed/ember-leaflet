@@ -17,20 +17,37 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
     this._contentDidChange();
   },
 
+  locationsProperty: null,
+
   destroy: function() {
     if (!this._super()) { return; }
     var content = get(this, 'content');
-    if(content) { content.removeArrayObserver(this); }
+    if(content) {
+      var locationsProperty = get(this, 'locationsProperty');
+      if(locationsProperty) {
+        get(content, locationsProperty).removeArrayObserver(this);
+      } else { content.removeArrayObserver(this); }
+    }
     return this;
   },
 
   _contentWillChange: Ember.beforeObserver(function() {
     var content = get(this, 'content');
-    if(content) { content.removeArrayObserver(this); }
+    if(content) {
+      var locationsProperty = get(this, 'locationsProperty');
+      if(locationsProperty) {
+        get(content, locationsProperty).removeArrayObserver(this);
+      } else { content.removeArrayObserver(this); }
+    }
   }, 'content'),
 
   _contentDidChange: Ember.observer(function() {
     var content = get(this, 'content');
-    if(content) { content.addArrayObserver(this); }
+    if(content) {
+      var locationsProperty = get(this, 'locationsProperty');
+      if(locationsProperty) {
+        get(content, locationsProperty).addArrayObserver(this);
+      } else { content.addArrayObserver(this); }
+    }
   }, 'content')
 });
