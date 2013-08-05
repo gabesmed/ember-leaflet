@@ -17,37 +17,32 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
     this._contentDidChange();
   },
 
+  /**
+  If this property is null, watch the content object for location updates.
+  If this property is set, look inside this property of the content object
+  for the locations array.
+  */
   locationsProperty: null,
 
   destroy: function() {
+    this._contentWillChange();
     if (!this._super()) { return; }
-    var content = get(this, 'content');
-    if(content) {
-      var locationsProperty = get(this, 'locationsProperty');
-      if(locationsProperty) {
-        get(content, locationsProperty).removeArrayObserver(this);
-      } else { content.removeArrayObserver(this); }
-    }
     return this;
   },
 
   _contentWillChange: Ember.beforeObserver(function() {
     var content = get(this, 'content');
-    if(content) {
-      var locationsProperty = get(this, 'locationsProperty');
-      if(locationsProperty) {
-        get(content, locationsProperty).removeArrayObserver(this);
-      } else { content.removeArrayObserver(this); }
-    }
-  }, 'content'),
+    if(!content) { return; }
+    var locationsProperty = get(this, 'locationsProperty'),
+      arr = locationsProperty ? get(content, locationsProperty) : content;
+    if(arr) { arr.removeArrayObserver(this); }
+  }, 'content', 'locationsProperty'),
 
   _contentDidChange: Ember.observer(function() {
     var content = get(this, 'content');
-    if(content) {
-      var locationsProperty = get(this, 'locationsProperty');
-      if(locationsProperty) {
-        get(content, locationsProperty).addArrayObserver(this);
-      } else { content.addArrayObserver(this); }
-    }
-  }, 'content')
+    if(!content) { return; }
+    var locationsProperty = get(this, 'locationsProperty'),
+      arr = locationsProperty ? get(content, locationsProperty) : content;
+    if(arr) { arr.addArrayObserver(this); }
+  }, 'content', 'locationsProperty')
 });

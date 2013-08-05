@@ -1,13 +1,13 @@
 require('ember-leaflet/~tests/test_helper');
 
 var content, polyline, PolylineClass, view, 
-  locationsEqual = window.locationsEqual,
-  locations = window.locations;
+  locations = window.locations,
+  locationsEqual = window.locationsEqual;
 
 module("EmberLeaflet.PolylineLayer with locations property", {
   setup: function() {
     content = Ember.Object.create({
-      path: Ember.A([ locations.chicago, locations.sf, locations.nyc ])
+      path: Ember.A([locations.chicago, locations.sf, locations.nyc])
     });
     PolylineClass = EmberLeaflet.PolylineLayer.extend({
       locationsProperty: 'path'
@@ -79,3 +79,18 @@ test("nullify location in content updates polyline", function() {
   equal(polyline._layer.getLatLngs().length, 2);
 });
 
+test("changing locations property updates", function() {
+  content.set('path2', Ember.A([locations.london, locations.newdelhi]));
+  polyline.set('locationsProperty', 'path2');
+  equal(polyline.get('locations.length'), 2);
+  equal(polyline._layer.getLatLngs().length, 2);
+  locationsEqual(polyline.get('locations')[0], locations.london);
+});
+
+test("observers reassigned after changing locationsProperty", function() {
+  content.set('path2', Ember.A([]));
+  polyline.set('locationsProperty', 'path2');
+  equal(polyline.get('locations.length'), 0);
+  content.get('path2').pushObject(locations.london);
+  equal(polyline.get('locations.length'), 1);
+});

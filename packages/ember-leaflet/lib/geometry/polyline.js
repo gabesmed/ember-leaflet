@@ -15,8 +15,9 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
 
   locations: Ember.computed(function() {
     var locationsProperty = get(this, 'locationsProperty'),
-        origin = 'content' + (locationsProperty ? '.' + locationsProperty : ''),
-        locations = get(this, origin) || [];
+        locationsPath = 'content' + (locationsProperty ? '.' +
+          locationsProperty : ''),
+        locations = get(this, locationsPath) || [];
     if(get(this, 'locationProperty')) {
       locations = locations.mapProperty(get(this, 'locationProperty')); }
     locations = locations.filter(function(i) { return !!i; });
