@@ -6,7 +6,7 @@ var marker, MarkerClass, view,
 
 var get = Ember.get;
 
-module("EmberLeaflet.PopupMixin", {
+module("EmberLeaflet.PopupMixin (Marker)", {
   setup: function() {
     MarkerClass = EmberLeaflet.MarkerLayer.extend(
       EmberLeaflet.PopupMixin, {});
@@ -28,19 +28,19 @@ module("EmberLeaflet.PopupMixin", {
   }
 });
 
-test("popup is created", function() {
+test("Popup is created", function() {
   ok(marker._popup, "popup is created");
-  equal(marker._popup._map, null, "popup not added yet.");  
+  equal(marker._popup._map, null, "popup not added until opened");  
 });
 
-test("Can click to show popup", function() {
+test("Clicking shows popup", function() {
   marker._layer.fire('click', {latlng: marker.get('location')});
   ok(!!marker._popup._map, "marker added to map");
   equal(marker._popup._content, 'hello there!');
   locationsEqual(marker._popup._latlng, marker.get('location'));
 });
 
-test("destroy map destroys popup", function() {
+test("Destroying map destroys popup", function() {
   Ember.run(function() { view.destroy(); });
   equal(marker._popup, null);
 });

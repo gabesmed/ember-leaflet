@@ -12,17 +12,20 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   popupOptions: {offset: L.point(0, -36)},
   
   _onClickOpenPopup: function(e) {
-    this.openPopup();
+    this.openPopup(e);
   },
 
   _onDragStartClosePopup: function(e) {
     this.closePopup();
   },
 
-  openPopup: function() {
+  openPopup: function(e) {
     this.willOpenPopup();
+    var latLng;
+    if (this._layer.getLatLng) { latLng = this._layer.getLatLng(); }
+    else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
-      .setLatLng(this._layer.getLatLng())
+      .setLatLng(e.latlng || latLng)
       .setContent(this.get('popupContent'))
       .openOn(this._layer._map);
     this.didOpenPopup();    

@@ -17,8 +17,9 @@ require("ember-leaflet/tile");
 require("ember-leaflet/collection/collection");
 require("ember-leaflet/collection/hash");
 
+require("ember-leaflet/mixin/popup");
+
 require("ember-leaflet/marker/draggable");
-require("ember-leaflet/marker/popup");
 require("ember-leaflet/marker/marker");
 
 require("ember-leaflet/marker_collection/bounds");
