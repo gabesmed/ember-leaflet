@@ -29,3 +29,4 @@ require("ember-leaflet/marker_collection/marker_hash");
 require("ember-leaflet/geometry/geometry");
 require("ember-leaflet/geometry/polyline");
 require("ember-leaflet/geometry/rectangle");
+require("ember-leaflet/geometry/circle");
