@@ -28,7 +28,8 @@ require("ember-leaflet/marker_collection/marker_hash");
 
 require("ember-leaflet/marker_cluster/marker_cluster");
 
-require("ember-leaflet/geometry/geometry");
+require("ember-leaflet/geometry/array");
+require("ember-leaflet/geometry/point");
 require("ember-leaflet/geometry/polyline");
 require("ember-leaflet/geometry/rectangle");
 require("ember-leaflet/geometry/circle");

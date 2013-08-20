@@ -79,3 +79,9 @@ test("nullify location in content updates polyline", function() {
   equal(polyline._layer.getLatLngs().length, 2);
 });
 
+test("upload location in content updates polyline", function() {
+  content[2].set('where', locations.paris);
+  locationsEqual(polyline.get('locations')[2], locations.paris);
+  locationsEqual(polyline._layer.getLatLngs()[2], locations.paris);  
+});
+
