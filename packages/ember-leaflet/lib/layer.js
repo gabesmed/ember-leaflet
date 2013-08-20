@@ -43,7 +43,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     if(!this.isVirtual) {
       this.propertyWillChange('layer');
       this._layer = this._newLayer();
-      this._parentLayer._layer.addLayer(this._layer);
+      this._addToParent();
       this.propertyDidChange('layer');
     }
     this.didCreateLayer();
@@ -54,15 +54,27 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     if(!this.isVirtual) {
       Ember.assert("Layer must exist.", !!this._layer);
       this.propertyWillChange('layer');
-      try {
-        this._parentLayer._layer.removeLayer(this._layer);
-      } catch(err) {
-        Ember.Logger.warn("Error removing layer on " + this.constructor);
-      }
+      this._removeFromParent();
       this._layer = null;
       this.propertyDidChange('layer');
     }
     this.didDestroyLayer();
+  },
+
+  _addToParent: function() {
+    this._parentLayer._addChild(this._layer);
+  },
+
+  _removeFromParent: function() {
+    this._parentLayer._removeChild(this._layer);
+  },
+
+  _addChild: function(layer) {
+    this._layer.addLayer(layer);
+  },
+
+  _removeChild: function(layer) {
+    this._layer.removeLayer(layer);
   }
 });
 

@@ -11,5 +11,13 @@ EmberLeaflet.MarkerClusterLayer = EmberLeaflet.ContainerLayer.extend({
   _newLayer: function() {
     Ember.assert("Leaflet.cluster must be loaded.", !!L.MarkerClusterGroup);
     return new L.MarkerClusterGroup(this.get('options'));
+  },
+
+  _removeChild: function(layer) {
+    this._layer.removeLayer(layer);
+    // If the marker still has a map, it's because it wasn't clustered --
+    // it was directly on the map. So we need to remove it from there
+    // as well.
+    if(layer._map) { layer._map.removeLayer(layer); }
   }
 });
