@@ -17,6 +17,19 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
   */
   location: Ember.computed.alias('content.location'),
 
+  /**
+  Detect clustering above this marker. And return if this marker is inside
+  a cluster object.
+  */
+  _detectClustering: function() {
+    var cursor = this;
+    while(cursor._parentLayer) {
+      cursor = cursor._parentLayer;
+      if(cursor._isCluster) { return true; }
+    }
+    return false;
+  },
+
   _updateLayerOnLocationChange: Ember.observer(function() {
     var newLatLng = get(this, 'location');
     if(newLatLng && !this._layer) {
@@ -26,7 +39,12 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
     } else {
       var oldLatLng = this._layer && this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
-        this._layer.setLatLng(newLatLng);
+        if(this._detectClustering()) {
+          this._destroyLayer();
+          this._createLayer();
+        } else {
+          this._layer.setLatLng(newLatLng);
+        }
       }
     }
   }, 'location'),

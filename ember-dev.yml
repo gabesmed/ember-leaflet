@@ -1,5 +1,5 @@
 ---
-name: Ember Leaflet
+name: EmberLeaflet
 assetfile: 'Assetfile'
 testing_suites:
   default:
@@ -9,7 +9,8 @@ testing_suites:
     - "package=all&extendprototypes=true&nojshint=true"
     - "package=all&dist=build&nojshint=true"
 testing_packages:
-  - ember-leaflet
+    - ember-leaflet
 testing_additional_requires:
     - ember-data
     - leaflet
+    - leaflet-cluster
