@@ -1,4 +1,4 @@
-// Last commit: b62eb29 (2013-07-30 20:50:28 -0700)
+// Last commit: 4554a56 (2013-08-09 11:31:58 -0700)
 
 
 (function() {
@@ -313,10 +313,12 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
 
   removeAndDestroyChildLayers: function() {
     var self = this;
-    forEach(this._childLayers, function(layer) {
-      self.removeChildLayer(layer);
-      layer.destroy();
-    });
+    if(this._childLayers) {
+      forEach(this._childLayers, function(layer) {
+        self.removeChildLayer(layer);
+        layer.destroy();
+      });
+    }
     this._childLayers = [];
   }
 
@@ -432,12 +434,13 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   },
 
   zoomDidChange: Ember.observer(function() {
-    if(!this._layer) { return; }
+    if(!this._layer || Ember.isNone(this.get('zoom'))) { return; }
     this._layer.setZoom(this.get('zoom'));
   }, 'zoom'),
   
   centerDidChange: Ember.observer(function() {
-    if (!this._layer || this.get('isMoving')) { return; }
+    if (!this._layer || this.get('isMoving') ||
+      !this.get('center')) { return; }
     this._layer.panTo(this.get('center'));
   }, 'center')
 });
@@ -640,58 +643,6 @@ EmberLeaflet.HashLayer = EmberLeaflet.CollectionLayer.extend({
 var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
 
 /**
-  `EmberLeaflet.DraggableMixin` adds drag and drop functionality to
-  `EmberLeaflet.MarkerLayer` classes.
- 
-  @class DraggableMixin
-  @namespace EmberLeaflet
-*/
-EmberLeaflet.DraggableMixin = Ember.Mixin.create({
-  isDragging: false,
-  isDraggable: true,
-
-  _onDragStart: function() {
-    set(this, 'isDragging', true);
-  },
-
-  _onDragEnd: function() {
-    setProperties(this, {
-      location: this._layer.getLatLng(),
-      isDragging: false
-    });
-  },
-
-  _updateDraggability: Ember.observer(function() {
-    if(!this._layer || !this._layer._map) { return; }
-    if(get(this, 'isDraggable')) {
-      this._layer.dragging.enable();
-    } else {
-      this._layer.dragging.disable();
-    }
-  }, 'isDraggable', 'layer'),
-
-  _removeDraggableObservers: Ember.beforeObserver(function() {
-    if(!this._layer) { return; }
-    this._layer.off('dragstart', this._onDragStart, this);
-    this._layer.off('dragend', this._onDragEnd, this);
-  }, 'layer'),
-
-  _addDraggableObservers: Ember.observer(function() {
-    if(!this._layer) { return; }
-    this._layer.on('dragstart', this._onDragStart, this);
-    this._layer.on('dragend', this._onDragEnd, this);
-  }, 'layer')
-
-});
-
-})();
-
-
-
-(function() {
-var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
-
-/**
   `EmberLeaflet.PopupMixin` adds popup functionality to any
   `EmberLeaflet.Layer` class.
  
@@ -703,17 +654,20 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   popupOptions: {offset: L.point(0, -36)},
   
   _onClickOpenPopup: function(e) {
-    this.openPopup();
+    this.openPopup(e);
   },
 
   _onDragStartClosePopup: function(e) {
     this.closePopup();
   },
 
-  openPopup: function() {
+  openPopup: function(e) {
     this.willOpenPopup();
+    var latLng;
+    if (this._layer.getLatLng) { latLng = this._layer.getLatLng(); }
+    else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
-      .setLatLng(this._layer.getLatLng())
+      .setLatLng(e.latlng || latLng)
       .setContent(this.get('popupContent'))
       .openOn(this._layer._map);
     this.didOpenPopup();    
@@ -772,6 +726,58 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
 
 
 (function() {
+var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
+
+/**
+  `EmberLeaflet.DraggableMixin` adds drag and drop functionality to
+  `EmberLeaflet.MarkerLayer` classes.
+ 
+  @class DraggableMixin
+  @namespace EmberLeaflet
+*/
+EmberLeaflet.DraggableMixin = Ember.Mixin.create({
+  isDragging: false,
+  isDraggable: true,
+
+  _onDragStart: function() {
+    set(this, 'isDragging', true);
+  },
+
+  _onDragEnd: function() {
+    setProperties(this, {
+      location: this._layer.getLatLng(),
+      isDragging: false
+    });
+  },
+
+  _updateDraggability: Ember.observer(function() {
+    if(!this._layer || !this._layer._map) { return; }
+    if(get(this, 'isDraggable')) {
+      this._layer.dragging.enable();
+    } else {
+      this._layer.dragging.disable();
+    }
+  }, 'isDraggable', 'layer'),
+
+  _removeDraggableObservers: Ember.beforeObserver(function() {
+    if(!this._layer) { return; }
+    this._layer.off('dragstart', this._onDragStart, this);
+    this._layer.off('dragend', this._onDragEnd, this);
+  }, 'layer'),
+
+  _addDraggableObservers: Ember.observer(function() {
+    if(!this._layer) { return; }
+    this._layer.on('dragstart', this._onDragStart, this);
+    this._layer.on('dragend', this._onDragEnd, this);
+  }, 'layer')
+
+});
+
+})();
+
+
+
+(function() {
 var get = Ember.get;
 
 /**
@@ -791,6 +797,19 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
   */
   location: Ember.computed.alias('content.location'),
 
+  /**
+  Detect clustering above this marker. And return if this marker is inside
+  a cluster object.
+  */
+  _detectClustering: function() {
+    var cursor = this;
+    while(cursor._parentLayer) {
+      cursor = cursor._parentLayer;
+      if(cursor._isCluster) { return true; }
+    }
+    return false;
+  },
+
   _updateLayerOnLocationChange: Ember.observer(function() {
     var newLatLng = get(this, 'location');
     if(newLatLng && !this._layer) {
@@ -800,7 +819,12 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
     } else {
       var oldLatLng = this._layer && this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
-        this._layer.setLatLng(newLatLng);
+        if(this._detectClustering()) {
+          this._destroyLayer();
+          this._createLayer();
+        } else {
+          this._layer.setLatLng(newLatLng);
+        }
       }
     }
   }, 'location'),
@@ -902,6 +926,27 @@ EmberLeaflet.MarkerHashLayer = EmberLeaflet.HashLayer.extend(
 
 
 (function() {
+EmberLeaflet.MarkerClusterLayer = EmberLeaflet.ContainerLayer.extend({
+  options: {},
+
+  /** Special value for detecting clustering. This is important as the
+  cluster won't update when a marker inside it is moved, so we need to
+  make sure to delete and re-create markers when they are inside a cluster
+  as opposed to just moving them.
+  */
+  _isCluster: true,
+
+  _newLayer: function() {
+    Ember.assert("Leaflet.cluster must be loaded.", !!L.MarkerClusterGroup);
+    return new L.MarkerClusterGroup(this.get('options'));
+  }
+});
+
+})();
+
+
+
+(function() {
 var get = Ember.get;
 
 /**
@@ -919,22 +964,33 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
     this._contentDidChange();
   },
 
+  /**
+  If this property is null, watch the content object for location updates.
+  If this property is set, look inside this property of the content object
+  for the locations array.
+  */
+  locationsProperty: null,
+
   destroy: function() {
-    if (!this._super()) { return; }
-    var content = get(this, 'content');
-    if(content) { content.removeArrayObserver(this); }
-    return this;
+    this._contentWillChange();
+    return this._super();
   },
 
   _contentWillChange: Ember.beforeObserver(function() {
     var content = get(this, 'content');
-    if(content) { content.removeArrayObserver(this); }
-  }, 'content'),
+    if(!content) { return; }
+    var locationsProperty = get(this, 'locationsProperty'),
+      arr = locationsProperty ? get(content, locationsProperty) : content;
+    if(arr) { arr.removeArrayObserver(this); }
+  }, 'content', 'locationsProperty'),
 
   _contentDidChange: Ember.observer(function() {
     var content = get(this, 'content');
-    if(content) { content.addArrayObserver(this); }
-  }, 'content')
+    if(!content) { return; }
+    var locationsProperty = get(this, 'locationsProperty'),
+      arr = locationsProperty ? get(content, locationsProperty) : content;
+    if(arr) { arr.addArrayObserver(this); }
+  }, 'content', 'locationsProperty')
 });
 
 })();
@@ -958,12 +1014,15 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
   locationProperty: null,
 
   locations: Ember.computed(function() {
-    var locations = get(this, 'content') || [];
+    var locationsProperty = get(this, 'locationsProperty'),
+        locationsPath = 'content' + (locationsProperty ? '.' +
+          locationsProperty : ''),
+        locations = get(this, locationsPath) || [];
     if(get(this, 'locationProperty')) {
       locations = locations.mapProperty(get(this, 'locationProperty')); }
     locations = locations.filter(function(i) { return !!i; });
     return locations;
-  }).property('content', 'locationProperty').volatile(),
+  }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 
   _newLayer: function() {
     return L.polyline(get(this, 'locations'), get(this, 'options'));
@@ -989,6 +1048,33 @@ EmberLeaflet.PolygonLayer = EmberLeaflet.PolylineLayer.extend({
   _newLayer: function() {
     return L.polygon(get(this, 'locations'), get(this, 'options'));
   }
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+
+/**
+  `EmberLeaflet.RectangleLayer` is a rectangle on the map that adjusts based
+  on a content object that should be an array of LatLng objects.
+ 
+  @class RectangleLayer
+  @namespace EmberLeaflet
+  @extends EmberLeaflet.PolylineLayer
+*/
+EmberLeaflet.RectangleLayer = EmberLeaflet.PolylineLayer.extend({
+  _newLayer: function() {
+    return L.rectangle(L.latLngBounds(get(this, 'locations')),
+                       get(this, 'options'));
+  },
+
+  locationsDidChange: Ember.observer(function() {
+    if(!this._layer) { return; }
+    this._layer.setBounds(L.latLngBounds(get(this, 'locations')));
+  }, 'locations')
 });
 
 })();
