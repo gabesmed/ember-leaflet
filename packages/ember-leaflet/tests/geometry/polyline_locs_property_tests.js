@@ -1,8 +1,7 @@
 require('ember-leaflet/~tests/test_helper');
 
 var content, polyline, PolylineClass, view, 
-  locations = window.locations,
-  locationsEqual = window.locationsEqual;
+  locations = window.locations;
 
 module("EmberLeaflet.PolylineLayer with locations property", {
   setup: function() {

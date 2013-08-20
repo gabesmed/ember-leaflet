@@ -1,7 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
 var content, polyline, PolylineClass, view, 
-  locationsEqual = window.locationsEqual,
   locations = window.locations;
 
 module("EmberLeaflet.PolylineLayer", {
@@ -47,25 +46,25 @@ test("replace content updates polyline", function() {
   locationsEqual(polyline._layer.getLatLngs()[0], locations.paris);
 });
 
-test("remove location from content updates polyline", function() {
+test("remove item from content updates polyline", function() {
   content.popObject();
   equal(polyline._layer.getLatLngs().length, content.length);
   equal(polyline.get('locations').length, content.length);
 });
 
-test("add location to content updates polyline", function() {
+test("add item to content updates polyline", function() {
   content.pushObject(locations.paris);
   equal(polyline._layer.getLatLngs().length, content.length);
   equal(polyline.get('locations').length, content.length);
 });
 
-test("move location in content moves polyline", function() {
+test("replace item in content moves polyline", function() {
   content.replace(2, 1, locations.paris);
   locationsEqual(polyline.get('locations')[2], locations.paris);
   locationsEqual(polyline._layer.getLatLngs()[2], locations.paris);
 });
 
-test("nullify location in content updates polyline", function() {
+test("nullify item in content updates polyline", function() {
   content.replace(2, 1, null);
   equal(polyline.get('locations.length'), 2);
   equal(polyline._layer.getLatLngs().length, 2);

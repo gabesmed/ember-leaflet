@@ -1,7 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
-var content, polyline, PolylineClass, view, 
-  locationsEqual = window.locationsEqual,
+var content, polyline, PolylineClass, view,
   locations = window.locations;
 
 module("EmberLeaflet.PolylineLayer with location property", {
@@ -9,7 +8,9 @@ module("EmberLeaflet.PolylineLayer with location property", {
     content = Ember.A([
       Ember.Object.create({where: locations.chicago}),
       Ember.Object.create({where: locations.sf}),
-      Ember.Object.create({where: locations.nyc})
+      Ember.Object.create({where: locations.nyc}),
+      Ember.Object.create({where: null}),
+      Ember.Object.create()
     ]);
     PolylineClass = EmberLeaflet.PolylineLayer.extend({
       locationProperty: 'where'
@@ -53,33 +54,35 @@ test("replace content updates polyline", function() {
   locationsEqual(polyline._layer.getLatLngs()[0], locations.paris);
 });
 
-test("remove location from content updates polyline", function() {
-  content.popObject();
-  equal(polyline._layer.getLatLngs().length, content.length);
-  equal(polyline.get('locations').length, content.length);
+test("remove item from content updates polyline", function() {
+  content.replace(2, 1, []);
+  equal(polyline._layer.getLatLngs().length, 2);
+  equal(polyline.get('locations').length, 2);
 });
 
-test("add location to content updates polyline", function() {
+test("add item to content updates polyline", function() {
   content.pushObject({where: locations.paris});
-  equal(polyline._layer.getLatLngs().length, content.length);
-  equal(polyline.get('locations').length, content.length);
+  equal(polyline._layer.getLatLngs().length, 4);
+  equal(polyline.get('locations').length, 4);
   locationsEqual(polyline.get('locations')[3], locations.paris);
   locationsEqual(polyline._layer.getLatLngs()[3], locations.paris);
 });
 
-test("move location in content moves polyline", function() {
-  content.replace(2, 1, {where: locations.paris});
-  locationsEqual(polyline.get('locations')[2], locations.paris);
-  locationsEqual(polyline._layer.getLatLngs()[2], locations.paris);
-});
-
 test("nullify location in content updates polyline", function() {
-  content.replace(2, 1, null);
+  content[2].set('where', null);
   equal(polyline.get('locations.length'), 2);
   equal(polyline._layer.getLatLngs().length, 2);
 });
 
-test("upload location in content updates polyline", function() {
+test("un-nullify location in content updates polyline", function() {
+  content[3].set('where', locations.paris);
+  equal(polyline.get('locations.length'), 4);
+  equal(polyline._layer.getLatLngs().length, 4);
+  locationsEqual(polyline.get('locations')[3], locations.paris);
+  locationsEqual(polyline._layer.getLatLngs()[3], locations.paris);
+});
+
+test("update location in content updates polyline", function() {
   content[2].set('where', locations.paris);
   locationsEqual(polyline.get('locations')[2], locations.paris);
   locationsEqual(polyline._layer.getLatLngs()[2], locations.paris);  
