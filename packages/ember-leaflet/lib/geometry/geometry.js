@@ -15,6 +15,7 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
   init: function() {
     this._super();
     this._contentDidChange();
+    this._addLocationsPropertyObserver();
   },
 
   /**
@@ -43,7 +44,15 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
     var locationsProperty = get(this, 'locationsProperty'),
       arr = locationsProperty ? get(content, locationsProperty) : content;
     if(arr) { arr.addArrayObserver(this); }
-  }, 'content', 'locationsProperty')
+  }, 'content', 'locationsProperty'),
+
+  _addLocationsPropertyObserver: function() {
+    var locationsProperty = get(this, 'locationsProperty');
+    if (!locationsProperty) { return; }
+    this.addObserver('content.' + locationsProperty, this, function() {
+      this.notifyPropertyChange('locations');
+    });
+  }
 });
 
 /**
