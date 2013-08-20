@@ -132,10 +132,12 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
 
   removeAndDestroyChildLayers: function() {
     var self = this;
-    forEach(this._childLayers, function(layer) {
-      self.removeChildLayer(layer);
-      layer.destroy();
-    });
+    if(this._childLayers) {
+      forEach(this._childLayers, function(layer) {
+        self.removeChildLayer(layer);
+        layer.destroy();
+      });
+    }
     this._childLayers = [];
   }
 

@@ -1,6 +1,6 @@
 #qunit-fixture {
     position: static;
-    display: none;
+    /*display: none;*/
 }
 
 #qunit-fixture .leaflet-container {

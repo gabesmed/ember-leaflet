@@ -82,6 +82,7 @@ test("nullifying object's location removes marker", function() {
     "Location should be nullified.");
   equal(collection._childLayers[0]._layer, null,
     "Marker should be removed.");
+  equal(Object.keys(view._layer._layers).length, 2, "two markers left");
 });
 
 test("un-nullify objects' location", function() {
@@ -90,6 +91,7 @@ test("un-nullify objects' location", function() {
     locations.chicago, "Location should be updated");
   ok(!!collection._childLayers[3]._layer, "Marker should be added to map");
   equal(collection._childLayers[3]._layer._map, view._layer);
+  equal(Object.keys(view._layer._layers).length, 4, "four markers now");
 });
 
 test("changing content", function() {
