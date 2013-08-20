@@ -44,10 +44,14 @@ More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/em
 
 ## Running unit tests
 
-Run ```bundle exec rackup``` and open [http://localhost:9292](http://localhost:9292) in a browser.
+Run `bundle exec rackup` and open [http://localhost:9292](http://localhost:9292) in a browser.
 
 ## Thanks
 
 * Thanks to the contributors to [emberjs/list-view](https://github.com/emberjs/list-view), from whom I cribbed this project skeleton.
 * Thanks to everyone who makes Ember a joy to work with!
 * Thanks to the makers of Leaflet, hooray for maps!
+
+## Install notes
+
+For linux installs, the most common missing dependencies are libsxlt-dev, libxml2-dev, and ruby1.9.1-dev or ruby1.8-dev. If something goes wrong, first make sure you have these installed.
