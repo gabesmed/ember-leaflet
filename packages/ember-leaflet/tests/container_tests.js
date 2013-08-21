@@ -53,3 +53,43 @@ test("remove child layers by removing from ContainerLayer", function() {
   equal(view.get('length'), 1);
   equal(view._childLayers[0].get('aNumber'), 2);
 });
+
+test("array observers are fired on add", function() {
+  expect(6);
+  var receiver = Ember.Object.create({
+    arrayWillChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 2);
+      equal(removedCount, 0);
+      equal(addedCount, 1);
+    },
+    arrayDidChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 2);
+      equal(removedCount, 0);
+      equal(addedCount, 1);
+    }
+  });
+  view.addArrayObserver(receiver);
+  view.pushObject(EmberLeaflet.EmptyLayer.extend({aNumber: 3}));
+  view.removeArrayObserver(receiver);
+});
+
+test("array observers are fired on remove", function() {
+  expect(6);
+  var receiver = Ember.Object.create({
+    arrayWillChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 1);
+      equal(removedCount, 1);
+      equal(addedCount, 0);
+    },
+    arrayDidChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 1);
+      equal(removedCount, 1);
+      equal(addedCount, 0);
+    }
+  });
+  view.addArrayObserver(receiver);
+  Ember.run(function() {
+    view.removeAt(1);
+  });
+  view.removeArrayObserver(receiver);
+});
