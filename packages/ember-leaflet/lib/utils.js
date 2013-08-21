@@ -74,11 +74,11 @@ EmberLeaflet.computed.latLngFromLatLngArray = function(coordKey) {
   Define a computed property that gets and sets a value from the
   options object.
 
-  @method latlngFromLatLngArray
+  @method optionProperty
 */
 EmberLeaflet.computed.optionProperty = function(optionKey) {
   return Ember.computed('options', function(key, value) {
-    // override given key with explicitly defined one if necessary;
+    // override given key with explicitly defined one if necessary
     key = optionKey || key;
     if(arguments.length > 1) { // set
       var setterName = 'set' + Ember.String.classify(key);
