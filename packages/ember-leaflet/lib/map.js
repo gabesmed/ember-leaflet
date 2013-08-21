@@ -79,6 +79,12 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
 
   zoomend: function(e) {
     this.setProperties({isZooming: false, zoom: this._layer.getZoom()});
+    // if two zooms are called at once, a zoom could get queued. So
+    // set zoom to the queued one if relevant.
+    if(this._queuedZoom && this._queuedZoom !== this._layer.getZoom()) {
+      this._layer.setZoom(this._queuedZoom);
+      this._queuedZoom = null;
+    }
   },
 
   movestart: function(e) {
@@ -95,7 +101,11 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
 
   zoomDidChange: Ember.observer(function() {
     if(!this._layer || Ember.isNone(this.get('zoom'))) { return; }
-    this._layer.setZoom(this.get('zoom'));
+    if(this._layer._animatingZoom) {
+      this._queuedZoom = this.get('zoom');
+    } else {
+      this._layer.setZoom(this.get('zoom'));
+    }
   }, 'zoom'),
   
   centerDidChange: Ember.observer(function() {

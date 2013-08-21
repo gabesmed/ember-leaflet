@@ -66,6 +66,17 @@ test("change map zoom updates object", function() {
   equal(view.get('zoom'), 17);
 });
 
+asyncTest("two zooms in rapid succession end correctly", 1, function() {
+  view.set('zoom', 17);
+  setTimeout(function() {
+    view.set('zoom', 18);
+    setTimeout(function() {
+      equal(view.get('zoom'), 18, "zoom set correctly");
+      start();
+    }, 100);
+  }, 1);
+});
+
 test("default tile layer created", function() {
   equal(view._childLayers.length, 1, "should be created");
   equal(Ember.typeOf(view._childLayers[0]), "instance",
