@@ -26,6 +26,15 @@ App.AnotherMapView = EmberLeaflet.MapView.extend({
 });
 ```
 
+Handle events by adding functions: listeners are added and removed automatically.
+
+``` javascript
+App.MarkerLayer = EmberLeaflet.MarkerLayer.extend({
+    click: function(e) { alert('hi!'); },
+    dblclick: function(e) { alert('hi again!'); }
+});
+```
+
 Functionality is added to classes with mixins.
 
 ``` javascript

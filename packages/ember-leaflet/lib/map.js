@@ -17,6 +17,16 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   isMoving: false,
   isZooming: false,
 
+  // Events this map can respond to.
+  events: [
+    'click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout',
+    'mousemove', 'contextmenu', 'focus', 'blur', 'preclick', 'load',
+    'unload', 'viewreset', 'movestart', 'move', 'moveend', 'dragstart',
+    'drag', 'dragend', 'zoomstart', 'zoomend', 'zoomlevelschange',
+    'resize', 'autopanstart', 'layeradd', 'layerremove',
+    'baselayerchange', 'overlayadd', 'overlayremove', 'locationfound',
+    'locationerror', 'popupopen', 'popupclose'],
+
   init: function() {
     this._super();
     if(this.get('childLayers') === undefined) {
@@ -62,40 +72,24 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
     this.propertyDidChange('layer');
     this.didDestroyLayer();
   },
-  
-  _addEventListeners: function() {
-    this._layer.on('zoomstart', this._onZoomStart, this);
-    this._layer.on('zoomend', this._onZoomEnd, this);
-    this._layer.on('movestart', this._onMoveStart, this);
-    this._layer.on('moveend', this._onMoveEnd, this);
-    this._layer.on('move', this._onMove, this);
-  },
 
-  _removeEventListeners: function() {
-    this._layer.off('zoomstart', this._onZoomStart, this);
-    this._layer.off('zoomend', this._onZoomEnd, this);
-    this._layer.off('movestart', this._onMoveStart, this);
-    this._layer.off('moveend', this._onMoveEnd, this);
-    this._layer.off('move', this._onMove, this);
-  },
-
-  _onZoomStart: function(e) {
+  zoomstart: function(e) {
     this.set('isZooming', true);
   },
 
-  _onZoomEnd: function(e) {
+  zoomend: function(e) {
     this.setProperties({isZooming: false, zoom: this._layer.getZoom()});
   },
 
-  _onMoveStart: function(e) {
+  movestart: function(e) {
     this.set('isMoving', true);
   },
 
-  _onMoveEnd: function(e) {
+  moveend: function(e) {
     this.set('isMoving', false);
   },
 
-  _onMove: function(e) {
+  move: function(e) {
     this.set('center', this._layer.getCenter());    
   },
 

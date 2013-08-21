@@ -11,6 +11,9 @@ var get = Ember.get;
 EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
   options: {},
 
+  events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
+    'contextmenu', 'add', 'remove', 'popupopen', 'popupclose'],
+
   _newLayer: function() {
     return L.polyline(get(this, 'locations'), get(this, 'options'));
   },

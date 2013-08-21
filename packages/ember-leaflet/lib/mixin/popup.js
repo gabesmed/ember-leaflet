@@ -11,11 +11,13 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   popupContent: 'default popup content',
   popupOptions: {offset: L.point(0, -36)},
   
-  _onClickOpenPopup: function(e) {
+  click: function(e) {
+    if(this._super) { this._super(e); }
     this.openPopup(e);
   },
 
-  _onDragStartClosePopup: function(e) {
+  dragstart: function(e) {
+    if(this._super) { this._super(e); }
     this.closePopup();
   },
 
@@ -66,15 +68,11 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
 
   _removePopupObservers: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
-    this._layer.off('click', this._onClickOpenPopup, this);
-    this._layer.off('dragstart', this._onDragStartClosePopup, this);
     this._destroyPopup();
   }, 'layer'),
 
   _addPopupObservers: Ember.observer(function() {
     if(!this._layer) { return; }
     this._createPopup();
-    this._layer.on('click', this._onClickOpenPopup, this);
-    this._layer.on('dragstart', this._onDragStartClosePopup, this);
   }, 'layer')
 });

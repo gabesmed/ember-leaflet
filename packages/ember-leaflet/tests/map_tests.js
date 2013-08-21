@@ -1,6 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
-var view, f, locationsEqual = window.locationsEqual;
+var view, f;
 
 module("EmberLeaflet.MapView", {
   setup: function() {

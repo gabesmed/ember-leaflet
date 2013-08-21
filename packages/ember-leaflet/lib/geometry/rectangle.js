@@ -9,6 +9,10 @@ var get = Ember.get;
   @extends EmberLeaflet.BoundingGeometryLayer
 */
 EmberLeaflet.RectangleLayer = EmberLeaflet.BoundingGeometryLayer.extend({
+
+  events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
+    'contextmenu', 'add', 'remove', 'popupopen', 'popupclose'],
+
   _newLayer: function() {
     return L.rectangle(get(this, 'bounds'), get(this, 'options'));
   },

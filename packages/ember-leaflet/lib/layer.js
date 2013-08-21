@@ -1,4 +1,5 @@
-var fmt = Ember.String.fmt;
+var fmt = Ember.String.fmt, forEach = Ember.EnumerableUtils.forEach,
+  get = Ember.get;
 
 /**
   `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
@@ -12,6 +13,8 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _parentLayer: null,
   isVirtual: false, 
   _childLayers: [],
+
+  concatenatedProperties: ['events'],
 
   /**
     @private
@@ -34,6 +37,8 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   willDestroyLayer: Ember.K,
   didDestroyLayer: Ember.K,
 
+  events: [],
+
   _createLayer: function() {
     Ember.assert("Layer must not already be created.", !this._layer);
     Ember.assert("Layer must have a parent", !!this._parentLayer);
@@ -43,6 +48,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     if(!this.isVirtual) {
       this.propertyWillChange('layer');
       this._layer = this._newLayer();
+      this._addEventListeners();
       this._addToParent();
       this.propertyDidChange('layer');
     }
@@ -54,6 +60,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     if(!this.isVirtual) {
       Ember.assert("Layer must exist.", !!this._layer);
       this.propertyWillChange('layer');
+      this._removeEventListeners();
       this._removeFromParent();
       this._layer = null;
       this.propertyDidChange('layer');
@@ -75,7 +82,24 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
 
   _removeChild: function(layer) {
     this._layer.removeLayer(layer);
+  },
+
+  _addEventListeners: function() {
+    forEach(get(this, 'events'), function(eventName) {
+      if(typeof this[eventName] === 'function') {
+        this._layer.addEventListener(eventName, this[eventName], this);
+      }
+    }, this);
+  },
+
+  _removeEventListeners: function() {
+    forEach(get(this, 'events'), function(eventName) {
+      if(typeof this[eventName] === 'function') {
+        this._layer.removeEventListener(eventName, this[eventName], this);
+      }
+    }, this);
   }
+
 });
 
 /**
