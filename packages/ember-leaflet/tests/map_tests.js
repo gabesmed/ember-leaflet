@@ -67,11 +67,13 @@ test("change map zoom updates object", function() {
 });
 
 asyncTest("two zooms in rapid succession end correctly", 1, function() {
+  expect(2);
   view.set('zoom', 17);
   setTimeout(function() {
     view.set('zoom', 18);
     setTimeout(function() {
-      equal(view.get('zoom'), 18, "zoom set correctly");
+      equal(view.get('zoom'), 18, "zoom correct on object");
+      equal(view._layer.getZoom(), 18, "zoom correct on map");
       start();
     }, 100);
   }, 1);
