@@ -12,13 +12,11 @@ var get = Ember.get;
 EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
   init: function() {
     this._super();
-    this._contentDidChange();
     this._setupLocationObservers();
   },
 
   destroy: function() {
     this._teardownLocationObservers();
-    this._contentWillChange();
     return this._super();
   },
 
@@ -41,12 +39,13 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
   The computed array of locations.
   */
   locations: Ember.computed(function() {
-    var locationsProperty = get(this, 'locationsProperty'),
+    var locationProperty = get(this, 'locationProperty'),
+        locationsProperty = get(this, 'locationsProperty'),
         locationsPath = 'content' + (locationsProperty ? '.' +
           locationsProperty : ''),
-        locations = get(this, locationsPath) || [];
-    if(get(this, 'locationProperty')) {
-      locations = locations.mapProperty(get(this, 'locationProperty')); }
+        locations = get(this, locationsPath) || Ember.A();
+    if(locationProperty) {
+      locations = locations.mapProperty(locationProperty); }
     locations = locations.filter(function(i) { return !!i; });
     return locations;
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
@@ -128,6 +127,16 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
   },
 
   _contentLocationsDidChange: function() {
+    this.propertyDidChange('locations');
+  },
+
+  /** On any change to the array, just update the entire leaflet path,
+  as it reprocesses the whole thing anyway. */
+  arrayWillChange: function(array, idx, removedCount, addedCount) {
+    this.propertyWillChange('locations');
+  },
+
+  arrayDidChange: function(array, idx, removedCount, addedCount) {
     this.propertyDidChange('locations');
   }
 });

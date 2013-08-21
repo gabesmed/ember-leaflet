@@ -8,14 +8,24 @@ var get = Ember.get;
   @namespace EmberLeaflet
   @extends EmberLeaflet.PolylineLayer
 */
-EmberLeaflet.RectangleLayer = EmberLeaflet.PolylineLayer.extend({
+EmberLeaflet.RectangleLayer = EmberLeaflet.BoundingGeometryLayer.extend({
   _newLayer: function() {
-    return L.rectangle(L.latLngBounds(get(this, 'locations')),
-                       get(this, 'options'));
+    return L.rectangle(get(this, 'bounds'), get(this, 'options'));
   },
 
-  locationsDidChange: Ember.observer(function() {
-    if(!this._layer) { return; }
-    this._layer.setBounds(L.latLngBounds(get(this, 'locations')));
-  }, 'locations')
+  _createLayer: function() {
+    if(!get(this, 'bounds')) { return; }
+    this._super();
+  },
+
+  boundsDidChange: Ember.observer(function() {
+    var bounds = get(this, 'bounds');
+    if(this._layer && !bounds) {
+      this._destroyLayer();
+    } else if(bounds && !this._layer) {
+      this._createLayer();
+    } else if(bounds && this._layer) {
+      this._layer.setBounds(bounds);
+    }
+  }, 'bounds')
 });

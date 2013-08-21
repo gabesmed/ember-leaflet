@@ -7,7 +7,6 @@
   @extends EmberLeaflet.CollectionLayer
   @uses EmberLeaflet.BoundsMixin
 */
-EmberLeaflet.MarkerCollectionLayer = EmberLeaflet.CollectionLayer.extend(
-    EmberLeaflet.BoundsMixin, {
+EmberLeaflet.MarkerCollectionLayer = EmberLeaflet.CollectionLayer.extend({
   itemLayerClass: EmberLeaflet.MarkerLayer
 });

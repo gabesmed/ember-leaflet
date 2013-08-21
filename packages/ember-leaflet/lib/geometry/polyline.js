@@ -18,17 +18,7 @@ EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
   locationsDidChange: Ember.observer(function() {
     if(!this._layer) { return; }
     this._layer.setLatLngs(get(this, 'locations'));    
-  }, 'locations'),
-
-  /* On any change to the array, just update the entire leaflet path,
-  as it reprocesses the whole thing anyway. */
-  arrayWillChange: function(array, idx, removedCount, addedCount) {
-    this.propertyWillChange('locations');
-  },
-
-  arrayDidChange: function(array, idx, removedCount, addedCount) {
-    this.propertyDidChange('locations');
-  }
+  }, 'locations')
 });
 
 EmberLeaflet.PolygonLayer = EmberLeaflet.PolylineLayer.extend({
