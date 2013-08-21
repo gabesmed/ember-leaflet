@@ -28,6 +28,50 @@ test("child layers are instantiated and added", function() {
   equal(collection._childLayers[0].get('content.number'), 1);
 });
 
+test("child layers accessible by property", function() {
+  equal(collection.get('childLayers.length'), 3);
+});
+
+test("array observers are fired on add", function() {
+  expect(6);
+  var receiver = Ember.Object.create({
+    arrayWillChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 3);
+      equal(removedCount, 0);
+      equal(addedCount, 1);
+    },
+    arrayDidChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 3);
+      equal(removedCount, 0);
+      equal(addedCount, 1);
+    }
+  });
+  collection.addArrayObserver(receiver);
+  content.addObject({number: 4});
+  collection.removeArrayObserver(receiver);
+});
+
+test("array observers are fired on remove", function() {
+  expect(6);
+  var receiver = Ember.Object.create({
+    arrayWillChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 1);
+      equal(removedCount, 1);
+      equal(addedCount, 0);
+    },
+    arrayDidChange: function(array, idx, removedCount, addedCount) {
+      equal(idx, 1);
+      equal(removedCount, 1);
+      equal(addedCount, 0);
+    }
+  });
+  collection.addArrayObserver(receiver);
+  Ember.run(function() {
+    content.removeAt(1);
+  });
+  collection.removeArrayObserver(receiver);
+});
+
 test("adding an object", function() {
   content.addObject({number: 4});
   equal(collection._childLayers.length, 4);

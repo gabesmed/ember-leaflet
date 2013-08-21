@@ -30,15 +30,13 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
   },
 
   createAndAddChildLayers: function() {
+    var _childLayers = this._childLayers = Ember.A(), self = this, layer;
     if(this._childLayerClasses === undefined) {
       this._childLayerClasses = get(this, 'childLayers') || [];
     }
-    // redefine view's childLayers property that was obliterated
     Ember.defineProperty(this, 'childLayers', Ember.computed(function() {
       return this._childLayers;
-    }).property());
-
-    var _childLayers = this._childLayers = Ember.A(), self = this, layer;
+    }));
 
     forEach(this._childLayerClasses, function(layerClass, idx) {
       layer = self.createChildLayer(layerClass);

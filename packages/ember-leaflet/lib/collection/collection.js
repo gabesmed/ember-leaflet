@@ -18,16 +18,13 @@ EmberLeaflet.CollectionLayer = EmberLeaflet.ContainerLayer.extend({
   }).property(),
 
   didCreateLayer: function() {
-    this._childLayers = Ember.A();
+    this._super();
     this._contentDidChange();
-    var content = get(this, 'content');
-    if(content) { content.addArrayObserver(this); }
   },
 
   willDestroyLayer: function() {
-    var content = get(this, 'content');
-    if(content) { content.removeArrayObserver(this); }
     this._contentWillChange();
+    this._super();
   },
 
   _contentWillChange: Ember.beforeObserver(function() {

@@ -1,7 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
-var view, collection, content, locationsEqual = window.locationsEqual,
-  locations = window.locations;
+var view, collection, content, locations = window.locations;
 
 module("EmberLeaflet.MarkerCollectionLayer", {
   setup: function() {

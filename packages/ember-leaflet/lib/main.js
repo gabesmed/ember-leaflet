@@ -14,10 +14,11 @@ require("ember-leaflet/map");
 
 require("ember-leaflet/tile");
 
-require("ember-leaflet/collection/collection");
-
 require("ember-leaflet/mixin/popup");
 require("ember-leaflet/mixin/bounds");
+
+require("ember-leaflet/collection/collection");
+require("ember-leaflet/collection/bounds");
 
 require("ember-leaflet/marker/draggable");
 require("ember-leaflet/marker/marker");
