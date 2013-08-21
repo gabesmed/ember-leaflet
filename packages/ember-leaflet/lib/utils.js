@@ -69,3 +69,26 @@ EmberLeaflet.computed.latLngFromLatLngArray = function(coordKey) {
     }
   });  
 };
+
+/**
+  Define a computed property that gets and sets a value from the
+  options object.
+
+  @method latlngFromLatLngArray
+*/
+EmberLeaflet.computed.optionProperty = function(optionKey) {
+  return Ember.computed('options', function(key, value) {
+    // override given key with explicitly defined one if necessary;
+    key = optionKey || key;
+    if(arguments.length > 1) { // set
+      var setterName = 'set' + Ember.String.classify(key);
+      Ember.assert(
+        this.constructor + " must have a " + setterName + " function.",
+        !!this._layer[setterName]);
+      this._layer[setterName].call(this._layer, value);
+      return value;
+    } else { // get
+      return this._layer.options[key];
+    }
+  });
+};

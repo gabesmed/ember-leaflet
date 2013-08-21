@@ -1,7 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
 var content, marker, MarkerClass, view, 
-  locationsEqual = window.locationsEqual,
   locations = window.locations;
 
 module("EmberLeaflet.MarkerLayer", {
@@ -51,6 +50,30 @@ test("nullify location in content clears marker", function() {
   content.set('loc', null);
   equal(marker.get('location'), null);
   equal(marker._layer, null);
+});
+
+test("get & set opacity", function() {
+  equal(marker.get('opacity'), 1.0);
+  marker.set('opacity', 0.5);
+  equal(marker._layer.options.opacity, 0.5,
+    'opacity should be set in options');
+  equal(Ember.$(marker._layer._icon).css('opacity'), 0.5,
+    'opacity should be set in stylesheet');
+  equal(marker.get('opacity'), 0.5);
+});
+
+test("get & set zIndexOffset", function() {
+  marker._layer.update();
+  var initZIndex = parseInt(Ember.$(marker._layer._icon).css('z-index'), 10);
+  equal(marker.get('zIndexOffset'), 0);
+  marker.set('zIndexOffset', 4);
+  equal(marker._layer.options.zIndexOffset, 4,
+    'zIndexOffset set in options');
+  equal(marker.get('zIndexOffset'), 4, "updated to 4");
+  equal(Ember.$(marker._layer._icon).css('zIndex'), initZIndex + 4,
+    "zIndex is increased by 4, was " + 
+    Ember.$(marker._layer._icon).css('z-index') +
+    ", should be " + (initZIndex + 4));
 });
 
 module("EmberLeaflet.MarkerLayer with conversion", {

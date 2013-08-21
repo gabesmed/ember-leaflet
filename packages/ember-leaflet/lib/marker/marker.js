@@ -17,6 +17,10 @@ EmberLeaflet.MarkerLayer = EmberLeaflet.Layer.extend({
   */
   location: Ember.computed.alias('content.location'),
 
+  /** Forwards to respective options property */
+  zIndexOffset: EmberLeaflet.computed.optionProperty(),
+  opacity: EmberLeaflet.computed.optionProperty(),
+
   /**
   Detect clustering above this marker. And return if this marker is inside
   a cluster object.

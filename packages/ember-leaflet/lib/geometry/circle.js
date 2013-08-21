@@ -6,7 +6,7 @@ var get = Ember.get;
  
   @class CircleLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.PolylineLayer
+  @extends EmberLeaflet.PointGeometryLayer
 */
 EmberLeaflet.CircleLayer = EmberLeaflet.PointGeometryLayer.extend({
   

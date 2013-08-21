@@ -6,7 +6,7 @@ var get = Ember.get;
  
   @class PolylineLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
+  @extends EmberLeaflet.ArrayGeometryLayer
 */
 EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
   options: {},

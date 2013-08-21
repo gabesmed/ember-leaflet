@@ -6,7 +6,7 @@ var get = Ember.get;
  
   @class RectangleLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.PolylineLayer
+  @extends EmberLeaflet.BoundingGeometryLayer
 */
 EmberLeaflet.RectangleLayer = EmberLeaflet.BoundingGeometryLayer.extend({
   _newLayer: function() {
