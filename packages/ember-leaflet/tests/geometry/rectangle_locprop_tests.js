@@ -1,7 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
 var content, rectangle, RectangleClass, view, 
-  locationsEqual = window.locationsEqual,
   locations = window.locations;
 
 module("EmberLeaflet.RectangleLayer with location property", {
@@ -46,7 +45,9 @@ test("locations match", function() {
 });
 
 test("replace content updates rectangle", function() {
-  rectangle.set('content', Ember.A([{where:locations.paris}, {where:locations.nyc}]));
+  rectangle.set('content', Ember.A([
+    {where:locations.paris},
+    {where:locations.nyc}]));
   locationsEqual(rectangle.get('locations')[0], locations.paris);
   locationsEqual(rectangle.get('locations')[1], locations.nyc);
   var _layerBounds = rectangle._layer.getBounds();
@@ -56,18 +57,20 @@ test("replace content updates rectangle", function() {
 
 test("remove location from content updates rectangle", function() {
   content.popObject();
-  locationsEqual(rectangle._layer.getBounds().getNorthEast(), locations.chicago);
+  locationsEqual(rectangle._layer.getBounds().getNorthEast(),
+    locations.chicago);
   equal(rectangle.get('locations.length'), content.length);
 });
 
 test("add location to content updates rectangle", function() {
   content.pushObject({where:locations.paris});
-  locationsEqual(rectangle._layer.getBounds().getNorthEast(), locations.paris);
+  locationsEqual(rectangle._layer.getBounds().getNorthEast(),
+    locations.paris);
   equal(rectangle.get('locations.length'), content.length);
 });
 
 test("replace location in content updates rectangle", function() {
-  content.replace(1, 1, {where:locations.paris});
+  content[1].set('where', locations.paris);
   locationsEqual(rectangle.get('locations')[1], locations.paris);
   var _layerBounds = rectangle._layer.getBounds();
   locationsEqual(_layerBounds.getNorthEast(), locations.paris);
@@ -76,7 +79,7 @@ test("replace location in content updates rectangle", function() {
 });
 
 test("nullify location in content updates rectangle", function() {
-  content.replace(1, 1, null);
+  content[1].set('where', null);
   equal(rectangle.get('locations.length'), 2);
   var _layerBounds = rectangle._layer.getBounds();
   locationsEqual(_layerBounds.getNorthWest(), locations.chicago);
