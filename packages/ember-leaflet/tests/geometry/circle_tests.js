@@ -1,19 +1,17 @@
 require('ember-leaflet/~tests/test_helper');
 
 var content, circle, view, 
-  locationsEqual = window.locationsEqual,
   locations = window.locations;
 
 module("EmberLeaflet.CircleLayer", {
   setup: function() {
-    content = Ember.Object.create({loc:locations.sf,radius:10});
-    var CircleClass = EmberLeaflet.CircleLayer.extend({
-      location: Ember.computed.alias('content.loc')
-    });
-    circle = CircleClass.create({
+    content = Ember.Object.create({location: locations.sf, radius:10});
+    circle = EmberLeaflet.CircleLayer.create({
       content: content
     });
-    view = EmberLeaflet.MapView.create({childLayers: [circle]});
+    view = EmberLeaflet.MapView.create({
+      childLayers: [circle]
+    });
     Ember.run(function() {
       view.appendTo('#qunit-fixture');
     });
@@ -47,11 +45,11 @@ test("radius match", function() {
 test("set location to null clears circle", function() {
   circle.set('location', null);
   equal(circle._layer, null);
-  equal(content.get('loc'), null);
+  equal(content.get('location'), null);
 });
 
 test("move location in content moves circle", function() {
-  content.set('loc', locations.chicago);
+  content.set('location', locations.chicago);
   locationsEqual(circle.get('location'), locations.chicago);
   locationsEqual(circle._layer.getLatLng(), locations.chicago);
 });
@@ -63,7 +61,26 @@ test("change radius in content changes circle radius", function() {
 });
 
 test("nullify location in content clears circle", function() {
-  content.set('loc', null);
+  content.set('location', null);
   equal(circle.get('location'), null);
   equal(circle._layer, null);
+});
+
+test("circle with null location should not create leaflet obj", function() {
+  var newCircle = EmberLeaflet.CircleLayer.create({
+    content: {location: null, radius: 10}
+  });
+  view.pushObject(newCircle);
+  equal(newCircle._layer, null);
+});
+
+test("circle with null radius should create leaflet obj", function() {
+  var newCircle = EmberLeaflet.CircleLayer.create({
+    content: {location: locations.sf, radius: null}
+  });
+  Ember.run(function() {
+    view.pushObject(newCircle);
+  });
+  ok(newCircle._layer);
+  equal(newCircle._layer._mRadius, null);
 });

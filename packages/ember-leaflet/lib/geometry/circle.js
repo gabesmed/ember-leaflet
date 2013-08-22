@@ -33,8 +33,8 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointGeometryLayer.extend({
   }, 'radius'),
   
   _newLayer: function() {
-    return L.circle(get(this, 'location'), get(this,'radius'),
-                       get(this, 'options'));
+    return L.circle(get(this, 'location'), get(this, 'radius'),
+      get(this, 'options'));
   }, 
   
   _destroyLayer: function() {

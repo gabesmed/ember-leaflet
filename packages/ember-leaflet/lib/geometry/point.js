@@ -12,6 +12,12 @@ EmberLeaflet.PointGeometryLayer = EmberLeaflet.Layer.extend({
 
   location: Ember.computed.alias('content.location'),
   
+  _createLayer: function() {
+    // don't create layer if we don't have a location.
+    if(this._layer || !get(this, 'location')) { return; }
+    this._super();    
+  },
+
   _updateLayerOnLocationChange: Ember.observer(function() {
     var newLatLng = get(this, 'location');
       
