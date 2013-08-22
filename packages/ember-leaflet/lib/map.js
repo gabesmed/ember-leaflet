@@ -81,8 +81,9 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
     this.setProperties({isZooming: false, zoom: this._layer.getZoom()});
     // if two zooms are called at once, a zoom could get queued. So
     // set zoom to the queued one if relevant.
-    if(this._queuedZoom && this._queuedZoom !== this._layer.getZoom()) {
-      this._layer.setZoom(this._queuedZoom);
+    if(this._queuedZoom) {
+      if(this._queuedZoom !== this._layer.getZoom()) {
+        this._layer.setZoom(this._queuedZoom); }
       this._queuedZoom = null;
     }
   },
