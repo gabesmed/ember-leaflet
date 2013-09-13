@@ -51,11 +51,13 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 
   _contentWillChange: Ember.beforeObserver(function() {
+    this._contentLocationsWillChange();
     this._teardownLocationObservers();
   }, 'content', 'locationsProperty', 'locationProperty'),
 
   _contentDidChange: Ember.observer(function() {
     this._setupLocationObservers();
+    this._contentLocationsDidChange();
   }, 'content', 'locationsProperty', 'locationProperty'),
 
   _setupLocationObservers: function() {
