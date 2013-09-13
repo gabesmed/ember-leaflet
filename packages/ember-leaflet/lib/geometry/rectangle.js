@@ -31,5 +31,5 @@ EmberLeaflet.RectangleLayer = EmberLeaflet.BoundingGeometryLayer.extend({
     } else if(bounds && this._layer) {
       this._layer.setBounds(bounds);
     }
-  }, 'bounds')
+  }, 'locations')
 });
