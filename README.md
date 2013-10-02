@@ -44,6 +44,14 @@ App.DraggableMarker = EmberLeaflet.MarkerLayer.extend(
 
 More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet)
 
+## Roadmap
+
+- `EmberLeaflet.GeojsonLayer` for automatic parsing of geojson.
+- `popupViewClass` for including Ember Views in popups.
+- `Icon` and `DivIcon` classes for easy bindings to icon properties like `className` and `innerHTM`.
+
+PRs welcome! To contribute, get in touch with @gabesmed.
+
 ## Build It
 
 1. `git clone https://github.com/gabesmed/ember-leaflet.git`
