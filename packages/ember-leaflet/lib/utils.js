@@ -104,7 +104,7 @@ EmberLeaflet.computed.styleProperty = function(styleKey) {
     // override given key with explicitly defined one if necessary
     key = styleKey || key;
     if(arguments.length > 1) { // set
-      var styleObject = {}
+      var styleObject = {};
       Ember.assert(
         "The Leaflet layer for " + this.constructor +
         " does not have a setStyle function.",
