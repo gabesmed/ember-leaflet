@@ -8,7 +8,7 @@ var get = Ember.get;
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.PointGeometryLayer = EmberLeaflet.Layer.extend({
+EmberLeaflet.PointGeometryLayer = EmberLeaflet.GeometryLayer.extend({
 
   location: Ember.computed.alias('content.location'),
   

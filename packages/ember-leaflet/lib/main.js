@@ -27,6 +27,8 @@ require("ember-leaflet/marker_collection/marker_collection");
 
 require("ember-leaflet/marker_cluster/marker_cluster");
 
+require("ember-leaflet/geometry/geometry");
+
 require("ember-leaflet/geometry/point");
 require("ember-leaflet/geometry/circle");
 

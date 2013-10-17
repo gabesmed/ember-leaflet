@@ -9,7 +9,7 @@ var get = Ember.get;
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.Layer.extend({
+EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.GeometryLayer.extend({
   init: function() {
     this._super();
     this._setupLocationObservers();
