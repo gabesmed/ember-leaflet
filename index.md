@@ -109,7 +109,11 @@ RadMarkersApp.IndexView =
       RadMarkersApp.MarkerCollectionLayer]});
 ```
 
-Easily incorporate 3rd-party leaflet classes into your Ember app.
+## Easily incorporate 3rd-party leaflet classes into your Ember app.
+
+Extend the `Layer` or `ContainerLayer` class and provide a `_newLayer` function to use custom leaflet classes within the context of `EmberLeaflet`.
+
+### Marker clustering
 
 {% assign ember_app = "clustered" %}
 {% include ember_app.liquid %}
@@ -137,6 +141,25 @@ ClusteredApp.IndexView =
       EmberLeaflet.DefaultTileLayer,
       ClusteredApp.MarkerClusterLayer]});
 ```
+
+### Custom controls
+
+Hook into the `didCreateLayer` callback to modify the default created layer.
+
+{% assign ember_app = "locateMap" %}
+{% include ember_app.liquid %}
+
+``` javascript
+LocateMapApp = Ember.Application.create();
+LocateMapApp.IndexView = 
+  EmberLeaflet.MapView.extend({
+    didCreateLayer: function() {
+      this._super();
+      L.control.locate().addTo(this._layer);
+    }
+  });
+```
+
 
 ## Use it
 

@@ -1,4 +1,4 @@
-.leaflet-container { height: 10em; }
+.leaflet-container { height: 10em; margin-bottom: 2em; }
 
 #simpleMap .leaflet-container { height: 6em; }
 #centeredMap .leaflet-container { height: 10em; }
@@ -6,6 +6,7 @@
 #markers .leaflet-container { height: 27em; }
 #radMarkers .leaflet-container { height: 33em; }
 #clustered .leaflet-container { height: 33em; }
+#locateMap .leaflet-container { height: 13em; }
 
 @media print, screen and (min-width: 720px) {
     .ember-application {

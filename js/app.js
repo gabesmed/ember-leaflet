@@ -87,3 +87,13 @@ ClusteredApp.IndexView =
     childLayers: [
       EmberLeaflet.DefaultTileLayer,
       ClusteredApp.MarkerClusterLayer]});
+
+// LocateMap
+LocateMapApp = Ember.Application.create({rootElement: '#locateMap'});
+LocateMapApp.IndexView = EmberLeaflet.MapView.extend({
+  options: {zoomControl: false},
+  didCreateLayer: function() {
+     this._super();
+     L.control.locate().addTo(this._layer);
+  }
+});
