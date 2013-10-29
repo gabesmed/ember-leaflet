@@ -2,7 +2,9 @@ require('ember-leaflet/~tests/test_helper');
 
 var marker, MarkerClass, view, 
   locationsEqual = window.locationsEqual,
-  locations = window.locations;
+  locations = window.locations,
+  firstPopupContent = 'hello there!',
+  secondPopupContent = 'salutations!';
 
 var get = Ember.get;
 
@@ -13,7 +15,7 @@ module("EmberLeaflet.PopupMixin (Marker)", {
     
     marker = MarkerClass.create({
       content: {location: locations.nyc},
-      popupContent: 'hello there!'
+      popupContent: firstPopupContent
     });
 
     view = EmberLeaflet.MapView.create({childLayers: [marker]});
@@ -36,8 +38,15 @@ test("Popup is created", function() {
 test("Clicking shows popup", function() {
   marker._layer.fire('click', {latlng: marker.get('location')});
   ok(!!marker._popup._map, "marker added to map");
-  equal(marker._popup._content, 'hello there!');
+  equal(marker._popup._content, firstPopupContent, "popup content set");
   locationsEqual(marker._popup._latlng, marker.get('location'));
+});
+
+test("Popup content updates", function() {
+  marker._layer.fire('click', {latlng: marker.get('location')});
+  equal(marker._popup._content, firstPopupContent, "popup content initially set");
+  marker.set('popupContent', secondPopupContent);
+  equal(marker._popup._content, secondPopupContent, "popup content updates");
 });
 
 test("Destroying map destroys popup", function() {

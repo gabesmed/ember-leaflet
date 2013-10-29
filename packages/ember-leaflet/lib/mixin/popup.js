@@ -66,6 +66,11 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     this.didDestroyPopup();
   },
 
+  _updatePopup: Ember.observer(function() {
+    if(!this._popup) { return; }
+    this._popup.setContent(get(this, 'popupContent'));
+  }, 'popupContent'),
+
   _removePopupObservers: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
     this._destroyPopup();
