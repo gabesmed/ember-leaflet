@@ -12,7 +12,15 @@ EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
   options: {},
   _newLayer: function() {
     return L.tileLayer(get(this, 'tileUrl'), get(this, 'options'));
-  }
+  },
+
+  tileUrlDidChange: Ember.observer(function() {
+    if(!this._layer) { return; }
+    this._layer.setUrl(this.get('tileUrl'));
+  }, 'tileUrl'),
+
+  zIndex: EmberLeaflet.computed.optionProperty(),
+  opacity: EmberLeaflet.computed.optionProperty()
 });
 
 EmberLeaflet.DefaultTileLayer = EmberLeaflet.TileLayer.extend({
