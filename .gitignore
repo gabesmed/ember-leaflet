@@ -15,7 +15,9 @@ assets/bpm_libs.js
 assets/bpm_styles.css
 bin/
 coverage
-dist
+dist/*
+!dist/ember-leaflet.js
+!dist/ember-leaflet.min.js
 docs/build
 docs/node_modules
 lib/*/tests/all.js

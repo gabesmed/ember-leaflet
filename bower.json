@@ -1,0 +1,42 @@
+{
+  "name": "ember-leaflet",
+  "description": "Ember + Leaflet = Fun with maps!",
+  "homepage": "http://gabesmed.github.io/ember-leaflet",
+  "version": "0.0.1",
+  "license": "MIT",
+  "authors": [
+    "Gabe Smedresman <gabesmed@yahoo.com>"
+  ],
+  "keywords": [
+    "ember",
+    "leaflet",
+    "maps"
+  ],
+  "main": "dist/ember-leaflet.js",
+  "ignore": [
+    "docs",
+    "generators",
+    "lib",
+    "packages",
+    "tests",
+    ".gitignore",
+    ".jshintrc",
+    ".travis.yml",
+    "Assetfile",
+    "bower.json",
+    "config.ru",
+    "ember-dev.yml",
+    "Gemfile",
+    "Gemfile.lock",
+    "LICENSE",
+    "Rakefile",
+    "README.md",
+    "VERSION"
+  ],
+  "dependencies": {
+    "ember": "~1.2",
+    "ember-data": "~1.0.0-beta.4",
+    "leaflet-dist": "~0.7.0",
+    "leaflet.markerclusterer": "0.4"
+  }
+}

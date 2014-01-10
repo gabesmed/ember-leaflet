@@ -79,7 +79,7 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.GeometryLayer.extend({
     // Add array observer for new/removed items in content list
     var arr = locationsProperty ? get(content, locationsProperty) : content;
     Ember.assert("Content object or locations property must be array-like",
-      !!arr.addArrayObserver);
+      !arr || !!arr.addArrayObserver);
     if(arr) { arr.addArrayObserver(this); }
 
     // Add @each chain observer for location property on array.

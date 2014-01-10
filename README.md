@@ -48,7 +48,7 @@ More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/em
 
 - `EmberLeaflet.GeojsonLayer` for automatic parsing of geojson.
 - `popupViewClass` for including Ember Views in popups.
-- `Icon` and `DivIcon` classes for easy bindings to icon properties like `className` and `innerHTM`.
+- `Icon` and `DivIcon` classes for easy bindings to icon properties like `className` and `innerHTML`.
 
 PRs welcome! To contribute, get in touch with @gabesmed.
 
