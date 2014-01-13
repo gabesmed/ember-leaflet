@@ -85,9 +85,15 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   },
 
   _addEventListeners: function() {
+    this._eventHandlers = {};
     forEach(get(this, 'events'), function(eventName) {
       if(typeof this[eventName] === 'function') {
-        this._layer.addEventListener(eventName, this[eventName], this);
+        // create an event handler that runs the function inside an event loop.
+        this._eventHandlers[eventName] = function(e) {
+          Ember.run(this, this[eventName], e);
+        };
+        this._layer.addEventListener(eventName,
+          this._eventHandlers[eventName], this);
       }
     }, this);
   },
@@ -95,7 +101,9 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _removeEventListeners: function() {
     forEach(get(this, 'events'), function(eventName) {
       if(typeof this[eventName] === 'function') {
-        this._layer.removeEventListener(eventName, this[eventName], this);
+        this._layer.removeEventListener(eventName,
+          this._eventHandlers[eventName], this);
+        delete this._eventHandlers[eventName];
       }
     }, this);
   }

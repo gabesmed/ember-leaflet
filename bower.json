@@ -35,7 +35,6 @@
   ],
   "dependencies": {
     "ember": "~1.2",
-    "ember-data": "~1.0.0-beta.4",
     "leaflet-dist": "~0.7.0",
     "leaflet.markerclusterer": "0.4"
   }
