@@ -46,6 +46,7 @@ More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/em
 
 ## Roadmap
 
+- Better documentation and JSDoc auto-generation
 - `EmberLeaflet.GeojsonLayer` for automatic parsing of geojson.
 - `popupViewClass` for including Ember Views in popups.
 - `Icon` and `DivIcon` classes for easy bindings to icon properties like `className` and `innerHTML`.
