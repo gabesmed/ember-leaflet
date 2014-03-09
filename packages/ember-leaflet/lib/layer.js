@@ -4,16 +4,28 @@ var fmt = Ember.String.fmt, forEach = Ember.EnumerableUtils.forEach,
 /**
   `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
   wrapper of Leaflet layers, including instantiating child and parent layers.
- 
+
   @class LayerMixin
   @namespace EmberLeaflet
 */
 EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _layer: null,
   _parentLayer: null,
-  isVirtual: false, 
+  isVirtual: false,
   _childLayers: [],
 
+  /**
+   @protected
+
+   List of all supported events. EmberLeaflet will automatically create
+   and register event handler functions with the same name for events
+   listed in this property.
+
+   Define this property in a derived view to add your own custom events.
+
+   @property events
+   @type Array
+  */
   concatenatedProperties: ['events'],
 
   /**
@@ -26,12 +38,34 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
     @default []
   */
   parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
-  
+
   layer: Ember.computed(function() { return this._layer; }).property(),
 
+  /**
+   @protected
+
+   Create and return the layer instance for the view.
+
+   This needs to be implemented for any new type of view.
+  */
   _newLayer: Ember.required(Function),
 
+  /**
+   @protected
+
+   This gets called by the view just before the layer is created.
+  */
   willCreateLayer: Ember.K,
+
+  /**
+   @protected
+
+   This get called by the view after it has created the layer.
+
+   Override this in your derived view to gain access to newly created
+   layer (via `get("layer")`) for any custom functionality you may want
+   to add.
+  */
   didCreateLayer: Ember.K,
 
   willDestroyLayer: Ember.K,
@@ -114,7 +148,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   `EmberLeaflet.Layer` is a convenience object for those who prefer
   creating layers with `EmberLeaflet.Layer.extend(...)` rather than
   `Ember.Object.extend(EmberLeaflet.LayerMixin, ...)`.
- 
+
   @class Layer
   @namespace EmberLeaflet
 */
@@ -122,7 +156,7 @@ EmberLeaflet.Layer = Ember.Object.extend(EmberLeaflet.LayerMixin, {});
 
 /**
   `EmberLeaflet.EmptyLayer` is a null layer mostly for testing.
- 
+
   @class EmptyLayer
   @namespace EmberLeaflet
 */
