@@ -7,7 +7,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt,
   allowing programatic management of its child layers.
 
   @class ContainerLayer
-  @namespace Ember
+  @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
 EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(

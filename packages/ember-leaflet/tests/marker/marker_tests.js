@@ -102,7 +102,13 @@ test("location matches", function() {
   locationsEqual(marker.get('location'), locations.nyc);
 });
 
-test("move location in content moves marker", function() {
+test("setting location latLng in content moves marker", function() {
+  content.set('loc', L.latLng(locations.sf.lat, locations.sf.lng));
+  locationsEqual(marker.get('location'), locations.sf);
+  locationsEqual(marker._layer.getLatLng(), locations.sf);
+});
+
+test("setting location array in content moves marker", function() {
   content.set('loc', [locations.sf.lat, locations.sf.lng]);
   locationsEqual(marker.get('location'), locations.sf);
   locationsEqual(marker._layer.getLatLng(), locations.sf);

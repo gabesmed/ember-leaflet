@@ -1,0 +1,9 @@
+{
+    "name": "EmberLeaflet",
+    "description": "Ember + Leaflet = Fun with maps!",
+    "version": "0.1",
+    "url": "http://gabesmed.github.io/ember-leaflet/",
+    "options": {
+        "paths": ["packages/ember-leaflet/**"]
+    }
+}
