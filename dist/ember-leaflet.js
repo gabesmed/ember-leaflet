@@ -1,4 +1,4 @@
-// Last commit: e2c0aa6 (2013-10-16 17:02:27 -0700)
+// Last commit: b35a0a7 (2014-04-23 17:18:40 -0700)
 
 
 (function() {
@@ -104,31 +104,6 @@ EmberLeaflet.computed.optionProperty = function(optionKey) {
   });
 };
 
-/**
-  Define a computed property that gets and sets a style from the
-  options object.
-
-  @method styleProperty
-*/
-EmberLeaflet.computed.styleProperty = function(styleKey) {
-  return Ember.computed('options', function(key, value) {
-    // override given key with explicitly defined one if necessary
-    key = styleKey || key;
-    if(arguments.length > 1) { // set
-      var styleObject = {};
-      Ember.assert(
-        "The Leaflet layer for " + this.constructor +
-        " does not have a setStyle function.",
-        !!this._layer.setStyle);
-      styleObject[key] = value;
-      this._layer.setStyle(styleObject);
-      return value;
-    } else { // get
-      return this._layer.options[key];
-    }
-  });
-};
-
 })();
 
 
@@ -140,34 +115,66 @@ var fmt = Ember.String.fmt, forEach = Ember.EnumerableUtils.forEach,
 /**
   `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
   wrapper of Leaflet layers, including instantiating child and parent layers.
- 
+
   @class LayerMixin
   @namespace EmberLeaflet
 */
 EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _layer: null,
   _parentLayer: null,
-  isVirtual: false, 
+  isVirtual: false,
   _childLayers: [],
 
+  /**
+   List of all supported events. EmberLeaflet will automatically create
+   and register event handler functions with the same name for events
+   listed in this property.
+
+   Define this property in a derived view to add your own custom events.
+
+   @property events
+   @protected
+   @type Array
+  */
   concatenatedProperties: ['events'],
 
   /**
-    @private
-
     Reference to parent layer. Never set directly.
 
     @property childLayers
     @type Array
+    @private
     @default []
   */
   parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
-  
+
   layer: Ember.computed(function() { return this._layer; }).property(),
 
+  /**
+   Create and return the layer instance for the view.
+
+   This needs to be implemented for any new type of view.
+
+   @protected
+  */
   _newLayer: Ember.required(Function),
 
+  /**
+   This gets called by the view just before the layer is created.
+
+   @protected
+  */
   willCreateLayer: Ember.K,
+
+  /**
+   This get called by the view after it has created the layer.
+
+   Override this in your derived view to gain access to newly created
+   layer (via `get("layer")`) for any custom functionality you may want
+   to add.
+
+   @protected
+  */
   didCreateLayer: Ember.K,
 
   willDestroyLayer: Ember.K,
@@ -221,9 +228,15 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   },
 
   _addEventListeners: function() {
+    this._eventHandlers = {};
     forEach(get(this, 'events'), function(eventName) {
       if(typeof this[eventName] === 'function') {
-        this._layer.addEventListener(eventName, this[eventName], this);
+        // create an event handler that runs the function inside an event loop.
+        this._eventHandlers[eventName] = function(e) {
+          Ember.run(this, this[eventName], e);
+        };
+        this._layer.addEventListener(eventName,
+          this._eventHandlers[eventName], this);
       }
     }, this);
   },
@@ -231,7 +244,9 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _removeEventListeners: function() {
     forEach(get(this, 'events'), function(eventName) {
       if(typeof this[eventName] === 'function') {
-        this._layer.removeEventListener(eventName, this[eventName], this);
+        this._layer.removeEventListener(eventName,
+          this._eventHandlers[eventName], this);
+        delete this._eventHandlers[eventName];
       }
     }, this);
   }
@@ -242,7 +257,7 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   `EmberLeaflet.Layer` is a convenience object for those who prefer
   creating layers with `EmberLeaflet.Layer.extend(...)` rather than
   `Ember.Object.extend(EmberLeaflet.LayerMixin, ...)`.
- 
+
   @class Layer
   @namespace EmberLeaflet
 */
@@ -250,7 +265,7 @@ EmberLeaflet.Layer = Ember.Object.extend(EmberLeaflet.LayerMixin, {});
 
 /**
   `EmberLeaflet.EmptyLayer` is a null layer mostly for testing.
- 
+
   @class EmptyLayer
   @namespace EmberLeaflet
 */
@@ -551,7 +566,15 @@ EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
   options: {},
   _newLayer: function() {
     return L.tileLayer(get(this, 'tileUrl'), get(this, 'options'));
-  }
+  },
+
+  tileUrlDidChange: Ember.observer(function() {
+    if(!this._layer) { return; }
+    this._layer.setUrl(this.get('tileUrl'));
+  }, 'tileUrl'),
+
+  zIndex: EmberLeaflet.computed.optionProperty(),
+  opacity: EmberLeaflet.computed.optionProperty()
 });
 
 EmberLeaflet.DefaultTileLayer = EmberLeaflet.TileLayer.extend({
@@ -592,7 +615,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     if (this._layer.getLatLng) { latLng = this._layer.getLatLng(); }
     else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
-      .setLatLng(e.latlng || latLng)
+      .setLatLng((e && e.latlng) || latLng)
       .setContent(this.get('popupContent'))
       .openOn(this._layer._map);
     this.didOpenPopup();    
@@ -630,6 +653,11 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     this._popup = null;
     this.didDestroyPopup();
   },
+
+  _updatePopup: Ember.observer(function() {
+    if(!this._popup) { return; }
+    this._popup.setContent(get(this, 'popupContent'));
+  }, 'popupContent'),
 
   _removePopupObservers: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
@@ -954,26 +982,49 @@ EmberLeaflet.MarkerClusterLayer = EmberLeaflet.ContainerLayer.extend({
 
 (function() {
 /**
-  `EmberLeaflet.GeometryLayer` is a generic layer to be inherited
-  by other geometry layer classes.
+  `EmberLeaflet.PathLayer` is a generic layer to be inherited
+  by other geometry layer classes. Both CircleGeometry and PathGeometry
+  layers derive from it.
  
-  @class GeometryLayer
+  @class PathLayer
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
+var set = Ember.set, get = Ember.get;
 
-EmberLeaflet.GeometryLayer = EmberLeaflet.Layer.extend({
+
+function pathStyleProperty(styleKey) {
+  return Ember.computed('options', function(key, value) {
+    // override given key with explicitly defined one if necessary
+    key = styleKey || key;
+    if(arguments.length > 1) { // set
+      // Update style on existing object
+      if(this._layer) {
+        var styleObject = {};
+        styleObject[key] = value;
+        this._layer.setStyle(styleObject);
+      }
+      // Update options object for later initialization.
+      if(!get(this, 'options')) { set(this, 'options', {}); }
+      this.get('options')[key] = value;
+      return value;
+    } else { // get
+      return this._layer.options[key];
+    }
+  });
+}
+
+EmberLeaflet.PathLayer = EmberLeaflet.Layer.extend({
+
   // Style options available to all L.Path layers
-  stroke: EmberLeaflet.computed.styleProperty(),
-  color: EmberLeaflet.computed.styleProperty(),
-  weight: EmberLeaflet.computed.styleProperty(),
-  opacity: EmberLeaflet.computed.styleProperty(),
-  fill: EmberLeaflet.computed.styleProperty(),
-  fillColor: EmberLeaflet.computed.styleProperty(),
-  fillOpacity: EmberLeaflet.computed.styleProperty(),
-  dashArray: EmberLeaflet.computed.styleProperty(),
-  clickable: EmberLeaflet.computed.styleProperty(),
-  pointerEvents: EmberLeaflet.computed.styleProperty()
+  stroke: pathStyleProperty(),
+  color: pathStyleProperty(),
+  weight: pathStyleProperty(),
+  opacity: pathStyleProperty(),
+  fill: pathStyleProperty(),
+  fillColor: pathStyleProperty(),
+  fillOpacity: pathStyleProperty(),
+  dashArray: pathStyleProperty()
 });
 
 })();
@@ -984,14 +1035,14 @@ EmberLeaflet.GeometryLayer = EmberLeaflet.Layer.extend({
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.PointGeometryLayer` is a base geometry on the map that
+  `EmberLeaflet.PointPathLayer` is a base geometry on the map that
   adjusts based on a content object that should be a LatLng object.
  
-  @class PointGeometryLayer
+  @class PointPathLayer
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.PointGeometryLayer = EmberLeaflet.GeometryLayer.extend({
+EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
 
   location: Ember.computed.alias('content.location'),
   
@@ -1030,9 +1081,9 @@ var get = Ember.get;
  
   @class CircleLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.PointGeometryLayer
+  @extends EmberLeaflet.PointPathLayer
 */
-EmberLeaflet.CircleLayer = EmberLeaflet.PointGeometryLayer.extend({
+EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
   
   /**
   If this property is null, watch the content object for radius updates.
@@ -1075,15 +1126,15 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointGeometryLayer.extend({
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.ArrayGeometryLayer` is a base geometry on the map that
+  `EmberLeaflet.ArrayPathLayer` is a base geometry on the map that
   adjusts based on a content object that should be an array of
   LatLng objects.
  
-  @class ArrayGeometryLayer
+  @class ArrayPathLayer
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.GeometryLayer.extend({
+EmberLeaflet.ArrayPathLayer = EmberLeaflet.PathLayer.extend({
   init: function() {
     this._super();
     this._setupLocationObservers();
@@ -1153,7 +1204,7 @@ EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.GeometryLayer.extend({
     // Add array observer for new/removed items in content list
     var arr = locationsProperty ? get(content, locationsProperty) : content;
     Ember.assert("Content object or locations property must be array-like",
-      !!arr.addArrayObserver);
+      !arr || !!arr.addArrayObserver);
     if(arr) { arr.addArrayObserver(this); }
 
     // Add @each chain observer for location property on array.
@@ -1230,9 +1281,9 @@ var get = Ember.get;
  
   @class PolylineLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.ArrayGeometryLayer
+  @extends EmberLeaflet.ArrayPathLayer
 */
-EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
+EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayPathLayer.extend({
   options: {},
 
   events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
@@ -1262,14 +1313,14 @@ EmberLeaflet.PolygonLayer = EmberLeaflet.PolylineLayer.extend({
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.BoundingGeometryLayer` is a base class that takes a list
+  `EmberLeaflet.PathBoundsLayer` is a base class that takes a list
   of locations and computed the bounding box.
  
-  @class BoundingGeometryLayer
+  @class PathBoundsLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.ArrayGeometryLayer
+  @extends EmberLeaflet.ArrayPathLayer
 */
-EmberLeaflet.BoundingGeometryLayer = EmberLeaflet.ArrayGeometryLayer.extend(
+EmberLeaflet.PathBoundsLayer = EmberLeaflet.ArrayPathLayer.extend(
   EmberLeaflet.BoundsMixin, {});
 
 })();
@@ -1285,9 +1336,9 @@ var get = Ember.get;
  
   @class RectangleLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.BoundingGeometryLayer
+  @extends EmberLeaflet.PathBoundsLayer
 */
-EmberLeaflet.RectangleLayer = EmberLeaflet.BoundingGeometryLayer.extend({
+EmberLeaflet.RectangleLayer = EmberLeaflet.PathBoundsLayer.extend({
 
   events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
     'contextmenu', 'add', 'remove', 'popupopen', 'popupclose'],

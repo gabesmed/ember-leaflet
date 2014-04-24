@@ -51,7 +51,10 @@ RadMarkersApp.MarkerLayer =
   EmberLeaflet.MarkerLayer.extend(
     EmberLeaflet.DraggableMixin,
     EmberLeaflet.PopupMixin, {
-  popupContentBinding: 'content.title'
+  popupContentBinding: 'content.title',
+  didCreateLayer: function() {
+    Ember.run.next(this, 'openPopup');
+  }
 });
 
 RadMarkersApp.MarkerCollectionLayer =
