@@ -3,12 +3,13 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt,
   map = Ember.EnumerableUtils.map;
 
 /**
-  A `ContainerLayer` is an `EmberLeaflet.Layer` subclass that implements `Ember.MutableArray`
+  A `ContainerLayerMixin` is an `EmberLeaflet.Layer` mixin that implements `Ember.MutableArray`
   allowing programatic management of its child layers.
 
-  @class ContainerLayer
+  @class ContainerLayerMixin
   @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
+  @extends EmberLeaflet.LayerMixin
+  @extends Ember.MutableArray
 */
 EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
     EmberLeaflet.LayerMixin, Ember.MutableArray, {
@@ -138,8 +139,20 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
     }
     this._childLayers = [];
   }
-
 });
 
+/**
+  A `ContainerLayer` is an empty collection layer that you can programmatically
+  add new layers to.
+
+  @class ContainerLayer
+  @namespace EmberLeaflet
+  @uses EmberLeaflet.ContainerLayerMixin
+*/
 EmberLeaflet.ContainerLayer = Ember.Object.extend(
-    EmberLeaflet.ContainerLayerMixin, {});
+    EmberLeaflet.ContainerLayerMixin, {
+  /**
+  Default _newLayer calls L.layerGroup to allow adding of new layers.
+  */
+  _newLayer: function() { return L.layerGroup(); }
+});
