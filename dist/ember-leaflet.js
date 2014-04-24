@@ -1,4 +1,4 @@
-// Last commit: bbc765e (2014-04-21 11:54:44 -0700)
+// Last commit: b35a0a7 (2014-04-23 17:18:40 -0700)
 
 
 (function() {
@@ -126,8 +126,6 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   _childLayers: [],
 
   /**
-   @protected
-
    List of all supported events. EmberLeaflet will automatically create
    and register event handler functions with the same name for events
    listed in this property.
@@ -135,17 +133,17 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
    Define this property in a derived view to add your own custom events.
 
    @property events
+   @protected
    @type Array
   */
   concatenatedProperties: ['events'],
 
   /**
-    @private
-
     Reference to parent layer. Never set directly.
 
     @property childLayers
     @type Array
+    @private
     @default []
   */
   parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
@@ -153,29 +151,29 @@ EmberLeaflet.LayerMixin = Ember.Mixin.create({
   layer: Ember.computed(function() { return this._layer; }).property(),
 
   /**
-   @protected
-
    Create and return the layer instance for the view.
 
    This needs to be implemented for any new type of view.
+
+   @protected
   */
   _newLayer: Ember.required(Function),
 
   /**
-   @protected
-
    This gets called by the view just before the layer is created.
+
+   @protected
   */
   willCreateLayer: Ember.K,
 
   /**
-   @protected
-
    This get called by the view after it has created the layer.
 
    Override this in your derived view to gain access to newly created
    layer (via `get("layer")`) for any custom functionality you may want
    to add.
+
+   @protected
   */
   didCreateLayer: Ember.K,
 
