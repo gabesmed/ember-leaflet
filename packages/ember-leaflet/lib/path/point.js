@@ -1,4 +1,5 @@
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
 
 /**
   `EmberLeaflet.PointPathLayer` is a base geometry on the map that
@@ -19,14 +20,13 @@ EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
   },
 
   _updateLayerOnLocationChange: Ember.observer(function() {
-    var newLatLng = get(this, 'location');
-      
+    var newLatLng = latLngFromArray(get(this, 'location'));
     if(newLatLng && !this._layer) {
       this._createLayer();
     } else if(this._layer && !newLatLng) {
       this._destroyLayer();
-    } else {
-      var oldLatLng = this._layer && this._layer.getLatLng();
+    } else if(this._layer) {
+      var oldLatLng = this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         this._layer.setLatLng(newLatLng);
       }

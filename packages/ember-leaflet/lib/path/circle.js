@@ -1,4 +1,6 @@
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
+
 
 /**
   `EmberLeaflet.CircleLayer` is a circle on the map that adjusts based
@@ -33,8 +35,9 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
   }, 'radius'),
   
   _newLayer: function() {
-    return L.circle(get(this, 'location'), get(this, 'radius'),
-      get(this, 'options'));
+    // Convert from array if an array somehow got through.
+    return L.circle(latLngFromArray(get(this, 'location')),
+      get(this, 'radius'), get(this, 'options'));
   }, 
   
   _destroyLayer: function() {

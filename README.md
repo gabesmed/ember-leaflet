@@ -6,7 +6,7 @@ Wherever possible, the design is analogous to Ember's View, CollectionView and C
 
 Resources:
 
-* Quickstart and examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet).
+* Quickstart and examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet)
 * [Class reference](http://gabesmed.github.io/ember-leaflet/docs/index.html) (YUIDoc)
 * Minimal [JSFiddle](http://jsfiddle.net/3bUv8/)
 
@@ -50,7 +50,7 @@ More examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/em
 
 ## Roadmap
 
-- Better documentation and JSDoc auto-generation
+- Better documentation
 - `EmberLeaflet.GeojsonLayer` for automatic parsing of geojson.
 - `popupViewClass` for including Ember Views in popups.
 - `Icon` and `DivIcon` classes for easy bindings to icon properties like `className` and `innerHTML`.

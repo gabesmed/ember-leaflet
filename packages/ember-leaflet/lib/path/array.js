@@ -1,4 +1,5 @@
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
 
 /**
   `EmberLeaflet.ArrayPathLayer` is a base geometry on the map that
@@ -47,6 +48,8 @@ EmberLeaflet.ArrayPathLayer = EmberLeaflet.PathLayer.extend({
     if(locationProperty) {
       locations = locations.mapProperty(locationProperty); }
     locations = locations.filter(function(i) { return !!i; });
+    // Convert any arrays that somehow made it through to latLngs.
+    locations = locations.map(latLngFromArray);
     return locations;
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 

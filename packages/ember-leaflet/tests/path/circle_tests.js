@@ -54,6 +54,14 @@ test("move location in content moves circle", function() {
   locationsEqual(circle._layer.getLatLng(), locations.chicago);
 });
 
+test("move location to array moves circle", function() {
+  content.set('location', [locations.sf.lat, locations.sf.lng]);
+  deepEqual(circle.get('location'), [locations.sf.lat, locations.sf.lng],
+    'location is still array');
+  locationsEqual(circle._layer.getLatLng(), locations.sf,
+    'but circle center is converted to latLng before going to leatlet');
+});
+
 test("change radius in content changes circle radius", function() {
   content.set('radius', 20);
   equal(circle.get('radius'), 20);

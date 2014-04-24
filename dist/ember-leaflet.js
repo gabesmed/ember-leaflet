@@ -1,4 +1,4 @@
-// Last commit: 8fea714 (2014-04-23 17:36:40 -0700)
+// Last commit: 5285da2 (2014-04-23 18:06:08 -0700)
 
 
 (function() {
@@ -287,7 +287,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt,
   allowing programatic management of its child layers.
 
   @class ContainerLayer
-  @namespace Ember
+  @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
 EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
@@ -1032,7 +1032,8 @@ EmberLeaflet.PathLayer = EmberLeaflet.Layer.extend({
 
 
 (function() {
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
 
 /**
   `EmberLeaflet.PointPathLayer` is a base geometry on the map that
@@ -1053,14 +1054,13 @@ EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
   },
 
   _updateLayerOnLocationChange: Ember.observer(function() {
-    var newLatLng = get(this, 'location');
-      
+    var newLatLng = latLngFromArray(get(this, 'location'));
     if(newLatLng && !this._layer) {
       this._createLayer();
     } else if(this._layer && !newLatLng) {
       this._destroyLayer();
-    } else {
-      var oldLatLng = this._layer && this._layer.getLatLng();
+    } else if(this._layer) {
+      var oldLatLng = this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         this._layer.setLatLng(newLatLng);
       }
@@ -1073,7 +1073,9 @@ EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
 
 
 (function() {
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
+
 
 /**
   `EmberLeaflet.CircleLayer` is a circle on the map that adjusts based
@@ -1108,8 +1110,9 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
   }, 'radius'),
   
   _newLayer: function() {
-    return L.circle(get(this, 'location'), get(this, 'radius'),
-      get(this, 'options'));
+    // Convert from array if an array somehow got through.
+    return L.circle(latLngFromArray(get(this, 'location')),
+      get(this, 'radius'), get(this, 'options'));
   }, 
   
   _destroyLayer: function() {
@@ -1123,7 +1126,8 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
 
 
 (function() {
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
 
 /**
   `EmberLeaflet.ArrayPathLayer` is a base geometry on the map that
@@ -1172,6 +1176,8 @@ EmberLeaflet.ArrayPathLayer = EmberLeaflet.PathLayer.extend({
     if(locationProperty) {
       locations = locations.mapProperty(locationProperty); }
     locations = locations.filter(function(i) { return !!i; });
+    // Convert any arrays that somehow made it through to latLngs.
+    locations = locations.map(latLngFromArray);
     return locations;
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 

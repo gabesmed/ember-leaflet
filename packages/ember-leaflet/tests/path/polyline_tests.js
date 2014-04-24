@@ -46,6 +46,16 @@ test("replace content updates polyline", function() {
   locationsEqual(polyline._layer.getLatLngs()[0], locations.paris);
 });
 
+test("setting location to array of arrays works", function() {
+  polyline.set('content', Ember.A([
+    [locations.paris.lat, locations.paris.lng],
+    [locations.sf.lat, locations.sf.lng],
+    [locations.chicago.lat, locations.chicago.lng]
+  ]));
+  locationsEqual(polyline.get('locations')[1], locations.sf);
+  locationsEqual(polyline._layer.getLatLngs()[1], locations.sf);
+});
+
 test("remove item from content updates polyline", function() {
   content.popObject();
   equal(polyline._layer.getLatLngs().length, content.length);
