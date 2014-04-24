@@ -6,9 +6,9 @@ Wherever possible, the design is analogous to Ember's View, CollectionView and C
 
 Resources:
 
-    * Quickstart and examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet).
-    * [Class reference](http://gabesmed.github.io/ember-leaflet/docs/index.html) (YUIDoc)
-    * Minimal [JSFiddle](http://jsfiddle.net/3bUv8/)
+* Quickstart and examples at [gabesmed.github.io/ember-leaflet](http://gabesmed.github.io/ember-leaflet).
+* [Class reference](http://gabesmed.github.io/ember-leaflet/docs/index.html) (YUIDoc)
+* Minimal [JSFiddle](http://jsfiddle.net/3bUv8/)
 
 ## Usage
 
