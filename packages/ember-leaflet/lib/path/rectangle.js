@@ -6,9 +6,9 @@ var get = Ember.get;
  
   @class RectangleLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.BoundingGeometryLayer
+  @extends EmberLeaflet.PathBoundsLayer
 */
-EmberLeaflet.RectangleLayer = EmberLeaflet.BoundingGeometryLayer.extend({
+EmberLeaflet.RectangleLayer = EmberLeaflet.PathBoundsLayer.extend({
 
   events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
     'contextmenu', 'add', 'remove', 'popupopen', 'popupclose'],

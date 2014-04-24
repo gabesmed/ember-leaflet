@@ -27,7 +27,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     if (this._layer.getLatLng) { latLng = this._layer.getLatLng(); }
     else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
-      .setLatLng(e.latlng || latLng)
+      .setLatLng((e && e.latlng) || latLng)
       .setContent(this.get('popupContent'))
       .openOn(this._layer._map);
     this.didOpenPopup();    

@@ -6,9 +6,9 @@ var get = Ember.get;
  
   @class CircleLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.PointGeometryLayer
+  @extends EmberLeaflet.PointPathLayer
 */
-EmberLeaflet.CircleLayer = EmberLeaflet.PointGeometryLayer.extend({
+EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
   
   /**
   If this property is null, watch the content object for radius updates.

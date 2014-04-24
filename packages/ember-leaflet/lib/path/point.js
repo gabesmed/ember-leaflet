@@ -1,14 +1,14 @@
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.PointGeometryLayer` is a base geometry on the map that
+  `EmberLeaflet.PointPathLayer` is a base geometry on the map that
   adjusts based on a content object that should be a LatLng object.
  
-  @class PointGeometryLayer
+  @class PointPathLayer
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.PointGeometryLayer = EmberLeaflet.GeometryLayer.extend({
+EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
 
   location: Ember.computed.alias('content.location'),
   

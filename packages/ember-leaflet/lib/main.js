@@ -27,12 +27,12 @@ require("ember-leaflet/marker_collection/marker_collection");
 
 require("ember-leaflet/marker_cluster/marker_cluster");
 
-require("ember-leaflet/geometry/geometry");
+require("ember-leaflet/path/path");
 
-require("ember-leaflet/geometry/point");
-require("ember-leaflet/geometry/circle");
+require("ember-leaflet/path/point");
+require("ember-leaflet/path/circle");
 
-require("ember-leaflet/geometry/array");
-require("ember-leaflet/geometry/polyline");
-require("ember-leaflet/geometry/bounds");
-require("ember-leaflet/geometry/rectangle");
+require("ember-leaflet/path/array");
+require("ember-leaflet/path/polyline");
+require("ember-leaflet/path/bounds");
+require("ember-leaflet/path/rectangle");

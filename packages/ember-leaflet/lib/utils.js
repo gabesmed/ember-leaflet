@@ -92,28 +92,3 @@ EmberLeaflet.computed.optionProperty = function(optionKey) {
     }
   });
 };
-
-/**
-  Define a computed property that gets and sets a style from the
-  options object.
-
-  @method styleProperty
-*/
-EmberLeaflet.computed.styleProperty = function(styleKey) {
-  return Ember.computed('options', function(key, value) {
-    // override given key with explicitly defined one if necessary
-    key = styleKey || key;
-    if(arguments.length > 1) { // set
-      var styleObject = {};
-      Ember.assert(
-        "The Leaflet layer for " + this.constructor +
-        " does not have a setStyle function.",
-        !!this._layer.setStyle);
-      styleObject[key] = value;
-      this._layer.setStyle(styleObject);
-      return value;
-    } else { // get
-      return this._layer.options[key];
-    }
-  });
-};

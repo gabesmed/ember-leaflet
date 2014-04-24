@@ -7,7 +7,7 @@ var n = [-15.780148, -47.92917],
     s = [-15.786108, -47.931933],
     e = [-15.783423, -47.924638];
 
-module("EmberLeaflet.BoundingGeometryLayer with location property", {
+module("EmberLeaflet.PathBoundsLayer with location property", {
   setup: function() {
     locations = Ember.A([
       Ember.Object.create({lastSeenAt: n}),
@@ -16,7 +16,7 @@ module("EmberLeaflet.BoundingGeometryLayer with location property", {
       Ember.Object.create({lastSeenAt: null}),
       Ember.Object.create({lastSeenAt: e})
     ]);
-    geometry = EmberLeaflet.BoundingGeometryLayer.create({
+    geometry = EmberLeaflet.PathBoundsLayer.create({
       content: locations,
       locationProperty: 'lastSeenAt'
     });

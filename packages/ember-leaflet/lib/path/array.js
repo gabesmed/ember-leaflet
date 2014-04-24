@@ -1,15 +1,15 @@
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.ArrayGeometryLayer` is a base geometry on the map that
+  `EmberLeaflet.ArrayPathLayer` is a base geometry on the map that
   adjusts based on a content object that should be an array of
   LatLng objects.
  
-  @class ArrayGeometryLayer
+  @class ArrayPathLayer
   @namespace EmberLeaflet
   @extends EmberLeaflet.Layer
 */
-EmberLeaflet.ArrayGeometryLayer = EmberLeaflet.GeometryLayer.extend({
+EmberLeaflet.ArrayPathLayer = EmberLeaflet.PathLayer.extend({
   init: function() {
     this._super();
     this._setupLocationObservers();

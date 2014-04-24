@@ -6,9 +6,9 @@ var get = Ember.get;
  
   @class PolylineLayer
   @namespace EmberLeaflet
-  @extends EmberLeaflet.ArrayGeometryLayer
+  @extends EmberLeaflet.ArrayPathLayer
 */
-EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayGeometryLayer.extend({
+EmberLeaflet.PolylineLayer = EmberLeaflet.ArrayPathLayer.extend({
   options: {},
 
   events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
