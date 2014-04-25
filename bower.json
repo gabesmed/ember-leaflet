@@ -2,7 +2,7 @@
   "name": "ember-leaflet",
   "description": "Ember + Leaflet = Fun with maps!",
   "homepage": "http://gabesmed.github.io/ember-leaflet",
-  "version": "0.0.1",
+  "version": "0.5",
   "license": "MIT",
   "authors": [
     "Gabe Smedresman <gabesmed@yahoo.com>"
@@ -34,7 +34,7 @@
     "VERSION"
   ],
   "dependencies": {
-    "ember": "~1.2",
+    "ember": "~1.5",
     "leaflet-dist": "~0.7.0",
     "leaflet.markerclusterer": "0.4"
   }
