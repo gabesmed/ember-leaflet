@@ -2,7 +2,7 @@
   "name": "ember-leaflet",
   "description": "Ember + Leaflet = Fun with maps!",
   "homepage": "http://gabesmed.github.io/ember-leaflet",
-  "version": "0.5",
+  "version": "0.5.0",
   "license": "MIT",
   "authors": [
     "Gabe Smedresman <gabesmed@yahoo.com>"
