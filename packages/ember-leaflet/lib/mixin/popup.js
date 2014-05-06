@@ -53,7 +53,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
 
   _createPopup: function() {
     this.willCreatePopup();
-    this._popup = L.popup(this.get('popupOptions'),this._layer);
+    this._popup = L.popup(this.get('popupOptions'), this._layer);
     this.didCreatePopup();
   },
 
