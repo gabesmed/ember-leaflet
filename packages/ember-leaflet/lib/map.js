@@ -112,6 +112,8 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   centerDidChange: Ember.observer(function() {
     if (!this._layer || this.get('isMoving') ||
       !this.get('center')) { return; }
-    this._layer.panTo(this.get('center'));
+    if (!this._layer.getCenter().equals(this.get('center'))) {
+      this._layer.panTo(this.get('center'));
+    }
   }, 'center')
 });
