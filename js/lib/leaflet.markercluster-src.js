@@ -3,8 +3,7 @@
  https://github.com/Leaflet/Leaflet.markercluster
  (c) 2012-2013, Dave Leaver, smartrak
 */
-(function (window, document, undefined) {
-/*
+(function (window, document, undefined) {/*
  * L.MarkerClusterGroup extends L.FeatureGroup by clustering the markers contained within
  */
 
@@ -32,6 +31,12 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         //Increase to increase the distance away that spiderfied markers appear from the center
         spiderfyDistanceMultiplier: 1,
 
+        // When bulk adding layers, adds markers in chunks. Means addLayers may not add all the layers in the call, others will be loaded during setTimeouts
+        chunkedLoading: false,
+        chunkInterval: 200, // process markers for a maximum of ~ n milliseconds (then trigger the chunkProgress callback)
+        chunkDelay: 50, // at the end of each interval, give n milliseconds back to system/browser
+        chunkProgress: null, // progress callback: function(processed, total, elapsed) (e.g. for a progress indicator)
+
         //Options to pass to the L.Polygon constructor
         polygonOptions: {}
     },
@@ -53,6 +58,8 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         this._needsRemoving = []; //Markers removed while we aren't on the map need to be kept track of
         //The bounds of the currently shown area (from _getExpandedVisibleBounds) Updated on zoom/move
         this._currentShownBounds = null;
+
+        this._queue = [];
     },
 
     addLayer: function (layer) {
@@ -110,6 +117,15 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
     removeLayer: function (layer) {
 
+        if (layer instanceof L.LayerGroup)
+        {
+            var array = [];
+            for (var i in layer._layers) {
+                array.push(layer._layers[i]);
+            }
+            return this.removeLayers(array);
+        }
+
         //Non point layers
         if (!layer.getLatLng) {
             this._nonPointGroup.removeLayer(layer);
@@ -147,52 +163,90 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
     //Takes an array of markers and adds them in bulk
     addLayers: function (layersArray) {
-        var i, l, m,
-            onMap = this._map,
-            fg = this._featureGroup,
-            npg = this._nonPointGroup;
+        var fg = this._featureGroup,
+            npg = this._nonPointGroup,
+            chunked = this.options.chunkedLoading,
+            chunkInterval = this.options.chunkInterval,
+            chunkProgress = this.options.chunkProgress,
+            newMarkers, i, l, m;
 
-        for (i = 0, l = layersArray.length; i < l; i++) {
-            m = layersArray[i];
+        if (this._map) {
+            var offset = 0,
+                started = (new Date()).getTime();
+            var process = L.bind(function () {
+                var start = (new Date()).getTime();
+                for (; offset < layersArray.length; offset++) {
+                    if (chunked && offset % 200 === 0) {
+                        // every couple hundred markers, instrument the time elapsed since processing started:
+                        var elapsed = (new Date()).getTime() - start;
+                        if (elapsed > chunkInterval) {
+                            break; // been working too hard, time to take a break :-)
+                        }
+                    }
 
-            //Not point data, can't be clustered
-            if (!m.getLatLng) {
-                npg.addLayer(m);
-                continue;
-            }
+                    m = layersArray[offset];
 
-            if (this.hasLayer(m)) {
-                continue;
-            }
+                    //Not point data, can't be clustered
+                    if (!m.getLatLng) {
+                        npg.addLayer(m);
+                        continue;
+                    }
 
-            if (!onMap) {
-                this._needsClustering.push(m);
-                continue;
-            }
+                    if (this.hasLayer(m)) {
+                        continue;
+                    }
 
-            this._addLayer(m, this._maxZoom);
+                    this._addLayer(m, this._maxZoom);
 
-            //If we just made a cluster of size 2 then we need to remove the other marker from the map (if it is) or we never will
-            if (m.__parent) {
-                if (m.__parent.getChildCount() === 2) {
-                    var markers = m.__parent.getAllChildMarkers(),
-                        otherMarker = markers[0] === m ? markers[1] : markers[0];
-                    fg.removeLayer(otherMarker);
+                    //If we just made a cluster of size 2 then we need to remove the other marker from the map (if it is) or we never will
+                    if (m.__parent) {
+                        if (m.__parent.getChildCount() === 2) {
+                            var markers = m.__parent.getAllChildMarkers(),
+                                otherMarker = markers[0] === m ? markers[1] : markers[0];
+                            fg.removeLayer(otherMarker);
+                        }
+                    }
                 }
-            }
-        }
 
-        if (onMap) {
-            //Update the icons of all those visible clusters that were affected
-            fg.eachLayer(function (c) {
-                if (c instanceof L.MarkerCluster && c._iconNeedsUpdate) {
-                    c._updateIcon();
+                if (chunkProgress) {
+                    // report progress and time elapsed:
+                    chunkProgress(offset, layersArray.length, (new Date()).getTime() - started);
                 }
-            });
 
-            this._topClusterLevel._recursivelyAddChildrenToMap(null, this._zoom, this._currentShownBounds);
+                if (offset === layersArray.length) {
+                    //Update the icons of all those visible clusters that were affected
+                    this._featureGroup.eachLayer(function (c) {
+                        if (c instanceof L.MarkerCluster && c._iconNeedsUpdate) {
+                            c._updateIcon();
+                        }
+                    });
+
+                    this._topClusterLevel._recursivelyAddChildrenToMap(null, this._zoom, this._currentShownBounds);
+                } else {
+                    setTimeout(process, this.options.chunkDelay);
+                }
+            }, this);
+
+            process();
+        } else {
+            newMarkers = [];
+            for (i = 0, l = layersArray.length; i < l; i++) {
+                m = layersArray[i];
+
+                //Not point data, can't be clustered
+                if (!m.getLatLng) {
+                    npg.addLayer(m);
+                    continue;
+                }
+
+                if (this.hasLayer(m)) {
+                    continue;
+                }
+
+                newMarkers.push(m);
+            }
+            this._needsClustering = this._needsClustering.concat(newMarkers);
         }
-
         return this;
     },
 
@@ -275,19 +329,16 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
     //Override FeatureGroup.getBounds as it doesn't work
     getBounds: function () {
         var bounds = new L.LatLngBounds();
+
         if (this._topClusterLevel) {
             bounds.extend(this._topClusterLevel._bounds);
-        } else {
-            for (var i = this._needsClustering.length - 1; i >= 0; i--) {
-                bounds.extend(this._needsClustering[i].getLatLng());
-            }
         }
 
-        //TODO: Can remove this isValid test when leaflet 0.6 is released
-        var nonPointBounds = this._nonPointGroup.getBounds();
-        if (nonPointBounds.isValid()) {
-            bounds.extend(nonPointBounds);
+        for (var i = this._needsClustering.length - 1; i >= 0; i--) {
+            bounds.extend(this._needsClustering[i].getLatLng());
         }
+
+        bounds.extend(this._nonPointGroup.getBounds());
 
         return bounds;
     },
@@ -306,6 +357,28 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         }
 
         this._nonPointGroup.eachLayer(method, context);
+    },
+
+    //Overrides LayerGroup.getLayers
+    getLayers: function () {
+        var layers = [];
+        this.eachLayer(function (l) {
+            layers.push(l);
+        });
+        return layers;
+    },
+
+    //Overrides LayerGroup.getLayer, WARNING: Really bad performance
+    getLayer: function (id) {
+        var result = null;
+
+        this.eachLayer(function (l) {
+            if (L.stamp(l) === id) {
+                result = l;
+            }
+        });
+
+        return result;
     },
 
     //Returns true if the given layer is in this MarkerClusterGroup
@@ -354,19 +427,28 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
             }
         };
 
-        if (layer._icon) {
+        if (layer._icon && this._map.getBounds().contains(layer.getLatLng())) {
+            //Layer is visible ond on screen, immediate return
             callback();
         } else if (layer.__parent._zoom < this._map.getZoom()) {
-            //Layer should be visible now but isn't on screen, just pan over to it
+            //Layer should be visible at this zoom level. It must not be on screen so just pan over to it
             this._map.on('moveend', showMarker, this);
-            if (!layer._icon) {
-                this._map.panTo(layer.getLatLng());
-            }
+            this._map.panTo(layer.getLatLng());
         } else {
+            var moveStart = function () {
+                this._map.off('movestart', moveStart, this);
+                moveStart = null;
+            };
+
+            this._map.on('movestart', moveStart, this);
             this._map.on('moveend', showMarker, this);
             this.on('animationend', showMarker, this);
-            this._map.setView(layer.getLatLng(), layer.__parent._zoom + 1);
             layer.__parent.zoomToBounds();
+
+            if (moveStart) {
+                //Never started moving, must already be there, probably need clustering however
+                showMarker.call(this);
+            }
         }
     },
 
@@ -392,23 +474,9 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         }
         this._needsRemoving = [];
 
-        for (i = 0, l = this._needsClustering.length; i < l; i++) {
-            layer = this._needsClustering[i];
-
-            //If the layer doesn't have a getLatLng then we can't cluster it, so add it to our child featureGroup
-            if (!layer.getLatLng) {
-                this._featureGroup.addLayer(layer);
-                continue;
-            }
-
-
-            if (layer.__parent) {
-                continue;
-            }
-            this._addLayer(layer, this._maxZoom);
-        }
-        this._needsClustering = [];
-
+        //Remember the current zoom level and bounds
+        this._zoom = this._map.getZoom();
+        this._currentShownBounds = this._getExpandedVisibleBounds();
 
         this._map.on('zoomend', this._zoomEnd, this);
         this._map.on('moveend', this._moveEnd, this);
@@ -419,15 +487,10 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
         this._bindEvents();
 
-
         //Actually add our markers to the map:
-
-        //Remember the current zoom level and bounds
-        this._zoom = this._map.getZoom();
-        this._currentShownBounds = this._getExpandedVisibleBounds();
-
-        //Make things appear on the map
-        this._topClusterLevel._recursivelyAddChildrenToMap(null, this._zoom, this._currentShownBounds);
+        l = this._needsClustering;
+        this._needsClustering = [];
+        this.addLayers(l);
     },
 
     //Overrides FeatureGroup.onRemove
@@ -444,7 +507,10 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
             this._spiderfierOnRemove();
         }
 
+
+
         //Clean up all the layers we added to the map
+        this._hideCoverage();
         this._featureGroup.onRemove(map);
         this._nonPointGroup.onRemove(map);
 
@@ -455,10 +521,10 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
     getVisibleParent: function (marker) {
         var vMarker = marker;
-        while (vMarker !== null && !vMarker._icon) {
+        while (vMarker && !vMarker._icon) {
             vMarker = vMarker.__parent;
         }
-        return vMarker;
+        return vMarker || null;
     },
 
     //Remove the given object from the given array
@@ -535,8 +601,22 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         delete marker.__parent;
     },
 
+    _isOrIsParent: function (el, oel) {
+        while (oel) {
+            if (el === oel) {
+                return true;
+            }
+            oel = oel.parentNode;
+        }
+        return false;
+    },
+
     _propagateEvent: function (e) {
         if (e.layer instanceof L.MarkerCluster) {
+            //Prevent multiple clustermouseover/off events if the icon is made up of stacked divs (Doesn't work in ie <= 8, no relatedTarget)
+            if (e.originalEvent && this._isOrIsParent(e.layer._icon, e.originalEvent.relatedTarget)) {
+                return;
+            }
             e.type = 'cluster' + e.type;
         }
 
@@ -575,7 +655,6 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
             this.on('clustermouseover', this._showCoverage, this);
             this.on('clustermouseout', this._hideCoverage, this);
             map.on('zoomend', this._hideCoverage, this);
-            map.on('layerremove', this._hideCoverageOnRemove, this);
         }
     },
 
@@ -587,6 +666,11 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
             }
         } else if (this.options.zoomToBoundsOnClick) {
             e.layer.zoomToBounds();
+        }
+
+        // Focus the map again for keyboard users.
+        if (e.originalEvent && e.originalEvent.keyCode === 13) {
+            map._container.focus();
         }
     },
 
@@ -611,12 +695,6 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         }
     },
 
-    _hideCoverageOnRemove: function (e) {
-        if (e.layer === this) {
-            this._hideCoverage();
-        }
-    },
-
     _unbindEvents: function () {
         var spiderfyOnMaxZoom = this.options.spiderfyOnMaxZoom,
             showCoverageOnHover = this.options.showCoverageOnHover,
@@ -630,7 +708,6 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
             this.off('clustermouseover', this._showCoverage, this);
             this.off('clustermouseout', this._hideCoverage, this);
             map.off('zoomend', this._hideCoverage, this);
-            map.off('layerremove', this._hideCoverageOnRemove, this);
         }
     },
 
@@ -652,7 +729,7 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         var newBounds = this._getExpandedVisibleBounds();
 
         this._topClusterLevel._recursivelyRemoveChildrenFromMap(this._currentShownBounds, this._zoom, newBounds);
-        this._topClusterLevel._recursivelyAddChildrenToMap(null, this._zoom, newBounds);
+        this._topClusterLevel._recursivelyAddChildrenToMap(null, this._map._zoom, newBounds);
 
         this._currentShownBounds = newBounds;
         return;
@@ -660,7 +737,15 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
 
     _generateInitialClusters: function () {
         var maxZoom = this._map.getMaxZoom(),
-            radius = this.options.maxClusterRadius;
+            radius = this.options.maxClusterRadius,
+            radiusFn = radius;
+    
+        //If we just set maxClusterRadius to a single number, we need to create
+        //a simple function to return that number. Otherwise, we just have to
+        //use the function we've passed in.
+        if (typeof radius !== "function") {
+            radiusFn = function () { return radius; };
+        }
 
         if (this.options.disableClusteringAtZoom) {
             maxZoom = this.options.disableClusteringAtZoom - 1;
@@ -668,11 +753,11 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         this._maxZoom = maxZoom;
         this._gridClusters = {};
         this._gridUnclustered = {};
-
+    
         //Set up DistanceGrids for each zoom
         for (var zoom = maxZoom; zoom >= 0; zoom--) {
-            this._gridClusters[zoom] = new L.DistanceGrid(radius);
-            this._gridUnclustered[zoom] = new L.DistanceGrid(radius);
+            this._gridClusters[zoom] = new L.DistanceGrid(radiusFn(zoom));
+            this._gridUnclustered[zoom] = new L.DistanceGrid(radiusFn(zoom));
         }
 
         this._topClusterLevel = new L.MarkerCluster(this, -1);
@@ -750,9 +835,29 @@ L.MarkerClusterGroup = L.FeatureGroup.extend({
         return;
     },
 
+    //Enqueue code to fire after the marker expand/contract has happened
+    _enqueue: function (fn) {
+        this._queue.push(fn);
+        if (!this._queueTimeout) {
+            this._queueTimeout = setTimeout(L.bind(this._processQueue, this), 300);
+        }
+    },
+    _processQueue: function () {
+        for (var i = 0; i < this._queue.length; i++) {
+            this._queue[i].call(this);
+        }
+        this._queue.length = 0;
+        clearTimeout(this._queueTimeout);
+        this._queueTimeout = null;
+    },
+
     //Merge and split any existing clusters that are too big or small
     _mergeSplitClusters: function () {
-        if (this._zoom < this._map._zoom) { //Zoom in, split
+
+        //Incase we are starting to split before the animation finished
+        this._processQueue();
+
+        if (this._zoom < this._map._zoom && this._currentShownBounds.intersects(this._getExpandedVisibleBounds())) { //Zoom in, split
             this._animationStart();
             //Remove clusters now off screen
             this._topClusterLevel._recursivelyRemoveChildrenFromMap(this._currentShownBounds, this._zoom, this._getExpandedVisibleBounds());
@@ -811,10 +916,16 @@ L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
     _animationZoomIn: function (previousZoomLevel, newZoomLevel) {
         this._topClusterLevel._recursivelyRemoveChildrenFromMap(this._currentShownBounds, previousZoomLevel);
         this._topClusterLevel._recursivelyAddChildrenToMap(null, newZoomLevel, this._getExpandedVisibleBounds());
+
+        //We didn't actually animate, but we use this event to mean "clustering animations have finished"
+        this.fire('animationend');
     },
     _animationZoomOut: function (previousZoomLevel, newZoomLevel) {
         this._topClusterLevel._recursivelyRemoveChildrenFromMap(this._currentShownBounds, previousZoomLevel);
         this._topClusterLevel._recursivelyAddChildrenToMap(null, newZoomLevel, this._getExpandedVisibleBounds());
+
+        //We didn't actually animate, but we use this event to mean "clustering animations have finished"
+        this.fire('animationend');
     },
     _animationAddLayer: function (layer, newCluster) {
         this._animationAddLayerNonAnimated(layer, newCluster);
@@ -834,8 +945,7 @@ L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
         this.fire('animationend');
     },
     _animationZoomIn: function (previousZoomLevel, newZoomLevel) {
-        var me = this,
-            bounds = this._getExpandedVisibleBounds(),
+        var bounds = this._getExpandedVisibleBounds(),
             fg = this._featureGroup,
             i;
 
@@ -872,7 +982,7 @@ L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
         this._forceLayout();
 
         //Update opacities
-        me._topClusterLevel._recursivelyBecomeVisible(bounds, newZoomLevel);
+        this._topClusterLevel._recursivelyBecomeVisible(bounds, newZoomLevel);
         //TODO Maybe? Update markers in _recursivelyBecomeVisible
         fg.eachLayer(function (n) {
             if (!(n instanceof L.MarkerCluster) && n._icon) {
@@ -881,21 +991,20 @@ L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
         });
 
         //update the positions of the just added clusters/markers
-        me._topClusterLevel._recursively(bounds, previousZoomLevel, newZoomLevel, function (c) {
+        this._topClusterLevel._recursively(bounds, previousZoomLevel, newZoomLevel, function (c) {
             c._recursivelyRestoreChildPositions(newZoomLevel);
         });
 
         //Remove the old clusters and close the zoom animation
-
-        setTimeout(function () {
+        this._enqueue(function () {
             //update the positions of the just added clusters/markers
-            me._topClusterLevel._recursively(bounds, previousZoomLevel, 0, function (c) {
+            this._topClusterLevel._recursively(bounds, previousZoomLevel, 0, function (c) {
                 fg.removeLayer(c);
                 c.setOpacity(1);
             });
 
-            me._animationEnd();
-        }, 200);
+            this._animationEnd();
+        });
     },
 
     _animationZoomOut: function (previousZoomLevel, newZoomLevel) {
@@ -920,21 +1029,23 @@ L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
 
         //TODO: Maybe use the transition timing stuff to make this more reliable
         //When the animations are done, tidy up
-        setTimeout(function () {
+        this._enqueue(function () {
 
             //This cluster stopped being a cluster before the timeout fired
             if (cluster._childCount === 1) {
                 var m = cluster._markers[0];
                 //If we were in a cluster animation at the time then the opacity and position of our child could be wrong now, so fix it
                 m.setLatLng(m.getLatLng());
-                m.setOpacity(1);
+                if (m.setOpacity) {
+                    m.setOpacity(1);
+                }
             } else {
                 cluster._recursively(bounds, newZoomLevel, 0, function (c) {
                     c._recursivelyRemoveChildrenFromMap(bounds, previousZoomLevel + 1);
                 });
             }
             me._animationEnd();
-        }, 200);
+        });
     },
     _animationAddLayer: function (layer, newCluster) {
         var me = this,
@@ -951,12 +1062,12 @@ L.MarkerClusterGroup.include(!L.DomUtil.TRANSITION ? {
                 layer._setPos(this._map.latLngToLayerPoint(newCluster.getLatLng()));
                 layer.setOpacity(0);
 
-                setTimeout(function () {
+                this._enqueue(function () {
                     fg.removeLayer(layer);
                     layer.setOpacity(1);
 
                     me._animationEnd();
-                }, 200);
+                });
 
             } else { //Just became a cluster
                 this._forceLayout();
@@ -1026,9 +1137,32 @@ L.MarkerCluster = L.Marker.extend({
         return this._childCount;
     },
 
-    //Zoom to the extents of this cluster
+    //Zoom to the minimum of showing all of the child markers, or the extents of this cluster
     zoomToBounds: function () {
-        this._group._map.fitBounds(this._bounds);
+        var childClusters = this._childClusters.slice(),
+            map = this._group._map,
+            boundsZoom = map.getBoundsZoom(this._bounds),
+            zoom = this._zoom + 1,
+            mapZoom = map.getZoom(),
+            i;
+
+        //calculate how far we need to zoom down to see all of the markers
+        while (childClusters.length > 0 && boundsZoom > zoom) {
+            zoom++;
+            var newClusters = [];
+            for (i = 0; i < childClusters.length; i++) {
+                newClusters = newClusters.concat(childClusters[i]._childClusters);
+            }
+            childClusters = newClusters;
+        }
+
+        if (boundsZoom > zoom) {
+            this._group._map.setView(this._latlng, zoom);
+        } else if (boundsZoom <= mapZoom) { //If fitBounds wouldn't zoom us down, zoom us down instead
+            this._group._map.setView(this._latlng, mapZoom + 1);
+        } else {
+            this._group._map.fitBounds(this._bounds);
+        }
     },
 
     getBounds: function () {
@@ -1476,13 +1610,26 @@ Retrieved from: http://en.literateprograms.org/Quickhull_(Javascript)?oldid=1843
 
 (function () {
     L.QuickHull = {
+
+        /*
+         * @param {Object} cpt a point to be measured from the baseline
+         * @param {Array} bl the baseline, as represented by a two-element
+         *   array of latlng objects.
+         * @returns {Number} an approximate distance measure
+         */
         getDistant: function (cpt, bl) {
             var vY = bl[1].lat - bl[0].lat,
                 vX = bl[0].lng - bl[1].lng;
             return (vX * (cpt.lat - bl[0].lat) + vY * (cpt.lng - bl[0].lng));
         },
 
-
+        /*
+         * @param {Array} baseLine a two-element array of latlng objects
+         *   representing the baseline to project from
+         * @param {Array} latLngs an array of latlng objects
+         * @returns {Object} the maximum point and all new points to stay
+         *   in consideration for the hull.
+         */
         findMostDistantPointFromBaseLine: function (baseLine, latLngs) {
             var maxD = 0,
                 maxPt = null,
@@ -1503,11 +1650,19 @@ Retrieved from: http://en.literateprograms.org/Quickhull_(Javascript)?oldid=1843
                     maxD = d;
                     maxPt = pt;
                 }
-
             }
-            return { 'maxPoint': maxPt, 'newPoints': newPoints };
+
+            return { maxPoint: maxPt, newPoints: newPoints };
         },
 
+
+        /*
+         * Given a baseline, compute the convex hull of latLngs as an array
+         * of latLngs.
+         *
+         * @param {Array} latLngs
+         * @returns {Array}
+         */
         buildConvexHull: function (baseLine, latLngs) {
             var convexHullBaseLines = [],
                 t = this.findMostDistantPointFromBaseLine(baseLine, latLngs);
@@ -1523,12 +1678,19 @@ Retrieved from: http://en.literateprograms.org/Quickhull_(Javascript)?oldid=1843
                     );
                 return convexHullBaseLines;
             } else {  // if there is no more point "outside" the base line, the current base line is part of the convex hull
-                return [baseLine];
+                return [baseLine[0]];
             }
         },
 
+        /*
+         * Given an array of latlngs, compute a convex hull as an array
+         * of latlngs
+         *
+         * @param {Array} latLngs
+         * @returns {Array}
+         */
         getConvexHull: function (latLngs) {
-            //find first baseline
+            // find first baseline
             var maxLat = false, minLat = false,
                 maxPt = null, minPt = null,
                 i;
@@ -1555,23 +1717,17 @@ L.MarkerCluster.include({
     getConvexHull: function () {
         var childMarkers = this.getAllChildMarkers(),
             points = [],
-            hullLatLng = [],
-            hull, p, i;
+            p, i;
 
         for (i = childMarkers.length - 1; i >= 0; i--) {
             p = childMarkers[i].getLatLng();
             points.push(p);
         }
 
-        hull = L.QuickHull.getConvexHull(points);
-
-        for (i = hull.length - 1; i >= 0; i--) {
-            hullLatLng.push(hull[i][0]);
-        }
-
-        return hullLatLng;
+        return L.QuickHull.getConvexHull(points);
     }
 });
+
 
 //This code is 100% based on https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet
 //Huge thanks to jawj for implementing it first to make my job easy :-)
@@ -1686,6 +1842,8 @@ L.MarkerCluster.include({
                 delete m._spiderLeg;
             }
         }
+
+        group._spiderfied = null;
     }
 });
 
@@ -1928,10 +2086,9 @@ L.MarkerClusterGroup.include({
 
         if (this._map.options.zoomAnimation) {
             this._map.on('zoomstart', this._unspiderfyZoomStart, this);
-        } else {
-            //Browsers without zoomAnimation don't fire zoomstart
-            this._map.on('zoomend', this._unspiderfyWrapper, this);
         }
+        //Browsers without zoomAnimation or a big zoom don't fire zoomstart
+        this._map.on('zoomend', this._noanimationUnspiderfy, this);
 
         if (L.Path.SVG && !L.Browser.touch) {
             this._map._initPathRoot();
