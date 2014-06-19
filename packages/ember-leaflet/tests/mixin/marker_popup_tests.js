@@ -1,6 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
-var marker, MarkerClass, view, 
+var marker, MarkerClass, view,
   locationsEqual = window.locationsEqual,
   locations = window.locations,
   firstPopupContent = 'hello there!',
@@ -8,7 +8,7 @@ var marker, MarkerClass, view,
 
 var get = Ember.get;
 
-module("EmberLeaflet.PopupMixin (Marker)", {
+module("EmberLeaflet.PopupMixin (Marker with popupContent)", {
   setup: function() {
     MarkerClass = EmberLeaflet.MarkerLayer.extend(
       EmberLeaflet.PopupMixin, {});
@@ -53,3 +53,4 @@ test("Destroying map destroys popup", function() {
   Ember.run(function() { view.destroy(); });
   equal(marker._popup, null);
 });
+

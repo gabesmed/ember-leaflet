@@ -8,7 +8,8 @@ var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
   @namespace EmberLeaflet
 */
 EmberLeaflet.PopupMixin = Ember.Mixin.create({
-  popupContent: 'default popup content',
+  popupContent: '',
+  popupViewClass: null,
   popupOptions: {offset: L.point(0, -36)},
   
   click: function(e) {
@@ -28,8 +29,8 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
       .setLatLng((e && e.latlng) || latLng)
-      .setContent(this.get('popupContent'))
       .openOn(this._layer._map);
+    this._createPopupContent();
     this.didOpenPopup();    
   },
 
@@ -51,15 +52,45 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   willDestroyPopup: Ember.K,
   didDestroyPopup: Ember.K,
 
+  _createPopupContent: function() {
+    if(!this.get('popupViewClass')) {
+      this._popup.setContent(this.get('popupContent'));
+      return;
+    }
+    if(this._popupView) { this._destroyPopupContent(); }
+    this._popupView = this.get('popupViewClass').create({
+      controller: this.get('controller'),
+      context: this.get('controller')
+    });
+    var self = this;
+    this._popupView._insertElementLater(function() {
+      self._popupView.$().appendTo(self._popup._contentNode);
+    });
+  },
+
+  _destroyPopupContent: function() {
+    if(!this.get('popupViewClass')) { return; }
+    if(this._popupView) {
+      this._popupView.destroy();
+      this._popupView = null;
+    }
+  },
+
   _createPopup: function() {
     this.willCreatePopup();
     this._popup = L.popup(this.get('popupOptions'), this._layer);
+    var oldOnRemove = this._popup.onRemove, self = this;
+    this._popup.onRemove = function(map) {
+      self._destroyPopupContent();
+      oldOnRemove.call(self._popup, map);
+    };
     this.didCreatePopup();
   },
 
   _destroyPopup: function() {
     if(!this._popup) { return; }
     this.willDestroyPopup();
+    // closing popup will call _destroyPopupContent
     if(this._popup._map && this._layer && this._layer._map) {
       this._layer._map.closePopup(); }
     this._popup = null;
