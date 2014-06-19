@@ -1,4 +1,5 @@
-// Last commit: b35a0a7 (2014-04-23 17:18:40 -0700)
+// Version: v0.6.0
+// Last commit: 6248638 (2014-06-19 14:08:39 -0700)
 
 
 (function() {
@@ -283,12 +284,13 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt,
   map = Ember.EnumerableUtils.map;
 
 /**
-  A `ContainerLayer` is an `EmberLeaflet.Layer` subclass that implements `Ember.MutableArray`
+  A `ContainerLayerMixin` is an `EmberLeaflet.Layer` mixin that implements `Ember.MutableArray`
   allowing programatic management of its child layers.
 
-  @class ContainerLayer
-  @namespace Ember
-  @extends EmberLeaflet.Layer
+  @class ContainerLayerMixin
+  @namespace EmberLeaflet
+  @extends EmberLeaflet.LayerMixin
+  @extends Ember.MutableArray
 */
 EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
     EmberLeaflet.LayerMixin, Ember.MutableArray, {
@@ -391,6 +393,7 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
 
   createChildLayer: function(layerClass, attrs) {
     attrs = attrs || {};
+    attrs.container = this.get('container');
     attrs.controller = this.get('controller');
     attrs._parentLayer = this.isVirtual ? this._parentLayer : this;
     var layerInstance;
@@ -418,11 +421,23 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
     }
     this._childLayers = [];
   }
-
 });
 
+/**
+  A `ContainerLayer` is an empty collection layer that you can programmatically
+  add new layers to.
+
+  @class ContainerLayer
+  @namespace EmberLeaflet
+  @uses EmberLeaflet.ContainerLayerMixin
+*/
 EmberLeaflet.ContainerLayer = Ember.Object.extend(
-    EmberLeaflet.ContainerLayerMixin, {});
+    EmberLeaflet.ContainerLayerMixin, {
+  /**
+  Default _newLayer calls L.layerGroup to allow adding of new layers.
+  */
+  _newLayer: function() { return L.layerGroup(); }
+});
 
 })();
 
@@ -543,7 +558,9 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
   centerDidChange: Ember.observer(function() {
     if (!this._layer || this.get('isMoving') ||
       !this.get('center')) { return; }
-    this._layer.panTo(this.get('center'));
+    if (!this._layer.getCenter().equals(this.get('center'))) {
+      this._layer.panTo(this.get('center'));
+    }
   }, 'center')
 });
 
@@ -596,7 +613,8 @@ var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
   @namespace EmberLeaflet
 */
 EmberLeaflet.PopupMixin = Ember.Mixin.create({
-  popupContent: 'default popup content',
+  popupContent: '',
+  popupViewClass: null,
   popupOptions: {offset: L.point(0, -36)},
   
   click: function(e) {
@@ -616,8 +634,8 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
       .setLatLng((e && e.latlng) || latLng)
-      .setContent(this.get('popupContent'))
       .openOn(this._layer._map);
+    this._createPopupContent();
     this.didOpenPopup();    
   },
 
@@ -639,15 +657,46 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   willDestroyPopup: Ember.K,
   didDestroyPopup: Ember.K,
 
+  _createPopupContent: function() {
+    if(!this.get('popupViewClass')) {
+      this._popup.setContent(this.get('popupContent'));
+      return;
+    }
+    if(this._popupView) { this._destroyPopupContent(); }
+    this._popupView = this.get('popupViewClass').create({
+      container: this.get('container'),
+      controller: this.get('controller'),
+      context: this.get('controller')
+    });
+    var self = this;
+    this._popupView._insertElementLater(function() {
+      self._popupView.$().appendTo(self._popup._contentNode);
+    });
+  },
+
+  _destroyPopupContent: function() {
+    if(!this.get('popupViewClass')) { return; }
+    if(this._popupView) {
+      this._popupView.destroy();
+      this._popupView = null;
+    }
+  },
+
   _createPopup: function() {
     this.willCreatePopup();
-    this._popup = L.popup(this.get('popupOptions'));
+    this._popup = L.popup(this.get('popupOptions'), this._layer);
+    var oldOnRemove = this._popup.onRemove, self = this;
+    this._popup.onRemove = function(map) {
+      self._destroyPopupContent();
+      oldOnRemove.call(self._popup, map);
+    };
     this.didCreatePopup();
   },
 
   _destroyPopup: function() {
     if(!this._popup) { return; }
     this.willDestroyPopup();
+    // closing popup will call _destroyPopupContent
     if(this._popup._map && this._layer && this._layer._map) {
       this._layer._map.closePopup(); }
     this._popup = null;
@@ -1032,7 +1081,8 @@ EmberLeaflet.PathLayer = EmberLeaflet.Layer.extend({
 
 
 (function() {
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
 
 /**
   `EmberLeaflet.PointPathLayer` is a base geometry on the map that
@@ -1053,14 +1103,13 @@ EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
   },
 
   _updateLayerOnLocationChange: Ember.observer(function() {
-    var newLatLng = get(this, 'location');
-      
+    var newLatLng = latLngFromArray(get(this, 'location'));
     if(newLatLng && !this._layer) {
       this._createLayer();
     } else if(this._layer && !newLatLng) {
       this._destroyLayer();
-    } else {
-      var oldLatLng = this._layer && this._layer.getLatLng();
+    } else if(this._layer) {
+      var oldLatLng = this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         this._layer.setLatLng(newLatLng);
       }
@@ -1073,7 +1122,9 @@ EmberLeaflet.PointPathLayer = EmberLeaflet.PathLayer.extend({
 
 
 (function() {
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
+
 
 /**
   `EmberLeaflet.CircleLayer` is a circle on the map that adjusts based
@@ -1108,8 +1159,9 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
   }, 'radius'),
   
   _newLayer: function() {
-    return L.circle(get(this, 'location'), get(this, 'radius'),
-      get(this, 'options'));
+    // Convert from array if an array somehow got through.
+    return L.circle(latLngFromArray(get(this, 'location')),
+      get(this, 'radius'), get(this, 'options'));
   }, 
   
   _destroyLayer: function() {
@@ -1123,7 +1175,8 @@ EmberLeaflet.CircleLayer = EmberLeaflet.PointPathLayer.extend({
 
 
 (function() {
-var get = Ember.get;
+var get = Ember.get,
+  latLngFromArray = EmberLeaflet.convert.latLngFromLatLngArray;
 
 /**
   `EmberLeaflet.ArrayPathLayer` is a base geometry on the map that
@@ -1172,6 +1225,8 @@ EmberLeaflet.ArrayPathLayer = EmberLeaflet.PathLayer.extend({
     if(locationProperty) {
       locations = locations.mapProperty(locationProperty); }
     locations = locations.filter(function(i) { return !!i; });
+    // Convert any arrays that somehow made it through to latLngs.
+    locations = locations.map(latLngFromArray);
     return locations;
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 
