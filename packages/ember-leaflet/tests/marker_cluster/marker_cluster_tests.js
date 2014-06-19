@@ -47,12 +47,19 @@ test("initially clustered", function() {
     "cluster says 3");
 });
 
-asyncTest("zoom in", 1, function() {
+asyncTest("zoom in", 6, function() {
   view.set('zoom', 14);
   setTimeout(function() {
-    equal(map._panes.markerPane.childNodes.length, 3,
+    equal(map._panes.markerPane.childNodes.length, 4,
       "three markers in map");
-    start();        
+    var clusterMarker = map._panes.markerPane.childNodes[0];
+    ok(Ember.$(clusterMarker).hasClass('marker-cluster'));
+    equal(Ember.$(clusterMarker).css('opacity'), 0, 'cluster faded out');
+    var markers = map._panes.markerPane.childNodes;
+    equal(Ember.$(markers[1]).css('opacity'), 1, 'markers faded in');
+    equal(Ember.$(markers[2]).css('opacity'), 1, 'markers faded in');
+    equal(Ember.$(markers[3]).css('opacity'), 1, 'markers faded in');
+    start();
   }, 250);
 });
 
@@ -180,11 +187,18 @@ test("initially unclustered", function() {
     "three markers on map");
 });
 
-asyncTest("zoom out", 1, function() {
+asyncTest("zoom out", 6, function() {
   view.set('zoom', 3);
   setTimeout(function() {
-    equal(map._panes.markerPane.childNodes.length, 1,
-      "one cluster on map");
+    equal(map._panes.markerPane.childNodes.length, 4,
+      "four layers on map");
+    var clusterMarker = map._panes.markerPane.childNodes[3];
+    ok(Ember.$(clusterMarker).hasClass('marker-cluster'));
+    equal(Ember.$(clusterMarker).css('opacity'), 1, 'cluster faded in');
+    var markers = map._panes.markerPane.childNodes;
+    equal(Ember.$(markers[0]).css('opacity'), 0, 'markers faded out');
+    equal(Ember.$(markers[1]).css('opacity'), 0, 'markers faded out');
+    equal(Ember.$(markers[2]).css('opacity'), 0, 'markers faded out');
     start();        
   }, 250);
 });
