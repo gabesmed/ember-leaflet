@@ -1,5 +1,5 @@
-// Version: v0.5.0-5-g65a88a8
-// Last commit: 65a88a8 (2014-06-11 17:03:19 -0700)
+// Version: v0.5.0-7-gfac7ec7
+// Last commit: fac7ec7 (2014-06-18 19:44:46 -0700)
 
 
 (function() {
@@ -393,6 +393,7 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
 
   createChildLayer: function(layerClass, attrs) {
     attrs = attrs || {};
+    attrs.container = this.get('container');
     attrs.controller = this.get('controller');
     attrs._parentLayer = this.isVirtual ? this._parentLayer : this;
     var layerInstance;
@@ -663,6 +664,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     }
     if(this._popupView) { this._destroyPopupContent(); }
     this._popupView = this.get('popupViewClass').create({
+      container: this.get('container'),
       controller: this.get('controller'),
       context: this.get('controller')
     });

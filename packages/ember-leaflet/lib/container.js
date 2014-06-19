@@ -112,6 +112,7 @@ EmberLeaflet.ContainerLayerMixin = Ember.Mixin.create(
 
   createChildLayer: function(layerClass, attrs) {
     attrs = attrs || {};
+    attrs.container = this.get('container');
     attrs.controller = this.get('controller');
     attrs._parentLayer = this.isVirtual ? this._parentLayer : this;
     var layerInstance;

@@ -59,6 +59,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     }
     if(this._popupView) { this._destroyPopupContent(); }
     this._popupView = this.get('popupViewClass').create({
+      container: this.get('container'),
       controller: this.get('controller'),
       context: this.get('controller')
     });
