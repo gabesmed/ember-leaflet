@@ -1,6 +1,6 @@
 require('ember-leaflet/~tests/test_helper');
 
-var App, marker, MarkerClass, view, PopupViewClass, controller,
+var App, marker, MarkerClass, view, controller,
   locationsEqual = window.locationsEqual,
   locations = window.locations;
 
@@ -22,16 +22,14 @@ module("EmberLeaflet.PopupMixin (Marker with complex popupViewClass)", {
         'not activated' +
       '{{/if}}');
 
-    PopupViewClass = Ember.View.extend({
-      templateName: 'customPopup'
-    });
-
     MarkerClass = EmberLeaflet.MarkerLayer.extend(
       EmberLeaflet.PopupMixin, {});
     
     marker = MarkerClass.create({
       content: {location: locations.nyc},
-      popupViewClass: PopupViewClass
+      popupViewClass: Ember.View.extend({
+        templateName: 'customPopup'
+      })
     });
 
     controller = Ember.Controller.create({
@@ -84,7 +82,6 @@ test("Popup content updates", function() {
   });
   equal(Ember.$(marker._popup._contentNode).text(),
     '#40,#70,#20,', "popup content updated");
-
 });
 
 test("Closing popup destroys view", function() {
@@ -96,4 +93,49 @@ test("Closing popup destroys view", function() {
   });
   equal(marker._popupView, null, 'popupView is nullified');
   equal(popupView.isDestroyed, true, 'popup view is destroyed');
+});
+
+
+module("EmberLeaflet.PopupMixin (lookup popupViewClass by string)", {
+  setup: function() {
+
+    Ember.run(function() {
+      App = Ember.Application.create({});
+    });
+
+    App.PopupView = Ember.View.extend({
+      template: Ember.Handlebars.compile('test')
+    });
+
+    MarkerClass = EmberLeaflet.MarkerLayer.extend(
+      EmberLeaflet.PopupMixin, {});
+    
+    marker = MarkerClass.create({
+      content: {location: locations.nyc},
+      popupViewClass: 'popup'
+    });
+
+    view = EmberLeaflet.MapView.create({
+      childLayers: [marker],
+      container: App.__container__
+    });
+
+    Ember.run(function() {
+      view.appendTo('#qunit-fixture');
+    });
+  },
+  teardown: function() {
+    Ember.run(function() {
+      view.destroy();
+      App.destroy();
+    });
+    Ember.TEMPLATES = {};
+  }
+});
+
+test("popup class correctly found", function() {
+  Ember.run(function() {
+    marker.openPopup();
+  });
+  ok(Ember.View.detectInstance(marker._popupView));
 });

@@ -53,15 +53,20 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   didDestroyPopup: Ember.K,
 
   _createPopupContent: function() {
-    if(!this.get('popupViewClass')) {
-      this._popup.setContent(this.get('popupContent'));
+    if(!get(this, 'popupViewClass')) {
+      this._popup.setContent(get(this, 'popupContent'));
       return;
     }
     if(this._popupView) { this._destroyPopupContent(); }
-    this._popupView = this.get('popupViewClass').create({
-      container: this.get('container'),
-      controller: this.get('controller'),
-      context: this.get('controller')
+    var viewClass = get(this, 'popupViewClass');
+    if(Ember.typeOf(viewClass) === 'string') {
+      viewClass = get(this, 'container').lookupFactory('view:' + viewClass);
+    }
+    this._popupView = viewClass.create({
+      container: get(this, 'container'),
+      controller: get(this, 'controller'),
+      context: get(this, 'controller'),
+      content: get(this, 'content')
     });
     var self = this;
     this._popupView._insertElementLater(function() {
@@ -70,7 +75,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
   },
 
   _destroyPopupContent: function() {
-    if(!this.get('popupViewClass')) { return; }
+    if(!get(this, 'popupViewClass')) { return; }
     if(this._popupView) {
       this._popupView.destroy();
       this._popupView = null;
@@ -79,7 +84,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
 
   _createPopup: function() {
     this.willCreatePopup();
-    this._popup = L.popup(this.get('popupOptions'), this._layer);
+    this._popup = L.popup(get(this, 'popupOptions'), this._layer);
     var oldOnRemove = this._popup.onRemove, self = this;
     this._popup.onRemove = function(map) {
       self._destroyPopupContent();
