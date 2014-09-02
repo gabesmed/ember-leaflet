@@ -34,7 +34,7 @@
     "VERSION"
   ],
   "dependencies": {
-    "ember": "~1.5",
+    "ember": "^1.5",
     "leaflet-dist": "~0.7.0",
     "leaflet.markerclusterer": "0.4"
   }
