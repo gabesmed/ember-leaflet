@@ -71,6 +71,7 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     var self = this;
     this._popupView._insertElementLater(function() {
       self._popupView.$().appendTo(self._popup._contentNode);
+      self._popup.update();
     });
   },
 
