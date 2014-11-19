@@ -24,5 +24,5 @@ EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
 });
 
 EmberLeaflet.DefaultTileLayer = EmberLeaflet.TileLayer.extend({
-  tileUrl: 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png'
+  tileUrl: '//a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png'
 });
