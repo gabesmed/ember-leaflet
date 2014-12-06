@@ -87,7 +87,7 @@ test("default tile layer created", function() {
     "should be an EmberLeaflet.TileLayer");
   equal(view._childLayers[0]._layer._map, view._layer,
     "should be added to map");
-  equal(view._childLayers[0]._layer._url, 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png',
+  equal(view._childLayers[0]._layer._url, '//a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png',
     "should have tileUrl set");
 });
 
