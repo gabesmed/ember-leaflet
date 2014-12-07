@@ -1,5 +1,5 @@
-// Version: v0.6.0-1-g78d74a3
-// Last commit: 78d74a3 (2014-06-19 14:10:45 -0700)
+// Version: v0.6.0-5-gdd38076
+// Last commit: dd38076 (2014-12-03 02:26:38 +0000)
 
 
 (function() {
@@ -676,6 +676,12 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     var self = this;
     this._popupView._insertElementLater(function() {
       self._popupView.$().appendTo(self._popup._contentNode);
+    });
+
+    // After the view has rendered, call update to ensure
+    // popup is visible with autoPan
+    Ember.run.schedule('afterRender', this, function() {
+      self._popup.update();
     });
   },
 
