@@ -73,6 +73,12 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
       self._popupView.$().appendTo(self._popup._contentNode);
       self._popup.update();
     });
+
+    // After the view has rendered, call update to ensure
+    // popup is visible with autoPan
+    Ember.run.schedule('afterRender', this, function() {
+      self._popup.update();
+    });
   },
 
   _destroyPopupContent: function() {
