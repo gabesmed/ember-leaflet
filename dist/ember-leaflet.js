@@ -1,5 +1,5 @@
-// Version: v0.6.0-1-g78d74a3
-// Last commit: 78d74a3 (2014-06-19 14:10:45 -0700)
+// Version: v0.6.0-6-gda14abf
+// Last commit: da14abf (2014-12-05 18:58:14 -0500)
 
 
 (function() {
