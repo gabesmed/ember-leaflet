@@ -1,5 +1,5 @@
-// Version: v0.6.0-6-gda14abf
-// Last commit: da14abf (2014-12-05 18:58:14 -0500)
+// Version: v0.6.0-17-g0b8a8e8
+// Last commit: 0b8a8e8 (2014-12-10 15:52:41 -0800)
 
 
 (function() {
@@ -494,7 +494,7 @@ EmberLeaflet.MapView = Ember.View.extend(EmberLeaflet.ContainerLayerMixin, {
     Ember.assert("Center must be set before creating map, was " +
       this.get('center'), !!this.get('center'));
     Ember.assert("Zoom must be set before creating map, was " + 
-      this.get('zoom'), !!this.get('zoom'));
+      this.get('zoom'), !isNaN(parseInt(this.get('zoom'), 10)));
     this.willCreateLayer();
     this.propertyWillChange('layer');
     this._layer = L.map(this.get('elementId'), this.get('options'));
@@ -595,7 +595,7 @@ EmberLeaflet.TileLayer = EmberLeaflet.Layer.extend({
 });
 
 EmberLeaflet.DefaultTileLayer = EmberLeaflet.TileLayer.extend({
-  tileUrl: 'http://a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png'
+  tileUrl: '//a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png'
 });
 
 })();
@@ -676,6 +676,13 @@ EmberLeaflet.PopupMixin = Ember.Mixin.create({
     var self = this;
     this._popupView._insertElementLater(function() {
       self._popupView.$().appendTo(self._popup._contentNode);
+      self._popup.update();
+    });
+
+    // After the view has rendered, call update to ensure
+    // popup is visible with autoPan
+    Ember.run.schedule('afterRender', this, function() {
+      self._popup.update();
     });
   },
 
