@@ -77,11 +77,11 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     this.didDestroyLayer();
   },
 
-  zoomstart: function(e) {
+  zoomstart: function() {
     this.set('isZooming', true);
   },
 
-  zoomend: function(e) {
+  zoomend: function() {
     this.setProperties({isZooming: false, zoom: this._layer.getZoom()});
     // if two zooms are called at once, a zoom could get queued. So
     // set zoom to the queued one if relevant.
@@ -92,15 +92,15 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     }
   },
 
-  movestart: function(e) {
+  movestart: function() {
     this.set('isMoving', true);
   },
 
-  moveend: function(e) {
+  moveend: function() {
     this.set('isMoving', false);
   },
 
-  move: function(e) {
+  move: function() {
     this.set('center', this._layer.getCenter());
   },
 
