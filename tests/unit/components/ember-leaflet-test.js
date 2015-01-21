@@ -138,3 +138,46 @@ test('_destroyLayer cleans up', function() {
   equal(component.$('.leaflet-map-pane').length, 0);
   equal(component.get('element')._leaflet, undefined);
 });
+
+test('zoom events fire', function() {
+  var component = this.subject();
+  expect(2);
+  component.setProperties({
+    zoom: 13,
+    zoomstart: function() { ok(true, 'zoomstart fired'); },
+    zoomend: function() { ok(true, 'zoomend fired'); start();}
+  });
+  stop();
+  this.append();
+  component._layer.setZoom(14);
+});
+
+test('move events fire', function() {
+  var component = this.subject();
+  expect(3);
+  component.setProperties({
+    zoom: 13,
+    movestart: function() { ok(true, 'movestart fired'); },
+    move: function() { ok(true, 'move fired'); },
+    moveend: function() { ok(true, 'moveend fired');start(); }
+  });
+  stop();
+  this.append();
+  component._layer.setView(locations.paris, 13);
+});
+
+test('click events fire', function() {
+  var component = this.subject();
+  expect(2);
+  component.setProperties({
+    zoom: 13,
+    options: {doubleClickZoom: false},
+    center: locations.paris,
+    click: function() { ok(true, 'click fired'); },
+    dblclick: function() { ok(true, 'dblclick fired');start(); }
+  });
+  stop();
+  this.append();
+  component._layer.fire('click', {latlng: locations.paris});
+  component._layer.fire('dblclick', {latlng: locations.paris});
+});
