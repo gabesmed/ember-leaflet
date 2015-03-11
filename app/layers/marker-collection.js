@@ -8,7 +8,6 @@ import MarkerLayer from './marker';
   @class MarkerCollectionLayer
   @namespace EmberLeaflet
   @extends EmberLeaflet.CollectionLayer
-  @uses EmberLeaflet.BoundsMixin
 */
 export default CollectionLayer.extend({
   itemLayerClass: MarkerLayer

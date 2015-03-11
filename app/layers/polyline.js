@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import ArrayPathLayer from 'array-path';
+import ArrayPathLayer from './array-path';
 
 var get = Ember.get;
 

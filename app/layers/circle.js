@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import PointPathLayer from './point-path';
+import PointPathLayer from './point';
 import convert from '../utils/convert';
 
 var get = Ember.get;

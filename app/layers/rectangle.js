@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import ArrayPathLayer from 'array-path';
+import ArrayPathLayer from './array-path';
 import BoundsMixin from '../mixins/bounds';
 
 var get = Ember.get;

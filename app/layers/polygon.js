@@ -1,4 +1,7 @@
+import Ember from 'ember';
 import PolylineLayer from './polyline';
+
+var get = Ember.get;
 
 export default PolylineLayer.extend({
   _newLayer: function() {
