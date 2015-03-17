@@ -72,14 +72,14 @@ export default Ember.Mixin.create({
     });
     var self = this;
     this._popupView.createElement();
-    this._popupView.$().appendTo(self._popup._contentNode);
+    this._popup.setContent(this._popupView.element);
     this._popup.update();
 
     // After the view has rendered, call update to ensure
     // popup is visible with autoPan
-    /*Ember.run.schedule('afterRender', this, function() {
+    Ember.run.schedule('afterRender', this, function() {
       self._popup.update();
-    });*/
+    });
   },
 
   _destroyPopupContent: function() {

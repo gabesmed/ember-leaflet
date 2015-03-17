@@ -13,7 +13,9 @@ var get = Ember.get;
 moduleForComponent('ember-leaflet', 'PopupMixin (Marker with complex popupViewClass)', {
   beforeEach: function() {
 
-    Ember.TEMPLATES['customPopup'] = Ember.Handlebars.compile(
+    MarkerClass = MarkerLayer.extend(PopupMixin, {});
+
+    var template = Ember.Handlebars.compile(
       '{{#if isActivated}}' +
         '{{#each item in items}}' +
           '#{{item.number}},' +
@@ -22,18 +24,18 @@ moduleForComponent('ember-leaflet', 'PopupMixin (Marker with complex popupViewCl
         'not activated' +
       '{{/if}}');
 
-    MarkerClass = MarkerLayer.extend(PopupMixin, {});
-
-    marker = MarkerClass.create({
-      content: {location: locations.nyc},
-      popupViewClass: Ember.View.extend({
-        templateName: 'customPopup'
-      })
-    });
-
     controller = Ember.Controller.create({
       isActivated: true,
       items: Ember.A([{number: 40}, {number: 70}])
+    });
+
+    var PopupViewClass = Ember.View.extend({
+      template: template,
+    });
+
+    marker = MarkerClass.create({
+      content: {location: locations.nyc},
+      popupViewClass: PopupViewClass
     });
 
     component = this.subject();
