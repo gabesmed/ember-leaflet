@@ -6,12 +6,11 @@ import computed from '../utils/computed';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.TileLayer` is a tile set.
-
-  @class TileLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
-*/
+ * `TileLayer` is a tile set.
+ *
+ * @class TileLayer
+ * @extends Layer
+ */
 export default Layer.extend({
   tileUrl: null,
   options: {},

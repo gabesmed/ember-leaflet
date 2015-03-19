@@ -3,12 +3,12 @@ import Ember from 'ember';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.PopupMixin` adds popup functionality to any
-  `EmberLeaflet.Layer` class.
-
-  @class PopupMixin
-  @namespace EmberLeaflet
-*/
+ * `PopupMixin` adds popup functionality to any
+ * `Layer` class.
+ *
+ * @class PopupMixin
+ * @extends Ember.Mixin
+ */
 export default Ember.Mixin.create({
   popupContent: '',
   popupViewClass: null,

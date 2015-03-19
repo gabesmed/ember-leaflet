@@ -5,14 +5,13 @@ import convert from '../utils/convert';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.ArrayPathLayer` is a base geometry on the map that
-  adjusts based on a content object that should be an array of
-  LatLng objects.
-
-  @class ArrayPathLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
-*/
+ * `ArrayPathLayer` is a base geometry on the map that
+ * adjusts based on a content object that should be an array of
+ * LatLng objects.
+ *
+ * @class ArrayPathLayer
+ * @extends PathLayer
+ */
 export default PathLayer.extend({
   init: function() {
     this._super();

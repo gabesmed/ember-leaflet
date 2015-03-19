@@ -5,12 +5,11 @@ import computed from '../utils/computed';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.MarkerLayer` is a leaflet marker.
-
-  @class MarkerLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
-*/
+ * `MarkerLayer` is a leaflet marker.
+ *
+ * @class MarkerLayer
+ * @extends Layer
+ */
 export default Layer.extend({
   content: null,
   options: null,

@@ -3,13 +3,12 @@ import Layer from './layer';
 import computed from '../utils/computed';
 
 /**
-  `EmberLeaflet.PathLayer` is a generic layer to be inherited
-  by other geometry layer classes. Both CircleGeometry and PathGeometry
-  layers derive from it.
-
-  @class PathLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
+ * `PathLayer` is a generic layer to be inherited
+ * by other geometry layer classes.
+ * layers derive from it.
+ *
+ * @class PathLayer
+ * @extends Layer
 */
 export default Layer.extend({
 

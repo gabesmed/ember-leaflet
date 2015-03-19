@@ -4,14 +4,13 @@ import ContainerLayer from './container';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.CollectionLayer` is the equivalent of `Ember.CollectionView`
-  for DOM views -- it observes the `content` array for updates and maintains
-  a list of child layers associated with the content array.
+ * `CollectionLayer` is the equivalent of `Ember.CollectionView`
+ * for DOM views -- it observes the `content` array for updates and maintains
+ * a list of child layers associated with the content array.
 
-  @class CollectionLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
-*/
+ * @class CollectionLayer
+ * @extends ContainerLayer
+ */
 export default ContainerLayer.extend({
   content: [],
   isVirtual: true,

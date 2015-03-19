@@ -2,14 +2,13 @@ import Ember from 'ember';
 import BoundsMixin from './bounds';
 
 /**
-  `EmberLeaflet.CollectionBoundsMixin` provides bounding box functionality
-  to a collection layer.
-
-  @class CollectionBoundsMixin
-  @namespace EmberLeaflet
-  @extends Ember.Mixin
-  @uses EmberLeaflet.BoundsMixin
-*/
+ * `CollectionBoundsMixin` provides bounding box functionality
+ * to a collection layer.
+ *
+ * @class CollectionBoundsMixin
+ * @extends Ember.Mixin
+ * @uses BoundsMixin
+ */
 export default Ember.Mixin.create(BoundsMixin, {
 
   locations: Ember.computed('@each.location', function() {

@@ -4,15 +4,13 @@ import convert from '../utils/convert';
 
 var get = Ember.get;
 
-
 /**
-  `EmberLeaflet.CircleLayer` is a circle on the map that adjusts based
-  on a content object that should be an array of LatLng objects.
-
-  @class CircleLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.PointPathLayer
-*/
+ * `CircleLayer` is a circle on the map that adjusts based
+ * on a content object that should be an array of LatLng objects.
+ *
+ * @class CircleLayer
+ * @extends PointPathLayer
+ */
 export default PointPathLayer.extend({
 
   /**
