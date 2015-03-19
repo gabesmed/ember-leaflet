@@ -71,8 +71,12 @@ export default Ember.Mixin.create({
       content: get(this, 'content')
     });
     var self = this;
-    this._popupView.createElement();
-    this._popup.setContent(this._popupView.element);
+    // You can't call this._popupView.replaceIn because it erroneously detects
+    // the view as an Ember View because the popup's parent map's parent view 
+    // is an Ember View. So we need to trick it by calling the renderer's 
+    // replace function.
+    this._popupView.constructor.renderer.replaceIn(this._popupView,
+      this._popup._contentNode);
     this._popup.update();
 
     // After the view has rendered, call update to ensure
