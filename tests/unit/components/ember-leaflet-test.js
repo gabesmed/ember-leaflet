@@ -93,7 +93,7 @@ test('two zooms in rapid succession end correctly', function(assert) {
       assert.equal(component.get('zoom'), 18, 'zoom correct on object');
       assert.equal(component._layer.getZoom(), 18, 'zoom correct on map');
       done();
-    }, 100);
+    }, 200);
   }, 1);
 });
 

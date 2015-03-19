@@ -9,7 +9,7 @@ import computed from '../utils/computed';
  *
  * @class PathLayer
  * @extends Layer
-*/
+ */
 export default Layer.extend({
 
 	// Style options available to all L.Path layers

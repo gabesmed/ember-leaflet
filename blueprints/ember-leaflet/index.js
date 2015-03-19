@@ -6,8 +6,8 @@ module.exports = {
     // not specified (since that doesn't actually matter
     // to us
   },
-  
+
   afterInstall: function() {
-    return this.addBowerPackageToProject('leaflet');
+    return this.addBowerPackagesToProject(['leaflet', 'leaflet.markercluster']);
   }
 };

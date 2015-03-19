@@ -11,6 +11,7 @@
     "ember-qunit": "0.2.8",
     "ember-qunit-notifications": "0.0.7",
     "qunit": "~1.17.1",
-    "leaflet": "~0.7.3"
+    "leaflet": "~0.7.3",
+    "leaflet.markercluster": "~0.4.0"
   }
 }
