@@ -4,11 +4,12 @@ var fmt = Ember.String.fmt, forEach = Ember.EnumerableUtils.forEach,
   get = Ember.get;
 
 /**
-  `EmberLeaflet.LayerMixin` provides basic functionality for the Ember
-  wrapper of Leaflet layers, including instantiating child and parent layers.
-  @class LayerMixin
-  @namespace EmberLeaflet
-*/
+ * `LayerMixin` provides basic functionality for the Ember
+ * wrapper of Leaflet layers, including instantiating child and parent layers.
+ *
+ * @class LayerMixin
+ * @extends Ember.Mixin
+ */
 export default Ember.Mixin.create({
   _layer: null,
   _parentLayer: null,

@@ -3,12 +3,12 @@ import Ember from 'ember';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.PopupMixin` adds popup functionality to any
-  `EmberLeaflet.Layer` class.
-
-  @class PopupMixin
-  @namespace EmberLeaflet
-*/
+ * `PopupMixin` adds popup functionality to any
+ * `Layer` class.
+ *
+ * @class PopupMixin
+ * @extends Ember.Mixin
+ */
 export default Ember.Mixin.create({
   popupContent: '',
   popupViewClass: null,
@@ -71,10 +71,13 @@ export default Ember.Mixin.create({
       content: get(this, 'content')
     });
     var self = this;
-    this._popupView._insertElementLater(function() {
-      self._popupView.$().appendTo(self._popup._contentNode);
-      self._popup.update();
-    });
+    // You can't call this._popupView.replaceIn because it erroneously detects
+    // the view as an Ember View because the popup's parent map's parent view 
+    // is an Ember View. So we need to trick it by calling the renderer's 
+    // replace function.
+    this._popupView.constructor.renderer.replaceIn(this._popupView,
+      this._popup._contentNode);
+    this._popup.update();
 
     // After the view has rendered, call update to ensure
     // popup is visible with autoPan

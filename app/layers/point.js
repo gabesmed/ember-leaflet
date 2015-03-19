@@ -5,13 +5,12 @@ import convert from '../utils/convert';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.PointPathLayer` is a base geometry on the map that
-  adjusts based on a content object that should be a LatLng object.
-
-  @class PointPathLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.Layer
-*/
+ * `PointPathLayer` is a base geometry on the map that
+ * adjusts based on a content object that should be a LatLng object.
+ *
+ * @class PointPathLayer
+ * @extends PathLayer
+ */
 export default PathLayer.extend({
 
   location: Ember.computed.alias('content.location'),

@@ -1,17 +1,17 @@
 import Ember from 'ember';
-import ArrayPathLayer from 'array-path';
+import ArrayPathLayer from './array-path';
 import BoundsMixin from '../mixins/bounds';
 
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.RectangleLayer` is a rectangle on the map that adjusts based
-  on a content object that should be an array of LatLng objects.
-
-  @class RectangleLayer
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.PathBoundsLayer
-*/
+ * `RectangleLayer` is a rectangle on the map that adjusts based
+ * on a content object that should be an array of LatLng objects.
+ *
+ * @class RectangleLayer
+ * @extends ArrayPathLayer
+ * @uses BoundsMixin
+ */
 export default ArrayPathLayer.extend(BoundsMixin, {
 
   events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',

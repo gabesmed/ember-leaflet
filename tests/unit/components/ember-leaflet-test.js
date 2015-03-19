@@ -1,23 +1,12 @@
 import Ember from 'ember';
-import {
-  moduleForComponent,
-  test,
-} from 'ember-qunit';
+import { moduleForComponent, test } from 'ember-qunit';
 import locationsEqual from '../../helpers/locations-equal';
+import locations from '../../helpers/locations';
 
 moduleForComponent('ember-leaflet', 'EmberLeafletComponent', {
   // specify the other units that are required for this test
   // needs: ['component:foo', 'helper:bar']
 });
-
-var locations = {
-  nyc: L.latLng(40.713282, -74.006978),
-  sf: L.latLng(37.77493, -122.419415),
-  chicago: L.latLng(41.878114, -87.629798),
-  paris: L.latLng(48.856614, 2.352222),
-  london: L.latLng(51.511214, -0.119824),
-  newdelhi: L.latLng(28.635308, 77.22496)
-};
 
 test('it renders', function(assert) {
   assert.expect(2);

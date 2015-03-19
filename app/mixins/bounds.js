@@ -3,13 +3,12 @@ import Ember from 'ember';
 var get = Ember.get;
 
 /**
-  `EmberLeaflet.BoundsMixin` provides the ability to get a collection's
-  bounds by its locations property.
-
-  @class BoundsMixin
-  @namespace EmberLeaflet
-  @extends Ember.Mixin
-*/
+ * `BoundsMixin` provides the ability to get a collection's
+ * bounds by its `locations` property.
+ *
+ * @class BoundsMixin
+ * @extends Ember.Mixin
+ */
 export default Ember.Mixin.create({
 
   /** Calculate bounds, or if object is already a bounds, return it. */

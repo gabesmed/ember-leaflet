@@ -3,14 +3,13 @@ import ContainerLayerMixin from '../mixins/container-layer';
 import DefaultTileLayer from '../layers/default-tile';
 
 /**
-  An `Ember.Component` object present in the DOM, that
-  instantiates a Leaflet map inside.
-
-  @class EmberLeaflet
-  @namespace EmberLeaflet
-  @extends ContainerLayerMixin
-*/
-
+ * An `Ember.Component` object present in the DOM, that
+ * instantiates a Leaflet map inside.
+ *
+ * @class EmberLeafletComponent
+ * @extends Ember.Component
+ * @uses ContainerLayerMixin
+ */
 var DEFAULT_CENTER = L.latLng(40.713282, -74.006978);
 
 export default Ember.Component.extend(ContainerLayerMixin, {

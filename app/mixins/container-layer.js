@@ -6,13 +6,15 @@ var get = Ember.get, fmt = Ember.String.fmt,
   map = Ember.EnumerableUtils.map;
 
 /**
-  A `ContainerLayerMixin` is an `EmberLeaflet.Layer` mixin that implements `Ember.MutableArray`
-  allowing programatic management of its child layers.
-  @class ContainerLayerMixin
-  @namespace EmberLeaflet
-  @extends EmberLeaflet.LayerMixin
-  @extends Ember.MutableArray
-*/
+ * A `ContainerLayerMixin` is a `Layer` mixin that implements
+ * `Ember.MutableArray` allowing programatic management
+ * of its child layers.
+ *
+ * @class ContainerLayerMixin
+ * @extends Ember.Mixin
+ * @uses LayerMixin
+ * @uses Ember.MutableArray
+ */
 export default Ember.Mixin.create(
     LayerMixin, Ember.MutableArray, {
   /**
