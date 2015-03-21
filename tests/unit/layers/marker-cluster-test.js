@@ -49,20 +49,24 @@ test('initially clustered', function(assert) {
 
 test('zoom in', function(assert) {
   assert.expect(6);
-  component.set('zoom', 14);
   var done = assert.async();
+  var markers = map._panes.markerPane.childNodes;
+  var clusterMarker = markers[0];
+  assert.ok(Ember.$(clusterMarker).hasClass('marker-cluster'),
+    'cluster marker is present');
   setTimeout(function() {
-    assert.equal(map._panes.markerPane.childNodes.length, 4,
-      'three markers in map');
-    var clusterMarker = map._panes.markerPane.childNodes[0];
-    assert.ok(Ember.$(clusterMarker).hasClass('marker-cluster'));
-    assert.equal(Ember.$(clusterMarker).css('opacity'), 0, 'cluster faded out');
-    var markers = map._panes.markerPane.childNodes;
+    component.set('zoom', 14);
+  }, 10);
+  setTimeout(function() {
+    assert.equal(markers.length, 3,
+      'three markers only in map - cluster removed');
+    assert.equal(Ember.$(clusterMarker).css('opacity'), 0,
+      'cluster faded out');
+    assert.equal(Ember.$(markers[0]).css('opacity'), 1, 'markers faded in');
     assert.equal(Ember.$(markers[1]).css('opacity'), 1, 'markers faded in');
     assert.equal(Ember.$(markers[2]).css('opacity'), 1, 'markers faded in');
-    assert.equal(Ember.$(markers[3]).css('opacity'), 1, 'markers faded in');
     done();
-  }, 250);
+  }, 750);
 });
 
 test('adding an object updates cluster', function(assert) {
@@ -187,21 +191,20 @@ test('initially unclustered', function(assert) {
 });
 
 test('zoom out', function(assert) {
-  assert.expect(6);
-  component.set('zoom', 3);
+  assert.expect(4);
   var done = assert.async();
+  var markers = map._panes.markerPane.childNodes;
+  assert.equal(markers.length, 3, 'three layers on map');
   setTimeout(function() {
-    assert.equal(map._panes.markerPane.childNodes.length, 4,
-      'four layers on map');
-    var clusterMarker = map._panes.markerPane.childNodes[3];
+    component.set('zoom', 3);
+  }, 10);
+  setTimeout(function() {
+    assert.equal(markers.length, 1, 'only one layer on map');
+    var clusterMarker = markers[0];
     assert.ok(Ember.$(clusterMarker).hasClass('marker-cluster'));
     assert.equal(Ember.$(clusterMarker).css('opacity'), 1, 'cluster faded in');
-    var markers = map._panes.markerPane.childNodes;
-    assert.equal(Ember.$(markers[0]).css('opacity'), 0, 'markers faded out');
-    assert.equal(Ember.$(markers[1]).css('opacity'), 0, 'markers faded out');
-    assert.equal(Ember.$(markers[2]).css('opacity'), 0, 'markers faded out');
     done();
-  }, 250);
+  }, 500);
 });
 
 test('adding an object adds a marker', function(assert) {
