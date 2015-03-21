@@ -85,16 +85,18 @@ test('two zooms in rapid succession end correctly', function(assert) {
   var component = this.subject();
   this.append();
   assert.expect(2);
-  component.set('zoom', 17);
   var done = assert.async();
   setTimeout(function() {
+    component.set('zoom', 17);
+  }, 10);
+  setTimeout(function() {
     component.set('zoom', 18);
-    setTimeout(function() {
-      assert.equal(component.get('zoom'), 18, 'zoom correct on object');
-      assert.equal(component._layer.getZoom(), 18, 'zoom correct on map');
-      done();
-    }, 100);
-  }, 1);
+  }, 20);
+  setTimeout(function() {
+    assert.equal(component.get('zoom'), 18, 'zoom correct on object');
+    assert.equal(component._layer.getZoom(), 18, 'zoom correct on map');
+    done();
+  }, 1000);
 });
 
 test('default tile layer created', function(assert) {
