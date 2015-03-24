@@ -1,0 +1,13 @@
+{
+  "name": "ember-leaflet",
+  "description": "Ember + Leaflet = Fun with maps!",
+  "version": "0.0.0",
+  "options": {
+    "paths": [
+      "addon",
+      "app"
+    ],
+    "exclude": "vendor",
+    "outdir": "docs"
+  }
+}
