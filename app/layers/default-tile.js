@@ -4,7 +4,7 @@ import TileLayer from './tile';
  * A `DefaultTileLayer` is a tile layer that is used when no
  * tile layer is specied on a map.
  *
- * @class ContainerLayer
+ * @class DefaultTileLayer
  * @extends TileLayer
  */
 export default TileLayer.extend({
