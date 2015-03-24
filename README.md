@@ -98,6 +98,10 @@ PRs welcome! To contribute, get in touch with @gabesmed.
 
 Run `ember test`.
 
+## Building class reference docs
+
+Run `ember ember-cli-yuidoc`.
+
 ## Thanks
 
 * Thanks to the contributors to [emberjs/list-view](https://github.com/emberjs/list-view), from whom I cribbed this project skeleton.
