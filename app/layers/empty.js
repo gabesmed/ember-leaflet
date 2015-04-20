@@ -1,11 +1,3 @@
-import Layer from './layer';
+import EmberLeafletLayer from 'ember-leaflet/layers/empty';
 
-/**
- * `EmberLeaflet.EmptyLayer` is a null layer mostly for testing.
- *
- * @class EmptyLayer
- * @extends Layer
- */
-export default Layer.extend({
-  _newLayer: function() { return L.layerGroup([]); }
-});
+export default EmberLeafletLayer;
