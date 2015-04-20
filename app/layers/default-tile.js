@@ -1,12 +1,3 @@
-import TileLayer from './tile';
+import EmberLeafletLayer from 'ember-leaflet/layers/default-tile';
 
-/**
- * A `DefaultTileLayer` is a tile layer that is used when no
- * tile layer is specied on a map.
- *
- * @class DefaultTileLayer
- * @extends TileLayer
- */
-export default TileLayer.extend({
-  tileUrl: '//a.tiles.mapbox.com/v3/examples.map-zr0njcqy/{z}/{x}/{y}.png'
-});
+export default EmberLeafletLayer;
