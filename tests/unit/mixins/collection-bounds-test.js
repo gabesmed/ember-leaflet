@@ -10,7 +10,7 @@ var n = [-15.780148, -47.92917],
     s = [-15.786108, -47.931933],
     e = [-15.783423, -47.924638];
 
-moduleForComponent('ember-leaflet', 'CollectionBounds', {
+moduleForComponent('leaflet-map', 'CollectionBounds', {
   beforeEach: function() {
     content = Ember.A([
       L.latLng(n), L.latLng(w), L.latLng(s), null, L.latLng(e)

@@ -6,7 +6,7 @@ import locations from '../../helpers/locations';
 
 var content, polyline, PolylineClass, component;
 
-moduleForComponent('ember-leaflet', 'PolylineLayer with locations property', {
+moduleForComponent('leaflet-map', 'PolylineLayer with locations property', {
   beforeEach: function() {
     content = Ember.Object.create({
       path: Ember.A([locations.chicago, locations.sf, locations.nyc])

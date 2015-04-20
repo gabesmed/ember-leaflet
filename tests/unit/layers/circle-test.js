@@ -6,7 +6,7 @@ import locations from '../../helpers/locations';
 
 var content, circle, component;
 
-moduleForComponent('ember-leaflet', 'CircleLayer', {
+moduleForComponent('leaflet-map', 'CircleLayer', {
   beforeEach: function() {
     content = Ember.Object.create({location: locations.sf, radius:10});
     circle = CircleLayer.create({

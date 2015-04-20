@@ -9,7 +9,7 @@ import locations from '../../helpers/locations';
 
 var marker, MarkerClass, component;
 
-moduleForComponent('ember-leaflet', 'DraggableMixin', {
+moduleForComponent('leaflet-map', 'DraggableMixin', {
   beforeEach: function() {
     MarkerClass = MarkerLayer.extend(DraggableMixin, {});
 

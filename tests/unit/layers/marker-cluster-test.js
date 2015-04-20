@@ -6,7 +6,7 @@ import locationsEqual from '../../helpers/locations-equal';
 
 var component, collection, cluster, content, map;
 
-moduleForComponent('ember-leaflet', 'MarkerClusterLayer (clustered)', {
+moduleForComponent('leaflet-map', 'MarkerClusterLayer (clustered)', {
   beforeEach: function() {
     content = Ember.A([
       Ember.Object.create({location: L.latLng(40.714704, -74.000108)}),
@@ -151,7 +151,7 @@ test('destroy', function(assert) {
   component._childLayers = [];
 });
 
-moduleForComponent('ember-leaflet', 'MarkerClusterLayer (unclustered)', {
+moduleForComponent('leaflet-map', 'MarkerClusterLayer (unclustered)', {
   setup: function() {
     content = Ember.A([
       Ember.Object.create({location: L.latLng(40.714704, -74.000108)}),

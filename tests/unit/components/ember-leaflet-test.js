@@ -3,7 +3,7 @@ import { moduleForComponent, test } from 'ember-qunit';
 import locationsEqual from '../../helpers/locations-equal';
 import locations from '../../helpers/locations';
 
-moduleForComponent('ember-leaflet', 'EmberLeafletComponent', {
+moduleForComponent('leaflet-map', 'EmberLeafletComponent', {
   // specify the other units that are required for this test
   // needs: ['component:foo', 'helper:bar']
 });

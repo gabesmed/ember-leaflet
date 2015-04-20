@@ -10,7 +10,7 @@ var content, marker, MarkerClass, component;
 //Needed to silence leaflet autodetection error
 L.Icon.Default.imagePath = 'some-path';
 
-moduleForComponent('ember-leaflet', 'MarkerLayer', {
+moduleForComponent('leaflet-map', 'MarkerLayer', {
   beforeEach: function() {
     content = Ember.Object.create({loc: locations.nyc});
     MarkerClass = MarkerLayer.extend({
@@ -77,7 +77,7 @@ test('get & set zIndexOffset', function(assert) {
     'zIndex was updated in stylesheet');
 });
 
-moduleForComponent('ember-leaflet', 'MarkerLayer with conversion', {
+moduleForComponent('leaflet-map', 'MarkerLayer with conversion', {
   beforeEach: function() {
     content = Ember.Object.create({
       loc: [locations.nyc.lat, locations.nyc.lng]
