@@ -4,7 +4,7 @@ import { moduleForComponent, test } from 'ember-qunit';
 
 var component;
 
-moduleForComponent('ember-leaflet', 'TileLayer', {
+moduleForComponent('leaflet-map', 'TileLayer', {
   beforeEach: function() {
     component = this.subject();
     component.set('childLayers',  [

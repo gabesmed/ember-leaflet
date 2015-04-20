@@ -6,7 +6,7 @@ import locations from '../../helpers/locations';
 
 var content, rectangle, component;
 
-moduleForComponent('ember-leaflet', 'RectangleLayer', {
+moduleForComponent('leaflet-map', 'RectangleLayer', {
   beforeEach: function() {
     content = Ember.A([locations.chicago, locations.sf, locations.nyc]);
     rectangle = RectangleLayer.create({

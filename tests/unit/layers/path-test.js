@@ -5,7 +5,7 @@ import locations from '../../helpers/locations';
 
 var content, pathClass, path, component, get = Ember.get;
 
-moduleForComponent('ember-leaflet', 'PathLayer', {
+moduleForComponent('leaflet-map', 'PathLayer', {
   beforeEach: function() {
     content = Ember.Object.create({location: locations.sf, radius:10});
     pathClass = PathLayer.extend({

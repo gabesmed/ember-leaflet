@@ -10,7 +10,7 @@ var marker, MarkerClass, component, PopupViewClass, controller;
 
 var get = Ember.get;
 
-moduleForComponent('ember-leaflet', 'PopupMixin (Marker with popupViewClass)', {
+moduleForComponent('leaflet-map', 'PopupMixin (Marker with popupViewClass)', {
   beforeEach: function() {
     PopupViewClass = Ember.View.extend({
       template: Ember.Handlebars.compile('value: {{value}}')

@@ -7,7 +7,7 @@ import locations from '../../helpers/locations';
 
 var component, collection, content;
 
-moduleForComponent('ember-leaflet', 'MarkerCollectionLayer', {
+moduleForComponent('leaflet-map', 'MarkerCollectionLayer', {
   beforeEach: function() {
     content = Ember.A([
       Ember.Object.create({location: locations.nyc}),
@@ -117,7 +117,7 @@ test('destroy', function(assert) {
 
 var controller;
 
-moduleForComponent('ember-leaflet', 'MarkerCollectionLayer and Controller', {
+moduleForComponent('leaflet-map', 'MarkerCollectionLayer and Controller', {
   beforeEach: function() {
     content = Ember.A([
       Ember.Object.create({location: locations.nyc}),

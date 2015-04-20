@@ -6,7 +6,7 @@ import locations from '../../helpers/locations';
 
 var content, polyline, PolylineClass, component;
 
-moduleForComponent('ember-leaflet', 'PolylineLayer', {
+moduleForComponent('leaflet-map', 'PolylineLayer', {
   beforeEach: function() {
     content = Ember.A([locations.chicago, locations.sf, locations.nyc]);
     PolylineClass = PolylineLayer.extend({});

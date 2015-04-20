@@ -10,7 +10,7 @@ var App, marker, MarkerClass, component, controller;
 
 var get = Ember.get;
 
-moduleForComponent('ember-leaflet', 'PopupMixin (Marker with complex popupViewClass)', {
+moduleForComponent('leaflet-map', 'PopupMixin (Marker with complex popupViewClass)', {
   beforeEach: function() {
 
     MarkerClass = MarkerLayer.extend(PopupMixin, {});
