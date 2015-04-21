@@ -1,7 +1,8 @@
 import Ember from 'ember';
 
-var fmt = Ember.String.fmt, forEach = Ember.EnumerableUtils.forEach,
-  get = Ember.get;
+var forEach = Ember.EnumerableUtils.forEach,
+    // fmt = Ember.String.fmt,
+    get = Ember.get;
 
 /**
  * `LayerMixin` provides basic functionality for the Ember

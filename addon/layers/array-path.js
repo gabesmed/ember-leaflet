@@ -139,11 +139,14 @@ export default PathLayer.extend({
 
   /** On any change to the array, just update the entire leaflet path,
   as it reprocesses the whole thing anyway. */
-  arrayWillChange: function(array, idx, removedCount, addedCount) {
+
+  // arrayWillChange(array, idx, removedCount, addedCount)
+  arrayWillChange: function() {
     this.propertyWillChange('locations');
   },
-
-  arrayDidChange: function(array, idx, removedCount, addedCount) {
+  
+  // arrayDidChange(array, idx, removedCount, addedCount)
+  arrayDidChange: function() {
     this.propertyDidChange('locations');
   }
 });

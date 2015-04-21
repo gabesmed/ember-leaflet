@@ -1,11 +1,11 @@
 import Ember from 'ember';
-import PathLayer from '../../../layers/path';
+import PathLayer from 'ember-leaflet/layers/path';
 import { moduleForComponent, test } from 'ember-qunit';
 import locations from '../../helpers/locations';
 
 var content, pathClass, path, component, get = Ember.get;
 
-moduleForComponent('ember-leaflet', 'PathLayer', {
+moduleForComponent('leaflet-map', 'PathLayer', {
   beforeEach: function() {
     content = Ember.Object.create({location: locations.sf, radius:10});
     pathClass = PathLayer.extend({

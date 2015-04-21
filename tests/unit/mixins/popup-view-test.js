@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import MarkerLayer from '../../../layers/marker';
-import PopupMixin from '../../../mixins/popup';
+import MarkerLayer from 'ember-leaflet/layers/marker';
+import PopupMixin from 'ember-leaflet/mixins/popup';
 import { moduleForComponent, test } from 'ember-qunit';
 
 import locationsEqual from '../../helpers/locations-equal';
@@ -10,7 +10,7 @@ var marker, MarkerClass, component, PopupViewClass, controller;
 
 var get = Ember.get;
 
-moduleForComponent('ember-leaflet', 'PopupMixin (Marker with popupViewClass)', {
+moduleForComponent('leaflet-map', 'PopupMixin (Marker with popupViewClass)', {
   beforeEach: function() {
     PopupViewClass = Ember.View.extend({
       template: Ember.Handlebars.compile('value: {{value}}')

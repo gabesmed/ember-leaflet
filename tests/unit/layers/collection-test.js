@@ -1,11 +1,11 @@
 import Ember from 'ember';
-import CollectionLayer from '../../../layers/collection';
-import EmptyLayer from '../../../layers/empty';
+import CollectionLayer from 'ember-leaflet/layers/collection';
+import EmptyLayer from 'ember-leaflet/layers/empty';
 import { moduleForComponent, test } from 'ember-qunit';
 
 var component, collection, content;
 
-moduleForComponent('ember-leaflet', 'CollectionLayer', {
+moduleForComponent('leaflet-map', 'CollectionLayer', {
   beforeEach: function() {
     content = Ember.A([{number: 1}, {number: 2}, {number: 3}]);
     var collectionClass = CollectionLayer.extend({

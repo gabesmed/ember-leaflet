@@ -1,12 +1,12 @@
 import Ember from 'ember';
-import CircleLayer from '../../../layers/circle';
+import CircleLayer from 'ember-leaflet/layers/circle';
 import { moduleForComponent, test } from 'ember-qunit';
 import locationsEqual from '../../helpers/locations-equal';
 import locations from '../../helpers/locations';
 
 var content, circle, component;
 
-moduleForComponent('ember-leaflet', 'CircleLayer', {
+moduleForComponent('leaflet-map', 'CircleLayer', {
   beforeEach: function() {
     content = Ember.Object.create({location: locations.sf, radius:10});
     circle = CircleLayer.create({

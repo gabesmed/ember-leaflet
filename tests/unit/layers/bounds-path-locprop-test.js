@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import BoundsPathLayer from '../../../layers/bounds-path';
+import BoundsPathLayer from 'ember-leaflet/layers/bounds-path';
 import { module, test } from 'qunit';
 
 var geometry, locations;

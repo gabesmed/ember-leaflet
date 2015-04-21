@@ -1,7 +1,7 @@
 import Ember from 'ember';
-import MarkerLayer from '../../../layers/marker';
-import DraggableMixin from '../../../mixins/draggable';
-import EmptyLayer from '../../../layers/empty';
+import MarkerLayer from 'ember-leaflet/layers/marker';
+import DraggableMixin from 'ember-leaflet/mixins/draggable';
+import EmptyLayer from 'ember-leaflet/layers/empty';
 import { moduleForComponent, test } from 'ember-qunit';
 
 import locationsEqual from '../../helpers/locations-equal';
@@ -9,7 +9,7 @@ import locations from '../../helpers/locations';
 
 var marker, MarkerClass, component;
 
-moduleForComponent('ember-leaflet', 'DraggableMixin', {
+moduleForComponent('leaflet-map', 'DraggableMixin', {
   beforeEach: function() {
     MarkerClass = MarkerLayer.extend(DraggableMixin, {});
 

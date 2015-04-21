@@ -1,7 +1,7 @@
 import Ember from 'ember';
-import MarkerLayer from '../../../layers/marker';
-import PolygonLayer from '../../../layers/polygon';
-import PopupMixin from '../../../mixins/popup';
+import MarkerLayer from 'ember-leaflet/layers/marker';
+import PolygonLayer from 'ember-leaflet/layers/polygon';
+import PopupMixin from 'ember-leaflet/mixins/popup';
 import { moduleForComponent, test } from 'ember-qunit';
 
 import locationsEqual from '../../helpers/locations-equal';
@@ -11,7 +11,7 @@ var marker, MarkerClass, component,
   firstPopupContent = 'hello there!',
   secondPopupContent = 'salutations!';
 
-moduleForComponent('ember-leaflet', 'MarkerLayer with PopupMixin', {
+moduleForComponent('leaflet-map', 'MarkerLayer with PopupMixin', {
   beforeEach: function() {
     MarkerClass = MarkerLayer.extend(PopupMixin, {});
 
@@ -52,7 +52,7 @@ test('Destroying map destroys popup', function(assert) {
 
 var content, PolygonClass, polygon;
 
-moduleForComponent('ember-leaflet', 'PolygonLayer with PopupMixin', {
+moduleForComponent('leaflet-map', 'PolygonLayer with PopupMixin', {
   beforeEach: function() {
     content = Ember.A([locations.sf, locations.chicago, locations.nyc]);
     PolygonClass = PolygonLayer.extend(PopupMixin, {});
