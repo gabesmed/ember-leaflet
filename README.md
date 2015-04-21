@@ -24,15 +24,15 @@ You should now have access to a new component in your app.
 Render the EmberLeaflet component wherever you want to render a leaflet map:
 
 ```handlebars
-{{ember-leaflet}}
+{{leaflet-map}}
 ```
 
 Create layers and bind content declaratively in idiomatic Ember.
 
 ``` javascript
-// app/components/ember-leaflet.js
+// app/components/leaflet-map.js
 
-import EmberLeafletComponent from 'ember-leaflet/components/ember-leaflet';
+import EmberLeafletComponent from 'ember-leaflet/components/leaflet-map';
 import MarkerCollectionLayer from 'ember-leaflet/layers/marker-collection';
 import TileLayer from 'ember-leaflet/layers/tile';
 
