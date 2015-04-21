@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import MarkerLayer from '../../../layers/marker';
-import computed from '../../../utils/computed';
+import MarkerLayer from 'ember-leaflet/layers/marker';
+import computed from 'ember-leaflet/utils/computed';
 import { moduleForComponent, test } from 'ember-qunit';
 import locationsEqual from '../../helpers/locations-equal';
 import locations from '../../helpers/locations';

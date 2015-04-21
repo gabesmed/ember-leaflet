@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import RectangleLayer from '../../../layers/rectangle';
+import RectangleLayer from 'ember-leaflet/layers/rectangle';
 import { moduleForComponent, test } from 'ember-qunit';
 import locationsEqual from '../../helpers/locations-equal';
 import locations from '../../helpers/locations';

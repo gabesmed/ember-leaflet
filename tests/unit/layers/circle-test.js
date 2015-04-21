@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import CircleLayer from '../../../layers/circle';
+import CircleLayer from 'ember-leaflet/layers/circle';
 import { moduleForComponent, test } from 'ember-qunit';
 import locationsEqual from '../../helpers/locations-equal';
 import locations from '../../helpers/locations';

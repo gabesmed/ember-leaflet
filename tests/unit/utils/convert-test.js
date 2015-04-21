@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import convert from '../../../utils/convert';
+import convert from 'ember-leaflet/utils/convert';
 import { module, test } from 'qunit';
 import locationsEqual from '../../helpers/locations-equal';
 import locations from '../../helpers/locations';

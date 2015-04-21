@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import TileLayer from '../../../layers/tile';
+import TileLayer from 'ember-leaflet/layers/tile';
 import { moduleForComponent, test } from 'ember-qunit';
 
 var component;

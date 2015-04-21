@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import ContainerLayer from '../../../layers/container';
-import EmptyLayer from '../../../layers/empty';
+import ContainerLayer from 'ember-leaflet/layers/container';
+import EmptyLayer from 'ember-leaflet/layers/empty';
 import { moduleForComponent, test } from 'ember-qunit';
 
 var component;

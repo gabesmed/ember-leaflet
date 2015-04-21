@@ -1,7 +1,7 @@
 import Ember from 'ember';
-import CollectionLayer from '../../../layers/collection';
-import CollectionBoundsMixin from '../../../mixins/collection-bounds';
-import EmptyLayer from '../../../layers/empty';
+import CollectionLayer from 'ember-leaflet/layers/collection';
+import CollectionBoundsMixin from 'ember-leaflet/mixins/collection-bounds';
+import EmptyLayer from 'ember-leaflet/layers/empty';
 import { moduleForComponent, test } from 'ember-qunit';
 
 var component, collection, content;

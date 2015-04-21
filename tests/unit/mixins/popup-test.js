@@ -1,7 +1,7 @@
 import Ember from 'ember';
-import MarkerLayer from '../../../layers/marker';
-import PolygonLayer from '../../../layers/polygon';
-import PopupMixin from '../../../mixins/popup';
+import MarkerLayer from 'ember-leaflet/layers/marker';
+import PolygonLayer from 'ember-leaflet/layers/polygon';
+import PopupMixin from 'ember-leaflet/mixins/popup';
 import { moduleForComponent, test } from 'ember-qunit';
 
 import locationsEqual from '../../helpers/locations-equal';
