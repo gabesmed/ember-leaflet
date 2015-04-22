@@ -31,7 +31,6 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     'locationerror', 'popupopen', 'popupclose'],
 
   init: function() {
-    L.Icon.Default.imagePath = 'assets/images';
     this._super();
     if(this.get('childLayers') === undefined) {
       this.set('childLayers', [DefaultTileLayer]);
