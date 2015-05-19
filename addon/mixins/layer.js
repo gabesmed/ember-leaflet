@@ -37,14 +37,14 @@ export default Ember.Mixin.create({
   */
   parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
 
-  layer: Ember.computed(function() { return this._layer; }).property(),
+  layer: Ember.computed(function() { return this._layer; }),
 
   /**
    Create and return the layer instance for the view.
    This needs to be implemented for any new type of view.
    @protected
   */
-  _newLayer: Ember.required(Function),
+  _newLayer: null,
 
   /**
    This gets called by the view just before the layer is created.
