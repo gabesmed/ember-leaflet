@@ -1,37 +1,46 @@
 import Ember from 'ember';
 import convert from './convert';
+import computed from 'ember-new-computed';
 
 var get = Ember.get, set = Ember.set;
 
-var computed = {};
+var computedProperties = {};
 
 /**
   Define a computed property that gets and sets a value from the
   options object.
   @method optionProperty
 */
-computed.optionProperty = function(optionKey) {
-  return Ember.computed('options', function(key, value) {
-    // override given key with explicitly defined one if necessary
-    key = optionKey || key;
-    if(arguments.length > 1) { // set
+computedProperties.optionProperty = function(optionKey) {
+  return computed('options', {
+    get(key) {
+      // override given key with explicitly defined one if necessary
+      key = optionKey || key;
+      return this._layer.options[key];
+    },
+    set(key, value) {
+      // override given key with explicitly defined one if necessary
+      key = optionKey || key;
       var setterName = 'set' + Ember.String.classify(key);
       Ember.assert(
         this.constructor + " must have a " + setterName + " function.",
         !!this._layer[setterName]);
       this._layer[setterName].call(this._layer, value);
       return value;
-    } else { // get
-      return this._layer.options[key];
     }
   });
 };
 
-computed.pathStyleProperty = function(styleKey) {
-  return Ember.computed('options', function(key, value) {
-    // override given key with explicitly defined one if necessary
-    key = styleKey || key;
-    if(arguments.length > 1) { // set
+computedProperties.pathStyleProperty = function(styleKey) {
+  return computed('options', {
+    get(key) {
+      // override given key with explicitly defined one if necessary
+      key = styleKey || key;
+      return this._layer.options[key];
+    },
+    set(key, value) {
+      // override given key with explicitly defined one if necessary
+      key = styleKey || key;
       // Update style on existing object
       if(this._layer) {
         var styleObject = {};
@@ -42,8 +51,6 @@ computed.pathStyleProperty = function(styleKey) {
       if(!get(this, 'options')) { set(this, 'options', {}); }
       this.get('options')[key] = value;
       return value;
-    } else { // get
-      return this._layer.options[key];
     }
   });
 };
@@ -53,11 +60,12 @@ computed.pathStyleProperty = function(styleKey) {
   to a leaflet LatLng object.
   @method latlngFromLngLatArray
 */
-computed.latLngFromLngLatArray = function(coordKey) {
-  return Ember.computed(coordKey, function(key, value) {
-    if(arguments.length === 1) {
+computedProperties.latLngFromLngLatArray = function(coordKey) {
+  return computed(coordKey, {
+    get() {
       return convert.latLngFromLngLatArray(get(this, coordKey));
-    } else {
+    },
+    set(key, value) {
       set(this, coordKey, convert.lngLatArrayFromLatLng(value));
       return value;
     }
@@ -69,15 +77,16 @@ computed.latLngFromLngLatArray = function(coordKey) {
   to a leaflet LatLng object.
   @method latlngFromLatLngArray
 */
-computed.latLngFromLatLngArray = function(coordKey) {
-  return Ember.computed(coordKey, function(key, value) {
-    if(arguments.length === 1) {
+computedProperties.latLngFromLatLngArray = function(coordKey) {
+  return computed(coordKey, {
+    get() {
       return convert.latLngFromLatLngArray(get(this, coordKey));
-    } else {
+    },
+    set(key, value) {
       set(this, coordKey, value = convert.latLngArrayFromLatLng(value));
       return value;
     }
   });
 };
 
-export default computed;
+export default computedProperties;
