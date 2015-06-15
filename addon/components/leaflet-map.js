@@ -21,7 +21,7 @@ export default Ember.Component.extend(ContainerLayerMixin, {
   isZooming: false,
 
   // Events this map can respond to.
-  events: [
+  leafletEvents: [
     'click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout',
     'mousemove', 'contextmenu', 'focus', 'blur', 'preclick', 'load',
     'unload', 'viewreset', 'movestart', 'move', 'moveend', 'dragstart',

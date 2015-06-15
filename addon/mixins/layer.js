@@ -26,7 +26,7 @@ export default Ember.Mixin.create({
    @protected
    @type Array
   */
-  concatenatedProperties: ['events'],
+  concatenatedProperties: ['leafletEvents'],
 
   /**
     Reference to parent layer. Never set directly.
@@ -64,7 +64,7 @@ export default Ember.Mixin.create({
   willDestroyLayer: Ember.K,
   didDestroyLayer: Ember.K,
 
-  events: [],
+  leafletEvents: [],
 
   _createLayer: function() {
     Ember.assert("Layer must not already be created.", !this._layer);
@@ -113,7 +113,7 @@ export default Ember.Mixin.create({
 
   _addEventListeners: function() {
     this._eventHandlers = {};
-    forEach(get(this, 'events'), function(eventName) {
+    forEach(get(this, 'leafletEvents'), function(eventName) {
       if(typeof this[eventName] === 'function') {
         // create an event handler that runs the function inside an event loop.
         this._eventHandlers[eventName] = function(e) {
@@ -126,7 +126,7 @@ export default Ember.Mixin.create({
   },
 
   _removeEventListeners: function() {
-    forEach(get(this, 'events'), function(eventName) {
+    forEach(get(this, 'leafletEvents'), function(eventName) {
       if(typeof this[eventName] === 'function') {
         this._layer.removeEventListener(eventName,
           this._eventHandlers[eventName], this);

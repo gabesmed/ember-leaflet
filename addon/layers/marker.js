@@ -25,7 +25,7 @@ export default Layer.extend({
   opacity: computed.optionProperty(),
 
   /** events receivable */
-  events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
+  leafletEvents: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
     'contextmenu', 'dragstart', 'drag', 'dragend', 'move', 'remove',
     'popupopen', 'popupclose'],
 

@@ -14,7 +14,7 @@ var get = Ember.get;
  */
 export default ArrayPathLayer.extend(BoundsMixin, {
 
-  events: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
+  leafletEvents: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
     'contextmenu', 'add', 'remove', 'popupopen', 'popupclose'],
 
   _newLayer: function() {
