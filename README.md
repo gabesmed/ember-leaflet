@@ -15,7 +15,7 @@ Resources:
 EmberLeaflet is an Ember-cli addon, so you can install it by running:
 
 ```bash
-$ ember install ember-leaflet
+$ ember install gabesmed/ember-leaflet#ember-cli-es6
 ```
 
 ## Usage
