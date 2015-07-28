@@ -18,10 +18,10 @@ export default Layer.extend({
     return L.tileLayer(get(this, 'tileUrl'), get(this, 'options'));
   },
 
-  tileUrlDidChange: Ember.observer(function() {
+  tileUrlDidChange: Ember.observer('tileUrl', function() {
     if(!this._layer) { return; }
     this._layer.setUrl(this.get('tileUrl'));
-  }, 'tileUrl'),
+  }),
 
   zIndex: computed.optionProperty(),
   opacity: computed.optionProperty()

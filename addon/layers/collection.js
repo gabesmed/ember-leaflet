@@ -29,19 +29,19 @@ export default ContainerLayer.extend({
     this._super();
   },
 
-  _contentWillChange: Ember.beforeObserver(function() {
+  _contentWillChange: Ember.beforeObserver('content', function() {
     var content = get(this, 'content');
     if(content) { content.removeArrayObserver(this); }
     var len = content ? get(content, 'length') : 0;
     this.arrayWillChange(content, 0, len);
-  }, 'content'),
+  }),
 
-  _contentDidChange: Ember.observer(function() {
+  _contentDidChange: Ember.observer('content', function() {
     var content = get(this, 'content');
     if(content) { content.addArrayObserver(this); }
     var len = content ? get(content, 'length') : 0;
     this.arrayDidChange(content, 0, null, len);
-  }, 'content'),
+  }),
 
   arrayWillChange: function(array, idx, removedCount) {
     for(var i = idx; i < idx + removedCount; i++) {

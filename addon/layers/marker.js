@@ -42,7 +42,7 @@ export default Layer.extend({
     return false;
   },
 
-  _updateLayerOnLocationChange: Ember.observer(function() {
+  _updateLayerOnLocationChange: Ember.observer('location', function() {
     var newLatLng = get(this, 'location');
     if(newLatLng && !this._layer) {
       this._createLayer();
@@ -59,7 +59,7 @@ export default Layer.extend({
         }
       }
     }
-  }, 'location'),
+  }),
 
   _newLayer: function() {
     return L.marker(get(this, 'location'), get(this, 'options'));

@@ -20,8 +20,8 @@ export default ArrayPathLayer.extend({
     return L.polyline(get(this, 'locations'), get(this, 'options'));
   },
 
-  locationsDidChange: Ember.observer(function() {
+  locationsDidChange: Ember.observer('locations', function() {
     if(!this._layer) { return; }
     this._layer.setLatLngs(get(this, 'locations'));
-  }, 'locations')
+  })
 });

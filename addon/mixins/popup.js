@@ -116,18 +116,18 @@ export default Ember.Mixin.create({
     this.didDestroyPopup();
   },
 
-  _updatePopup: Ember.observer(function() {
+  _updatePopup: Ember.observer('popupContent', function() {
     if(!this._popup) { return; }
     this._popup.setContent(get(this, 'popupContent'));
-  }, 'popupContent'),
+  }),
 
   _removePopupObservers: Ember.beforeObserver(function() {
     if(!this._layer) { return; }
     this._destroyPopup();
   }, 'layer'),
 
-  _addPopupObservers: Ember.observer(function() {
+  _addPopupObservers: Ember.observer('layer', function() {
     if(!this._layer) { return; }
     this._createPopup();
-  }, 'layer')
+  })
 });

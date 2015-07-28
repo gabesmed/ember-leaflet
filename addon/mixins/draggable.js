@@ -24,12 +24,12 @@ export default Ember.Mixin.create({
     });
   },
 
-  _updateDraggability: Ember.observer(function() {
+  _updateDraggability: Ember.observer('isDraggable', 'layer', function() {
     if(!this._layer || !this._layer._map) { return; }
     if(get(this, 'isDraggable')) {
       this._layer.dragging.enable();
     } else {
       this._layer.dragging.disable();
     }
-  }, 'isDraggable', 'layer')
+  })
 });
