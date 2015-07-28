@@ -55,15 +55,15 @@ export default PathLayer.extend({
     return locations;
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 
-  _contentWillChange: Ember.beforeObserver(function() {
+  _contentWillChange: Ember.beforeObserver('content', 'locationsProperty', 'locationProperty', function() {
     this._contentLocationsWillChange();
     this._teardownLocationObservers();
-  }, 'content', 'locationsProperty', 'locationProperty'),
+  }),
 
-  _contentDidChange: Ember.observer(function() {
+  _contentDidChange: Ember.observer('content', 'locationsProperty', 'locationProperty', function() {
     this._setupLocationObservers();
     this._contentLocationsDidChange();
-  }, 'content', 'locationsProperty', 'locationProperty'),
+  }),
 
   _setupLocationObservers: function() {
     var content = get(this, 'content'),
@@ -144,7 +144,7 @@ export default PathLayer.extend({
   arrayWillChange: function() {
     this.propertyWillChange('locations');
   },
-  
+
   // arrayDidChange(array, idx, removedCount, addedCount)
   arrayDidChange: function() {
     this.propertyDidChange('locations');

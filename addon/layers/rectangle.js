@@ -26,7 +26,7 @@ export default ArrayPathLayer.extend(BoundsMixin, {
     this._super();
   },
 
-  boundsDidChange: Ember.observer(function() {
+  boundsDidChange: Ember.observer('locations', function() {
     var bounds = get(this, 'bounds');
     if(this._layer && !bounds) {
       this._destroyLayer();
@@ -35,5 +35,5 @@ export default ArrayPathLayer.extend(BoundsMixin, {
     } else if(bounds && this._layer) {
       this._layer.setBounds(bounds);
     }
-  }, 'locations')
+  })
 });

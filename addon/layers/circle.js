@@ -20,7 +20,7 @@ export default PointPathLayer.extend({
   */
   radius: Ember.computed.alias('content.radius'),
 
-  _updateLayerOnRadiusChange: Ember.observer(function() {
+  _updateLayerOnRadiusChange: Ember.observer('radius', function() {
     var newRadius = get(this, 'radius');
 
     if(newRadius && !this._layer) {
@@ -33,7 +33,7 @@ export default PointPathLayer.extend({
         this._layer.setRadius(newRadius);
       }
     }
-  }, 'radius'),
+  }),
 
   _newLayer: function() {
     // Convert from array if an array somehow got through.

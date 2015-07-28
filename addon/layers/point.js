@@ -21,7 +21,7 @@ export default PathLayer.extend({
     this._super();
   },
 
-  _updateLayerOnLocationChange: Ember.observer(function() {
+  _updateLayerOnLocationChange: Ember.observer('location', function() {
     var newLatLng = convert.latLngFromLatLngArray(get(this, 'location'));
     if(newLatLng && !this._layer) {
       this._createLayer();
@@ -33,5 +33,5 @@ export default PathLayer.extend({
         this._layer.setLatLng(newLatLng);
       }
     }
-  }, 'location')
+  })
 });
