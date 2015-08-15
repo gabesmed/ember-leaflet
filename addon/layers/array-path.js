@@ -48,7 +48,7 @@ export default PathLayer.extend({
           locationsProperty : ''),
         locations = get(this, locationsPath) || Ember.A();
     if(locationProperty) {
-      locations = locations.mapProperty(locationProperty); }
+      locations = locations.mapBy(locationProperty); }
     locations = locations.filter(function(i) { return !!i; });
     // Convert any arrays that somehow made it through to latLngs.
     locations = locations.map(convert.latLngFromLatLngArray);

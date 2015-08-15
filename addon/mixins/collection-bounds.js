@@ -12,7 +12,7 @@ import BoundsMixin from './bounds';
 export default Ember.Mixin.create(BoundsMixin, {
 
   locations: Ember.computed('@each.location', function() {
-    return this.filterProperty('location').mapProperty('location');
+    return this.filterBy('location').mapBy('location');
   })
 
 });
