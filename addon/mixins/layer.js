@@ -1,8 +1,6 @@
 import Ember from 'ember';
 
-var forEach = Ember.EnumerableUtils.forEach,
-    // fmt = Ember.String.fmt,
-    get = Ember.get;
+var get = Ember.get;
 
 /**
  * `LayerMixin` provides basic functionality for the Ember
@@ -113,7 +111,7 @@ export default Ember.Mixin.create({
 
   _addEventListeners: function() {
     this._eventHandlers = {};
-    forEach(get(this, 'leafletEvents'), function(eventName) {
+    get(this, 'leafletEvents').forEach(function(eventName) {
       if(typeof this[eventName] === 'function') {
         // create an event handler that runs the function inside an event loop.
         this._eventHandlers[eventName] = function(e) {
@@ -126,7 +124,7 @@ export default Ember.Mixin.create({
   },
 
   _removeEventListeners: function() {
-    forEach(get(this, 'leafletEvents'), function(eventName) {
+    get(this, 'leafletEvents').forEach(function(eventName) {
       if(typeof this[eventName] === 'function') {
         this._layer.removeEventListener(eventName,
           this._eventHandlers[eventName], this);
