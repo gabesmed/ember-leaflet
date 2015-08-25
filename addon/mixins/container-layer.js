@@ -1,9 +1,7 @@
 import Ember from 'ember';
 import LayerMixin from './layer';
 
-var get = Ember.get, fmt = Ember.String.fmt,
-  forEach = Ember.EnumerableUtils.forEach,
-  map = Ember.EnumerableUtils.map;
+var get = Ember.get, fmt = Ember.String.fmt;
 
 /**
  * A `ContainerLayerMixin` is a `Layer` mixin that implements
@@ -43,7 +41,7 @@ export default Ember.Mixin.create(
       return this._childLayers;
     }));
 
-    forEach(this._childLayerClasses, function(layerClass, idx) {
+    this._childLayerClasses.forEach(function(layerClass, idx) {
       layer = self.createChildLayer(layerClass);
       self.addChildLayer(layer);
       _childLayers[idx] = layer;
@@ -61,7 +59,7 @@ export default Ember.Mixin.create(
     } else {
       // instantiate class objects, make sure controller and
       // _parentLayer is set for each layer object added.
-      addedLayers = map(addedLayers, function(layer) {
+      addedLayers = addedLayers.map(function(layer) {
         return self.createChildLayer(layer);
       });
       var args = [idx, removedCount].concat(addedLayers);
@@ -89,7 +87,7 @@ export default Ember.Mixin.create(
     this.propertyWillChange('childLayers');
     if(removed > 0) {
       var removedLayers = layers.slice(start, start + removed);
-      forEach(removedLayers, function(layer) {
+      removedLayers.forEach(function(layer) {
         self.removeChildLayer(layer);
       });
     }
@@ -99,7 +97,7 @@ export default Ember.Mixin.create(
     var self = this;
     if(added > 0) {
       var addedLayers = layers.slice(start, start + added);
-      forEach(addedLayers, function(layer) {
+      addedLayers.forEach(function(layer) {
         self.addChildLayer(layer);
       });
     }
@@ -137,7 +135,7 @@ export default Ember.Mixin.create(
   removeAndDestroyChildLayers: function() {
     var self = this;
     if(this._childLayers) {
-      forEach(this._childLayers, function(layer) {
+      this._childLayers.forEach(function(layer) {
         self.removeChildLayer(layer);
         layer.destroy();
       });
