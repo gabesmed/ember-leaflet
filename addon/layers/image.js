@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import Layer from './layer';
-import computed from '../utils/computed';
 
 var get = Ember.get;
 
