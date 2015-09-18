@@ -104,6 +104,5 @@ Run `ember ember-cli-yuidoc`.
 
 ## Thanks
 
-* Thanks to the contributors to [emberjs/list-view](https://github.com/emberjs/list-view), from whom I cribbed this project skeleton.
 * Thanks to everyone who makes Ember a joy to work with!
 * Thanks to the makers of Leaflet, hooray for maps!
