@@ -13,14 +13,14 @@ var get = Ember.get;
 
 export default Layer.extend({
   imageUrl: null,
-  imageBounds: null,
+  bounds: null,
   options: null,
 
   _newLayer: function() {
-    return L.imageOverlay(get(this,'imageUrl'), get(this,'imageBounds'), get(this, 'options'));
+    return L.imageOverlay(get(this,'imageUrl'), get(this,'bounds'), get(this, 'options'));
   },
 
-  imageUrlDidChange: Ember.observer('imageUrl', function() {
+  urlDidChange: Ember.observer('imageUrl', function() {
     if(!this._layer) { return; }
     this._layer.setUrl(this.get('imageUrl'));
   }),
