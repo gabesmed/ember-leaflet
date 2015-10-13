@@ -1,8 +1,8 @@
 import Ember from 'ember';
 import convert from './convert';
-import computed from 'ember-new-computed';
 
 var get = Ember.get, set = Ember.set;
+var computed = Ember.computed;
 
 var computedProperties = {};
 
