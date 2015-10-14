@@ -61,12 +61,12 @@ export default PathLayer.extend({
   }),
 
   _setupLocationObservers() {
-    var content = get(this, 'content'),
+    const content = get(this, 'content'),
       locationProperty = get(this, 'locationProperty'),
       locationsProperty = get(this, 'locationsProperty');
     if(!content) { return; }
 
-    var observers = [];
+    const observers = [];
 
     // Add observer on locations property of content if relevant.
     if (locationsProperty) {
