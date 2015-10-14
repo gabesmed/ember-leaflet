@@ -124,14 +124,16 @@ export default Ember.Mixin.create({
     this._popup.setContent(get(this, 'popupContent'));
   }),
 
-  _removePopupObservers: Ember.beforeObserver(function() {
-    if(!this._layer) { return; }
-    this._destroyPopup();
-  }, 'layer'),
-
   _addPopupObservers: Ember.observer('layer', function() {
     if(!this._layer) { return; }
     this._destroyPopup();
     this._createPopup();
-  })
+  }),
+
+  _destroyLayer() {
+    if (this._popup) {
+      this._destroyPopup();
+    }
+    this._super();
+  }
 });
