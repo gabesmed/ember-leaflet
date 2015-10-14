@@ -1,10 +1,8 @@
 import Ember from 'ember';
 
 const {
-  get,
-  run
+  get
 } = Ember;
-const { schedule } = run;
 
 /**
  * `PopupMixin` adds popup functionality to any
@@ -59,43 +57,14 @@ export default Ember.Mixin.create({
   didDestroyPopup: Ember.K,
 
   _createPopupContent() {
-    if(!get(this, 'popupViewClass')) {
-      this._popup.setContent(get(this, 'popupContent'));
-      return;
+    if(get(this, 'popupViewClass')) {
+      throw new Ember.Error('popupViewClass functionality is being replaced with Ember 2.0 compatible components and is currently disabled.');
     }
-    if(this._popupView) { this._destroyPopupContent(); }
-    let viewClass = get(this, 'popupViewClass');
-    if(Ember.typeOf(viewClass) === 'string') {
-      viewClass = get(this, 'container').lookupFactory('view:' + viewClass);
-    }
-    this._popupView = viewClass.create({
-      container: get(this, 'container'),
-      controller: get(this, 'controller'),
-      context: get(this, 'controller'),
-      content: get(this, 'content')
-    });
-    // You can't call this._popupView.replaceIn because it erroneously detects
-    // the view as an Ember View because the popup's parent map's parent view
-    // is an Ember View. So we need to trick it by calling the renderer's
-    // replace function.
-    // In Ember 1.10 we need to access renderer through constructor.
-    const renderer = this._popupView.constructor.renderer || this._popupView.renderer;
-    renderer.replaceIn(this._popupView, this._popup._contentNode);
-    this._popup.update();
-
-    // After the view has rendered, call update to ensure
-    // popup is visible with autoPan
-    schedule('afterRender', this, () => {
-      this._popup.update();
-    });
+    this._popup.setContent(get(this, 'popupContent'));
   },
 
   _destroyPopupContent() {
-    if(!get(this, 'popupViewClass')) { return; }
-    if(this._popupView) {
-      this._popupView.destroy();
-      this._popupView = null;
-    }
+    // destroy internal popup component
   },
 
   _createPopup() {
@@ -124,13 +93,16 @@ export default Ember.Mixin.create({
     this._popup.setContent(get(this, 'popupContent'));
   }),
 
-  _removePopupObservers: Ember.beforeObserver(function() {
-    if(!this._layer) { return; }
-    this._destroyPopup();
-  }, 'layer'),
-
   _addPopupObservers: Ember.observer('layer', function() {
     if(!this._layer) { return; }
+    this._destroyPopup();
     this._createPopup();
-  })
+  }),
+
+  _destroyLayer() {
+    if (this._popup) {
+      this._destroyPopup();
+    }
+    this._super();
+  }
 });

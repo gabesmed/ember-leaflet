@@ -126,7 +126,7 @@ moduleForComponent('leaflet-map', 'MarkerCollectionLayer and Controller', {
       Ember.Object.create({location: null})
     ]);
 
-    controller = Ember.ArrayController.create({
+    controller = Ember.ArrayProxy.create({
       content: content
     });
     var collectionClass = MarkerCollectionLayer.extend({
