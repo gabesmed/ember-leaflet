@@ -128,6 +128,7 @@ export default Ember.Mixin.create({
 
   _addPopupObservers: Ember.observer('layer', function() {
     if(!this._layer) { return; }
+    this._destroyPopup();
     this._createPopup();
   })
 });

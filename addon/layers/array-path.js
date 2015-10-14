@@ -55,12 +55,8 @@ export default PathLayer.extend({
     return locations;
   }).property('content', 'locationProperty', 'locationsProperty').volatile(),
 
-  _contentWillChange: Ember.beforeObserver('content', 'locationsProperty', 'locationProperty', function() {
-    this._contentLocationsWillChange();
-    this._teardownLocationObservers();
-  }),
-
   _contentDidChange: Ember.observer('content', 'locationsProperty', 'locationProperty', function() {
+    this._teardownLocationObservers();
     this._setupLocationObservers();
     this._contentLocationsDidChange();
   }),
@@ -71,14 +67,12 @@ export default PathLayer.extend({
       locationsProperty = get(this, 'locationsProperty');
     if(!content) { return; }
 
+    var observers = [];
+
     // Add observer on locations property of content if relevant.
-    var contentLocationsProperty = locationsProperty ?
-      'content.' + locationsProperty : 'content';
     if (locationsProperty) {
-      Ember.addBeforeObserver(this, contentLocationsProperty, this,
-        '_contentLocationsWillChange');
-      Ember.addObserver(this, contentLocationsProperty, this,
-        '_contentLocationsDidChange');
+      observers.push([content, locationsProperty, this,
+        '_contentLocationsDidChange']);
     }
 
     // Add array observer for new/removed items in content list
@@ -88,52 +82,38 @@ export default PathLayer.extend({
     if(arr) { arr.addArrayObserver(this); }
 
     // Add @each chain observer for location property on array.
-    if(locationProperty) {
-      var contentLocationsChainProperty = contentLocationsProperty +
-        '.@each.' + locationProperty;
-      Ember.addBeforeObserver(this, contentLocationsChainProperty, this,
-        '_contentLocationsWillChange');
-      Ember.addObserver(this, contentLocationsChainProperty, this,
-        '_contentLocationsDidChange');
+    if(arr && locationProperty) {
+      var arrayLocationsChainProperty = '@each.' + locationProperty;
+      observers.push([arr, arrayLocationsChainProperty, this,
+        '_contentLocationsDidChange']);
     }
+
+    observers.forEach(function(args) {
+      Ember.addObserver.apply(Ember, args);
+    });
+
+    this._arr = arr;
+    this._observers = observers;
   },
 
   _teardownLocationObservers: function() {
-    var content = get(this, 'content'),
-      locationProperty = get(this, 'locationProperty'),
-      locationsProperty = get(this, 'locationsProperty');
-    if(!content) { return; }
-
-    // Remove observer on locations property of content.
-    var contentLocationsProperty = locationsProperty ?
-      'content.' + locationsProperty : 'content';
-    if (locationsProperty) {
-      Ember.addBeforeObserver(this, contentLocationsProperty, this,
-        '_contentLocationsWillChange');
-      Ember.addObserver(this, contentLocationsProperty, this,
-        '_contentLocationsDidChange');
+    // Remove array observer
+    if (this._arr) {
+      this._arr.removeArrayObserver(this);
+      this._arr = null;
     }
 
-    // Remove array observer for new/removed items in content list
-    var arr = locationsProperty ? get(content, locationsProperty) : content;
-    if(arr) { arr.removeArrayObserver(this); }
-
-    // Remove @each chain observer for location property on array.
-    if(locationProperty) {
-      var contentLocationsChainProperty = contentLocationsProperty +
-        '.@each.' + locationProperty;
-      Ember.removeBeforeObserver(this, contentLocationsChainProperty, this,
-        '_contentLocationsWillChange');
-      Ember.removeObserver(this, contentLocationsChainProperty, this,
-        '_contentLocationsDidChange');
+    // And remove all chained observers
+    if (this._observers) {
+      this._observers.forEach(function(args) {
+        Ember.removeObserver.apply(Ember, args);
+      });
+      this._observers = null;
     }
-  },
-
-  _contentLocationsWillChange: function() {
-    this.propertyWillChange('locations');
   },
 
   _contentLocationsDidChange: function() {
+    this.propertyWillChange('locations');
     this.propertyDidChange('locations');
   },
 

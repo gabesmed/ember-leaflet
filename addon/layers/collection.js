@@ -25,23 +25,26 @@ export default ContainerLayer.extend({
   },
 
   willDestroyLayer: function() {
-    this._contentWillChange();
+    this._clear();
     this._super();
   },
 
-  _contentWillChange: Ember.beforeObserver('content', function() {
-    var content = get(this, 'content');
-    if(content) { content.removeArrayObserver(this); }
-    var len = content ? get(content, 'length') : 0;
-    this.arrayWillChange(content, 0, len);
-  }),
-
   _contentDidChange: Ember.observer('content', function() {
+    this._clear();
     var content = get(this, 'content');
-    if(content) { content.addArrayObserver(this); }
-    var len = content ? get(content, 'length') : 0;
+    if (!content) { return; }
+    content.addArrayObserver(this);
+    this._content = content;
+    var len = get(content, 'length');
     this.arrayDidChange(content, 0, null, len);
   }),
+
+  _clear: function() {
+    if (!this._content) { return; }
+    this._content.removeArrayObserver(this);
+    this.arrayWillChange(this._content, 0, get(this._content, 'length'));
+    this._content = null;
+  },
 
   arrayWillChange: function(array, idx, removedCount) {
     for(var i = idx; i < idx + removedCount; i++) {
