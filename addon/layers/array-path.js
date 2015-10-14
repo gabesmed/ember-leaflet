@@ -2,7 +2,7 @@ import Ember from 'ember';
 import PathLayer from './path';
 import convert from '../utils/convert';
 
-const { get } = Ember;
+const { get, computed } = Ember;
 
 /**
  * `ArrayPathLayer` is a base geometry on the map that
@@ -41,7 +41,7 @@ export default PathLayer.extend({
   /**
   The computed array of locations.
   */
-  locations: Ember.computed(function() {
+  locations: computed('content', 'locationProperty', 'locationsProperty', function() {
     let locationProperty = get(this, 'locationProperty'),
         locationsProperty = get(this, 'locationsProperty'),
         locationsPath = 'content' + (locationsProperty ? `.${locationsProperty}` : ''),
@@ -52,7 +52,7 @@ export default PathLayer.extend({
     // Convert any arrays that somehow made it through to latLngs.
     locations = locations.map(convert.latLngFromLatLngArray);
     return locations;
-  }).property('content', 'locationProperty', 'locationsProperty').volatile(),
+  }).volatile(),
 
   _contentWillChange: Ember.beforeObserver('content', 'locationsProperty', 'locationProperty', function() {
     this._contentLocationsWillChange();
