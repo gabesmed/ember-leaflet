@@ -14,5 +14,5 @@ export default Ember.Object.extend(
   /**
   Default _newLayer calls L.layerGroup to allow adding of new layers.
   */
-  _newLayer: function() { return L.layerGroup(); }
+  _newLayer() { return L.layerGroup(); }
 });

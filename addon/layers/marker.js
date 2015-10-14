@@ -33,8 +33,8 @@ export default Layer.extend({
   Detect clustering above this marker. And return if this marker is inside
   a cluster object.
   */
-  _detectClustering: function() {
-    var cursor = this;
+  _detectClustering() {
+    let cursor = this;
     while(cursor._parentLayer) {
       cursor = cursor._parentLayer;
       if(cursor._isCluster) { return true; }
@@ -43,13 +43,13 @@ export default Layer.extend({
   },
 
   _updateLayerOnLocationChange: Ember.observer('location', function() {
-    var newLatLng = get(this, 'location');
+    const newLatLng = get(this, 'location');
     if(newLatLng && !this._layer) {
       this._createLayer();
     } else if(this._layer && !newLatLng) {
       this._destroyLayer();
     } else {
-      var oldLatLng = this._layer && this._layer.getLatLng();
+      const oldLatLng = this._layer && this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         if(this._detectClustering()) {
           this._destroyLayer();
@@ -61,17 +61,17 @@ export default Layer.extend({
     }
   }),
 
-  _newLayer: function() {
+  _newLayer() {
     return L.marker(get(this, 'location'), get(this, 'options'));
   },
 
-  _createLayer: function() {
+  _createLayer() {
     if(this._layer || !get(this, 'location')) { return; }
     this._super();
     this._layer.content = get(this, 'content');
 
     // Add a notification for layer changing on the onAdd function.
-    var oldAdd = this._layer.onAdd, self = this;
+    const oldAdd = this._layer.onAdd, self = this;
     this._layer.onAdd = function() {
       self.propertyWillChange('layer');
       oldAdd.apply(this, arguments);
@@ -80,7 +80,7 @@ export default Layer.extend({
     this.notifyPropertyChange('layer');
   },
 
-  _destroyLayer: function() {
+  _destroyLayer() {
     if(!this._layer) { return; }
     this._super();
   }

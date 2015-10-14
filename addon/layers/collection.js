@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import ContainerLayer from './container';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `CollectionLayer` is the equivalent of `Ember.CollectionView`
@@ -19,12 +19,12 @@ export default ContainerLayer.extend({
     throw new Error("itemLayerClass must be defined.");
   }).property(),
 
-  didCreateLayer: function() {
+  didCreateLayer() {
     this._super();
     this._contentDidChange();
   },
 
-  willDestroyLayer: function() {
+  willDestroyLayer() {
     this._clear();
     this._super();
   },
@@ -39,37 +39,36 @@ export default ContainerLayer.extend({
     this.arrayDidChange(content, 0, null, len);
   }),
 
-  _clear: function() {
+  _clear() {
     if (!this._content) { return; }
     this._content.removeArrayObserver(this);
     this.arrayWillChange(this._content, 0, get(this._content, 'length'));
     this._content = null;
   },
 
-  arrayWillChange: function(array, idx, removedCount) {
-    for(var i = idx; i < idx + removedCount; i++) {
+  arrayWillChange(array, idx, removedCount) {
+    for(let i = idx; i < idx + removedCount; i++) {
       this.objectWasRemoved(array.objectAt(i));
     }
   },
 
-  arrayDidChange: function(array, idx, removedCount, addedCount) {
-    for(var i = idx; i < idx + addedCount; i++) {
+  arrayDidChange(array, idx, removedCount, addedCount) {
+    for(let i = idx; i < idx + addedCount; i++) {
       this.objectWasAdded(array.objectAt(i), i);
     }
   },
 
-  objectWasAdded: function(obj, index) {
+  objectWasAdded(obj, index) {
     if(index === undefined) { index = this._childLayers.length; }
-    var childLayer = this.createChildLayer(get(this, 'itemLayerClass'), {
+    const childLayer = this.createChildLayer(get(this, 'itemLayerClass'), {
       content: obj
     });
     this.replace(index, 0, [childLayer]);
   },
 
-  objectWasRemoved: function(obj) {
-    var layer;
-    for(var i = 0, l = this._childLayers.length; i < l; i++) {
-      layer = this._childLayers[i];
+  objectWasRemoved(obj) {
+    for(let i = 0, l = this._childLayers.length; i < l; i++) {
+      const layer = this._childLayers[i];
       if(layer.get('content') === obj) {
         this.replace(i, 1, []);
         layer.destroy();

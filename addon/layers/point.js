@@ -2,7 +2,7 @@ import Ember from 'ember';
 import PathLayer from './path';
 import convert from '../utils/convert';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `PointPathLayer` is a base geometry on the map that
@@ -15,20 +15,20 @@ export default PathLayer.extend({
 
   location: Ember.computed.alias('content.location'),
 
-  _createLayer: function() {
+  _createLayer() {
     // don't create layer if we don't have a location.
     if(this._layer || !get(this, 'location')) { return; }
     this._super();
   },
 
   _updateLayerOnLocationChange: Ember.observer('location', function() {
-    var newLatLng = convert.latLngFromLatLngArray(get(this, 'location'));
+    const newLatLng = convert.latLngFromLatLngArray(get(this, 'location'));
     if(newLatLng && !this._layer) {
       this._createLayer();
     } else if(this._layer && !newLatLng) {
       this._destroyLayer();
     } else if(this._layer) {
-      var oldLatLng = this._layer.getLatLng();
+      const oldLatLng = this._layer.getLatLng();
       if(oldLatLng && newLatLng && !oldLatLng.equals(newLatLng)) {
         this._layer.setLatLng(newLatLng);
       }

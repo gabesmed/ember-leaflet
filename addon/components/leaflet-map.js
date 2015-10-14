@@ -10,7 +10,7 @@ import DefaultTileLayer from '../layers/default-tile';
  * @extends Ember.Component
  * @uses ContainerLayerMixin
  */
-var DEFAULT_CENTER = L.latLng(40.713282, -74.006978);
+const DEFAULT_CENTER = L.latLng(40.713282, -74.006978);
 
 export default Ember.Component.extend(ContainerLayerMixin, {
   options: {},
@@ -30,28 +30,32 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     'baselayerchange', 'overlayadd', 'overlayremove', 'locationfound',
     'locationerror', 'popupopen', 'popupclose'],
 
-  init: function() {
+  init() {
     this._super();
     if(this.get('childLayers') === undefined) {
       this.set('childLayers', [DefaultTileLayer]);
     }
   },
 
-  didInsertElement: function() {
+  didInsertElement() {
     this._super();
     this._createLayer();
   },
 
-  willDestroyElement: function() {
+  willDestroyElement() {
     this._destroyLayer();
   },
 
-  _createLayer: function() {
+  _createLayer() {
     if(this._layer) { return; }
-    Ember.assert("Center must be set before creating map, was " +
-      this.get('center'), !!this.get('center'));
-    Ember.assert("Zoom must be set before creating map, was " +
-      this.get('zoom'), !isNaN(parseInt(this.get('zoom'), 10)));
+    Ember.assert(
+      `Center must be set before creating map, was ${this.get('center')}`,
+      !!this.get('center')
+    );
+    Ember.assert(
+      `Zoom must be set before creating map, was ${this.get('zoom')}`,
+      !isNaN(parseInt(this.get('zoom'), 10))
+    );
     this.willCreateLayer();
     this.propertyWillChange('layer');
     this._layer = L.map(this.get('elementId'), this.get('options'));
@@ -61,7 +65,7 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     this.didCreateLayer();
   },
 
-  _destroyLayer: function() {
+  _destroyLayer() {
     this.willDestroyLayer();
     this.propertyWillChange('layer');
     if(!this._layer) { return; }
@@ -76,11 +80,11 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     this.didDestroyLayer();
   },
 
-  zoomstart: function() {
+  zoomstart() {
     this.set('isZooming', true);
   },
 
-  zoomend: function() {
+  zoomend() {
     this.setProperties({isZooming: false, zoom: this._layer.getZoom()});
     // if two zooms are called at once, a zoom could get queued. So
     // set zoom to the queued one if relevant.
@@ -91,15 +95,15 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     }
   },
 
-  movestart: function() {
+  movestart() {
     this.set('isMoving', true);
   },
 
-  moveend: function() {
+  moveend() {
     this.set('isMoving', false);
   },
 
-  move: function() {
+  move() {
     this.set('center', this._layer.getCenter());
   },
 

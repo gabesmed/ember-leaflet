@@ -1,10 +1,13 @@
 import Ember from 'ember';
 import convert from './convert';
-import computed from 'ember-new-computed';
 
-var get = Ember.get, set = Ember.set;
-
-var computedProperties = {};
+const {
+  get,
+  set,
+  computed
+} = Ember;
+const { classify } = Ember.String;
+const computedProperties = {};
 
 /**
   Define a computed property that gets and sets a value from the
@@ -21,9 +24,9 @@ computedProperties.optionProperty = function(optionKey) {
     set(key, value) {
       // override given key with explicitly defined one if necessary
       key = optionKey || key;
-      var setterName = 'set' + Ember.String.classify(key);
+      const setterName = `set${classify(key)}`;
       Ember.assert(
-        this.constructor + " must have a " + setterName + " function.",
+        `${this.constructor} must have a ${setterName} function.`,
         !!this._layer[setterName]);
       this._layer[setterName].call(this._layer, value);
       return value;

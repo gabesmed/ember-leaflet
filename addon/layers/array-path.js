@@ -2,7 +2,7 @@ import Ember from 'ember';
 import PathLayer from './path';
 import convert from '../utils/convert';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `ArrayPathLayer` is a base geometry on the map that
@@ -13,12 +13,12 @@ var get = Ember.get;
  * @extends PathLayer
  */
 export default PathLayer.extend({
-  init: function() {
+  init() {
     this._super();
     this._setupLocationObservers();
   },
 
-  destroy: function() {
+  destroy() {
     this._teardownLocationObservers();
     return this._super();
   },
@@ -42,10 +42,9 @@ export default PathLayer.extend({
   The computed array of locations.
   */
   locations: Ember.computed(function() {
-    var locationProperty = get(this, 'locationProperty'),
+    let locationProperty = get(this, 'locationProperty'),
         locationsProperty = get(this, 'locationsProperty'),
-        locationsPath = 'content' + (locationsProperty ? '.' +
-          locationsProperty : ''),
+        locationsPath = 'content' + (locationsProperty ? `.${locationsProperty}` : ''),
         locations = get(this, locationsPath) || Ember.A();
     if(locationProperty) {
       locations = locations.mapBy(locationProperty); }
@@ -61,7 +60,7 @@ export default PathLayer.extend({
     this._contentLocationsDidChange();
   }),
 
-  _setupLocationObservers: function() {
+  _setupLocationObservers() {
     var content = get(this, 'content'),
       locationProperty = get(this, 'locationProperty'),
       locationsProperty = get(this, 'locationsProperty');
@@ -76,14 +75,14 @@ export default PathLayer.extend({
     }
 
     // Add array observer for new/removed items in content list
-    var arr = locationsProperty ? get(content, locationsProperty) : content;
+    const arr = locationsProperty ? get(content, locationsProperty) : content;
     Ember.assert("Content object or locations property must be array-like",
       !arr || !!arr.addArrayObserver);
     if(arr) { arr.addArrayObserver(this); }
 
     // Add @each chain observer for location property on array.
     if(arr && locationProperty) {
-      var arrayLocationsChainProperty = '@each.' + locationProperty;
+      const arrayLocationsChainProperty = '@each.' + locationProperty;
       observers.push([arr, arrayLocationsChainProperty, this,
         '_contentLocationsDidChange']);
     }
@@ -96,7 +95,7 @@ export default PathLayer.extend({
     this._observers = observers;
   },
 
-  _teardownLocationObservers: function() {
+  _teardownLocationObservers() {
     // Remove array observer
     if (this._arr) {
       this._arr.removeArrayObserver(this);
@@ -112,7 +111,7 @@ export default PathLayer.extend({
     }
   },
 
-  _contentLocationsDidChange: function() {
+  _contentLocationsDidChange() {
     this.propertyWillChange('locations');
     this.propertyDidChange('locations');
   },
@@ -121,12 +120,12 @@ export default PathLayer.extend({
   as it reprocesses the whole thing anyway. */
 
   // arrayWillChange(array, idx, removedCount, addedCount)
-  arrayWillChange: function() {
+  arrayWillChange() {
     this.propertyWillChange('locations');
   },
 
   // arrayDidChange(array, idx, removedCount, addedCount)
-  arrayDidChange: function() {
+  arrayDidChange() {
     this.propertyDidChange('locations');
   }
 });

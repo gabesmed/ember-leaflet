@@ -1,6 +1,10 @@
 import Ember from 'ember';
 
-var get = Ember.get;
+const {
+  get,
+  run
+} = Ember;
+const { schedule } = run;
 
 /**
  * `PopupMixin` adds popup functionality to any
@@ -14,19 +18,19 @@ export default Ember.Mixin.create({
   popupViewClass: null,
   popupOptions: {offset: L.point(0, -36)},
 
-  click: function(e) {
+  click(e) {
     if(this._super) { this._super(e); }
     this.openPopup(e);
   },
 
-  dragstart: function(e) {
+  dragstart(e) {
     if(this._super) { this._super(e); }
     this.closePopup();
   },
 
-  openPopup: function(e) {
+  openPopup(e) {
     this.willOpenPopup();
-    var latLng;
+    let latLng;
     if (this._layer.getLatLng) { latLng = this._layer.getLatLng(); }
     else { latLng = L.latLngBounds(this._layer.getLatLngs()).getCenter(); }
     this._popup
@@ -36,7 +40,7 @@ export default Ember.Mixin.create({
     this.didOpenPopup();
   },
 
-  closePopup: function() {
+  closePopup() {
     this.willClosePopup();
     this._layer._map.closePopup();
     this.didClosePopup();
@@ -54,13 +58,13 @@ export default Ember.Mixin.create({
   willDestroyPopup: Ember.K,
   didDestroyPopup: Ember.K,
 
-  _createPopupContent: function() {
+  _createPopupContent() {
     if(!get(this, 'popupViewClass')) {
       this._popup.setContent(get(this, 'popupContent'));
       return;
     }
     if(this._popupView) { this._destroyPopupContent(); }
-    var viewClass = get(this, 'popupViewClass');
+    let viewClass = get(this, 'popupViewClass');
     if(Ember.typeOf(viewClass) === 'string') {
       viewClass = get(this, 'container').lookupFactory('view:' + viewClass);
     }
@@ -70,24 +74,23 @@ export default Ember.Mixin.create({
       context: get(this, 'controller'),
       content: get(this, 'content')
     });
-    var self = this;
     // You can't call this._popupView.replaceIn because it erroneously detects
     // the view as an Ember View because the popup's parent map's parent view
     // is an Ember View. So we need to trick it by calling the renderer's
     // replace function.
     // In Ember 1.10 we need to access renderer through constructor.
-    var renderer = this._popupView.constructor.renderer || this._popupView.renderer;
+    const renderer = this._popupView.constructor.renderer || this._popupView.renderer;
     renderer.replaceIn(this._popupView, this._popup._contentNode);
     this._popup.update();
 
     // After the view has rendered, call update to ensure
     // popup is visible with autoPan
-    Ember.run.schedule('afterRender', this, function() {
-      self._popup.update();
+    schedule('afterRender', this, () => {
+      this._popup.update();
     });
   },
 
-  _destroyPopupContent: function() {
+  _destroyPopupContent() {
     if(!get(this, 'popupViewClass')) { return; }
     if(this._popupView) {
       this._popupView.destroy();
@@ -95,18 +98,18 @@ export default Ember.Mixin.create({
     }
   },
 
-  _createPopup: function() {
+  _createPopup() {
     this.willCreatePopup();
     this._popup = L.popup(get(this, 'popupOptions'), this._layer);
-    var oldOnRemove = this._popup.onRemove, self = this;
-    this._popup.onRemove = function(map) {
-      self._destroyPopupContent();
-      oldOnRemove.call(self._popup, map);
+    const oldOnRemove = this._popup.onRemove;
+    this._popup.onRemove = (map) => {
+      this._destroyPopupContent();
+      oldOnRemove.call(this._popup, map);
     };
     this.didCreatePopup();
   },
 
-  _destroyPopup: function() {
+  _destroyPopup() {
     if(!this._popup) { return; }
     this.willDestroyPopup();
     // closing popup will call _destroyPopupContent

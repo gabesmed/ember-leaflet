@@ -7,5 +7,5 @@ import Layer from './layer';
  * @extends Layer
  */
 export default Layer.extend({
-  _newLayer: function() { return L.layerGroup([]); }
+  _newLayer() { return L.layerGroup([]); }
 });

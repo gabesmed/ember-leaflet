@@ -9,6 +9,21 @@ cache:
   directories:
     - node_modules
 
+env:
+  matrix:
+  - EMBER_TRY_SCENARIO=default
+  - EMBER_TRY_SCENARIO=ember-1.13.8
+  - EMBER_TRY_SCENARIO=ember-release
+  - EMBER_TRY_SCENARIO=ember-beta
+  - EMBER_TRY_SCENARIO=ember-canary
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: EMBER_TRY_SCENARIO=ember-release
+    - env: EMBER_TRY_SCENARIO=ember-beta
+    - env: EMBER_TRY_SCENARIO=ember-canary
+
 before_install:
   - "npm config set spin false"
   - "npm install -g npm@^2"
@@ -19,4 +34,4 @@ install:
   - bower install
 
 script:
-  - npm test
+  - ember try $EMBER_TRY_SCENARIO test
