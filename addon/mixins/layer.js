@@ -1,6 +1,11 @@
 import Ember from 'ember';
 
-var get = Ember.get;
+const {
+  get,
+  computed,
+  run
+} = Ember;
+const { alias } = computed;
 
 /**
  * `LayerMixin` provides basic functionality for the Ember
@@ -33,9 +38,9 @@ export default Ember.Mixin.create({
     @private
     @default []
   */
-  parentLayer: Ember.computed.alias('_parentLayer').readOnly(),
+  parentLayer: alias('_parentLayer').readOnly(),
 
-  layer: Ember.computed(function() { return this._layer; }),
+  layer: computed(function() { return this._layer; }),
 
   /**
    Create and return the layer instance for the view.
@@ -64,7 +69,7 @@ export default Ember.Mixin.create({
 
   leafletEvents: [],
 
-  _createLayer: function() {
+  _createLayer() {
     Ember.assert("Layer must not already be created.", !this._layer);
     Ember.assert("Layer must have a parent", !!this._parentLayer);
     Ember.assert("Parent layer must be in leaflet.",
@@ -80,7 +85,7 @@ export default Ember.Mixin.create({
     this.didCreateLayer();
   },
 
-  _destroyLayer: function() {
+  _destroyLayer() {
     this.willDestroyLayer();
     if(!this.isVirtual) {
       Ember.assert("Layer must exist.", !!this._layer);
@@ -93,29 +98,29 @@ export default Ember.Mixin.create({
     this.didDestroyLayer();
   },
 
-  _addToParent: function() {
+  _addToParent() {
     this._parentLayer._addChild(this._layer);
   },
 
-  _removeFromParent: function() {
+  _removeFromParent() {
     this._parentLayer._removeChild(this._layer);
   },
 
-  _addChild: function(layer) {
+  _addChild(layer) {
     this._layer.addLayer(layer);
   },
 
-  _removeChild: function(layer) {
+  _removeChild(layer) {
     this._layer.removeLayer(layer);
   },
 
-  _addEventListeners: function() {
+  _addEventListeners() {
     this._eventHandlers = {};
-    get(this, 'leafletEvents').forEach(function(eventName) {
+    get(this, 'leafletEvents').forEach((eventName) => {
       if(typeof this[eventName] === 'function') {
         // create an event handler that runs the function inside an event loop.
-        this._eventHandlers[eventName] = function(e) {
-          Ember.run(this, this[eventName], e);
+        this._eventHandlers[eventName] = (e) => {
+          run(this, this[eventName], e);
         };
         this._layer.addEventListener(eventName,
           this._eventHandlers[eventName], this);
@@ -123,8 +128,8 @@ export default Ember.Mixin.create({
     }, this);
   },
 
-  _removeEventListeners: function() {
-    get(this, 'leafletEvents').forEach(function(eventName) {
+  _removeEventListeners() {
+    get(this, 'leafletEvents').forEach((eventName) => {
       if(typeof this[eventName] === 'function') {
         this._layer.removeEventListener(eventName,
           this._eventHandlers[eventName], this);

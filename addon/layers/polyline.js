@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import ArrayPathLayer from './array-path';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `PolylineLayer` is a polyline on the map that adjusts based
@@ -16,7 +16,7 @@ export default ArrayPathLayer.extend({
   leafletEvents: ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout',
     'contextmenu', 'add', 'remove', 'popupopen', 'popupclose'],
 
-  _newLayer: function() {
+  _newLayer() {
     return L.polyline(get(this, 'locations'), get(this, 'options'));
   },
 

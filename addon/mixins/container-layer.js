@@ -1,7 +1,8 @@
 import Ember from 'ember';
 import LayerMixin from './layer';
 
-var get = Ember.get, fmt = Ember.String.fmt;
+const { get } = Ember;
+const { fmt } = Ember.String;
 
 /**
  * A `ContainerLayerMixin` is a `Layer` mixin that implements
@@ -22,18 +23,19 @@ export default Ember.Mixin.create(
 
   _childLayers: null,
 
-  didCreateLayer: function() {
+  didCreateLayer() {
     this._super();
     this.createAndAddChildLayers();
   },
 
-  willDestroyLayer: function() {
+  willDestroyLayer() {
     this.removeAndDestroyChildLayers();
     this._super();
   },
 
-  createAndAddChildLayers: function() {
-    var _childLayers = this._childLayers = Ember.A(), self = this, layer;
+  createAndAddChildLayers() {
+    const _childLayers = this._childLayers = Ember.A(), self = this;
+    let layer;
     if(this._childLayerClasses === undefined) {
       this._childLayerClasses = get(this, 'childLayers') || [];
     }
@@ -48,8 +50,8 @@ export default Ember.Mixin.create(
     }, this);
   },
 
-  replace: function(idx, removedCount, addedLayers) {
-    var addedCount = addedLayers ? get(addedLayers, 'length') : 0,
+  replace(idx, removedCount, addedLayers) {
+    const addedCount = addedLayers ? get(addedLayers, 'length') : 0,
       self = this;
     this.arrayContentWillChange(idx, removedCount, addedCount);
     this.childLayersWillChange(this._childLayers, idx, removedCount);
@@ -62,7 +64,7 @@ export default Ember.Mixin.create(
       addedLayers = addedLayers.map(function(layer) {
         return self.createChildLayer(layer);
       });
-      var args = [idx, removedCount].concat(addedLayers);
+      const args = [idx, removedCount].concat(addedLayers);
       if (addedLayers.length && !this._childLayers.length) {
         this._childLayers = this._childLayers.slice();
       }
@@ -74,7 +76,7 @@ export default Ember.Mixin.create(
     return this;
   },
 
-  objectAt: function(idx) {
+  objectAt(idx) {
     return this._childLayers[idx];
   },
 
@@ -82,43 +84,37 @@ export default Ember.Mixin.create(
     return this._childLayers.length;
   }),
 
-  childLayersWillChange: function(layers, start, removed) {
-    var self = this;
+  childLayersWillChange(layers, start, removed) {
     this.propertyWillChange('childLayers');
     if(removed > 0) {
       var removedLayers = layers.slice(start, start + removed);
-      removedLayers.forEach(function(layer) {
-        self.removeChildLayer(layer);
-      });
+      removedLayers.forEach((layer) => this.removeChildLayer(layer));
     }
   },
 
-  childLayersDidChange: function(layers, start, removed, added) {
-    var self = this;
+  childLayersDidChange(layers, start, removed, added) {
     if(added > 0) {
       var addedLayers = layers.slice(start, start + added);
-      addedLayers.forEach(function(layer) {
-        self.addChildLayer(layer);
-      });
+      addedLayers.forEach((layer) => this.addChildLayer(layer));
     }
     this.propertyDidChange('childLayers');
   },
 
-  addChildLayer: function(layer) {
+  addChildLayer(layer) {
     layer._createLayer();
   },
 
-  removeChildLayer: function(layer) {
+  removeChildLayer(layer) {
     layer._destroyLayer();
   },
 
-  createChildLayer: function(layerClass, attrs) {
+  createChildLayer(layerClass, attrs) {
     attrs = attrs || {};
     attrs.container = this.get('container');
     attrs.controller = this.get('controller');
     attrs._parentLayer = this.isVirtual ? this._parentLayer : this;
-    var layerInstance;
-    var layerType = Ember.typeOf(layerClass);
+    let layerInstance;
+    const layerType = Ember.typeOf(layerClass);
     Ember.assert(
       fmt("layerClass %@ must be an Ember instance or class.",
         layerClass ? layerClass.toString() : '<undefined>'),
@@ -132,11 +128,10 @@ export default Ember.Mixin.create(
     return layerInstance;
   },
 
-  removeAndDestroyChildLayers: function() {
-    var self = this;
+  removeAndDestroyChildLayers() {
     if(this._childLayers) {
-      this._childLayers.forEach(function(layer) {
-        self.removeChildLayer(layer);
+      this._childLayers.forEach((layer) => {
+        this.removeChildLayer(layer);
         layer.destroy();
       });
     }

@@ -2,7 +2,7 @@ import Ember from 'ember';
 import PathLayer from './path';
 import convert from '../utils/convert';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `ArrayPathLayer` is a base geometry on the map that
@@ -13,12 +13,12 @@ var get = Ember.get;
  * @extends PathLayer
  */
 export default PathLayer.extend({
-  init: function() {
+  init() {
     this._super();
     this._setupLocationObservers();
   },
 
-  destroy: function() {
+  destroy() {
     this._teardownLocationObservers();
     return this._super();
   },
@@ -42,10 +42,9 @@ export default PathLayer.extend({
   The computed array of locations.
   */
   locations: Ember.computed(function() {
-    var locationProperty = get(this, 'locationProperty'),
+    let locationProperty = get(this, 'locationProperty'),
         locationsProperty = get(this, 'locationsProperty'),
-        locationsPath = 'content' + (locationsProperty ? '.' +
-          locationsProperty : ''),
+        locationsPath = 'content' + (locationsProperty ? `.${locationsProperty}` : ''),
         locations = get(this, locationsPath) || Ember.A();
     if(locationProperty) {
       locations = locations.mapBy(locationProperty); }
@@ -65,7 +64,7 @@ export default PathLayer.extend({
     this._contentLocationsDidChange();
   }),
 
-  _setupLocationObservers: function() {
+  _setupLocationObservers() {
     var content = get(this, 'content'),
       locationProperty = get(this, 'locationProperty'),
       locationsProperty = get(this, 'locationsProperty');
@@ -73,7 +72,7 @@ export default PathLayer.extend({
 
     // Add observer on locations property of content if relevant.
     var contentLocationsProperty = locationsProperty ?
-      'content.' + locationsProperty : 'content';
+      `content.${locationsProperty}` : 'content';
     if (locationsProperty) {
       Ember.addBeforeObserver(this, contentLocationsProperty, this,
         '_contentLocationsWillChange');
@@ -82,15 +81,14 @@ export default PathLayer.extend({
     }
 
     // Add array observer for new/removed items in content list
-    var arr = locationsProperty ? get(content, locationsProperty) : content;
+    const arr = locationsProperty ? get(content, locationsProperty) : content;
     Ember.assert("Content object or locations property must be array-like",
       !arr || !!arr.addArrayObserver);
     if(arr) { arr.addArrayObserver(this); }
 
     // Add @each chain observer for location property on array.
     if(locationProperty) {
-      var contentLocationsChainProperty = contentLocationsProperty +
-        '.@each.' + locationProperty;
+      const contentLocationsChainProperty = `${contentLocationsProperty}.@each.${locationProperty}`;
       Ember.addBeforeObserver(this, contentLocationsChainProperty, this,
         '_contentLocationsWillChange');
       Ember.addObserver(this, contentLocationsChainProperty, this,
@@ -99,14 +97,13 @@ export default PathLayer.extend({
   },
 
   _teardownLocationObservers: function() {
-    var content = get(this, 'content'),
+    const content = get(this, 'content'),
       locationProperty = get(this, 'locationProperty'),
       locationsProperty = get(this, 'locationsProperty');
     if(!content) { return; }
 
     // Remove observer on locations property of content.
-    var contentLocationsProperty = locationsProperty ?
-      'content.' + locationsProperty : 'content';
+    const contentLocationsProperty = locationsProperty ? `content.${locationsProperty}` : 'content';
     if (locationsProperty) {
       Ember.addBeforeObserver(this, contentLocationsProperty, this,
         '_contentLocationsWillChange');
@@ -115,13 +112,12 @@ export default PathLayer.extend({
     }
 
     // Remove array observer for new/removed items in content list
-    var arr = locationsProperty ? get(content, locationsProperty) : content;
+    const arr = locationsProperty ? get(content, locationsProperty) : content;
     if(arr) { arr.removeArrayObserver(this); }
 
     // Remove @each chain observer for location property on array.
     if(locationProperty) {
-      var contentLocationsChainProperty = contentLocationsProperty +
-        '.@each.' + locationProperty;
+      const contentLocationsChainProperty = `${contentLocationsProperty}.@each.${locationProperty}`;
       Ember.removeBeforeObserver(this, contentLocationsChainProperty, this,
         '_contentLocationsWillChange');
       Ember.removeObserver(this, contentLocationsChainProperty, this,
@@ -129,11 +125,11 @@ export default PathLayer.extend({
     }
   },
 
-  _contentLocationsWillChange: function() {
+  _contentLocationsWillChange() {
     this.propertyWillChange('locations');
   },
 
-  _contentLocationsDidChange: function() {
+  _contentLocationsDidChange() {
     this.propertyDidChange('locations');
   },
 
@@ -141,12 +137,12 @@ export default PathLayer.extend({
   as it reprocesses the whole thing anyway. */
 
   // arrayWillChange(array, idx, removedCount, addedCount)
-  arrayWillChange: function() {
+  arrayWillChange() {
     this.propertyWillChange('locations');
   },
 
   // arrayDidChange(array, idx, removedCount, addedCount)
-  arrayDidChange: function() {
+  arrayDidChange() {
     this.propertyDidChange('locations');
   }
 });

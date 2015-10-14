@@ -2,7 +2,7 @@ import Ember from 'ember';
 import Layer from './layer';
 import computed from '../utils/computed';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `imageOverlay` is a layer with a single image.
@@ -16,7 +16,7 @@ export default Layer.extend({
   bounds: null,
   options: null,
 
-  _newLayer: function() {
+  _newLayer() {
     return L.imageOverlay(get(this,'imageUrl'), get(this,'bounds'), get(this, 'options'));
   },
 
