@@ -47,41 +47,44 @@ moduleForComponent('leaflet-map', 'PopupMixin (Marker with complex popupViewClas
     this.render();
   }
 });
-test('Popup is created', function(assert) {
-  assert.ok(marker._popup, 'popup is created');
-  assert.equal(marker._popup._map, null, 'popup not added until opened');
-});
 
-test('Clicking shows popup', function(assert) {
-  marker._layer.fire('click', {latlng: marker.get('location')});
-  assert.ok(!!marker._popup._map, 'marker added to map');
-  locationsEqual(assert, marker._popup._latlng, marker.get('location'));
-  assert.equal(Ember.$(marker._popup._contentNode).text(),
-    '#40,#70,', 'popup content set');
-});
+// TODO: reimplement these tests when a popupComponent is implemented
 
-test('Popup content updates', function(assert) {
-  marker._layer.fire('click', {latlng: marker.get('location')});
-  Ember.run(function() {
-    controller.set('isActivated', false);
-  });
-  assert.equal(Ember.$(marker._popup._contentNode).text(),
-    'not activated', 'popup content updated');
-  Ember.run(function() {
-    controller.set('isActivated', true);
-    controller.get('items').pushObject({number: 20});
-  });
-  assert.equal(Ember.$(marker._popup._contentNode).text(),
-    '#40,#70,#20,', 'popup content updated');
-});
+// test('Popup is created', function(assert) {
+//   assert.ok(marker._popup, 'popup is created');
+//   assert.equal(marker._popup._map, null, 'popup not added until opened');
+// });
 
-test('Closing popup destroys view', function(assert) {
-  marker._layer.fire('click', {latlng: marker.get('location')});
-  var popupView = marker._popupView;
-  assert.ok(popupView, 'popup view created');
-  Ember.run(function() {
-    component._layer.closePopup();
-  });
-  assert.equal(marker._popupView, null, 'popupView is nullified');
-  assert.equal(popupView.isDestroyed, true, 'popup view is destroyed');
-});
+// test('Clicking shows popup', function(assert) {
+//   marker._layer.fire('click', {latlng: marker.get('location')});
+//   assert.ok(!!marker._popup._map, 'marker added to map');
+//   locationsEqual(assert, marker._popup._latlng, marker.get('location'));
+//   assert.equal(Ember.$(marker._popup._contentNode).text(),
+//     '#40,#70,', 'popup content set');
+// });
+
+// test('Popup content updates', function(assert) {
+//   marker._layer.fire('click', {latlng: marker.get('location')});
+//   Ember.run(function() {
+//     controller.set('isActivated', false);
+//   });
+//   assert.equal(Ember.$(marker._popup._contentNode).text(),
+//     'not activated', 'popup content updated');
+//   Ember.run(function() {
+//     controller.set('isActivated', true);
+//     controller.get('items').pushObject({number: 20});
+//   });
+//   assert.equal(Ember.$(marker._popup._contentNode).text(),
+//     '#40,#70,#20,', 'popup content updated');
+// });
+
+// test('Closing popup destroys view', function(assert) {
+//   marker._layer.fire('click', {latlng: marker.get('location')});
+//   var popupView = marker._popupView;
+//   assert.ok(popupView, 'popup view created');
+//   Ember.run(function() {
+//     component._layer.closePopup();
+//   });
+//   assert.equal(marker._popupView, null, 'popupView is nullified');
+//   assert.equal(popupView.isDestroyed, true, 'popup view is destroyed');
+// });

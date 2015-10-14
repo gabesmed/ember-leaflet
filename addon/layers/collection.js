@@ -31,11 +31,11 @@ export default ContainerLayer.extend({
 
   _contentDidChange: Ember.observer('content', function() {
     this._clear();
-    var content = get(this, 'content');
+    const content = get(this, 'content');
     if (!content) { return; }
     content.addArrayObserver(this);
     this._content = content;
-    var len = get(content, 'length');
+    const len = get(content, 'length');
     this.arrayDidChange(content, 0, null, len);
   }),
 
