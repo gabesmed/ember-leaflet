@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import PolylineLayer from './polyline';
 
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `PolygonLayer` is a polygon on the map that adjusts based
@@ -11,7 +11,7 @@ var get = Ember.get;
  * @extends PolylineLayer
  */
 export default PolylineLayer.extend({
-  _newLayer: function() {
+  _newLayer() {
     return L.polygon(get(this, 'locations'), get(this, 'options'));
   }
 });

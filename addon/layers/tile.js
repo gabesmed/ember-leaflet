@@ -2,8 +2,7 @@ import Ember from 'ember';
 import Layer from './layer';
 import computed from '../utils/computed';
 
-
-var get = Ember.get;
+const { get } = Ember;
 
 /**
  * `TileLayer` is a tile set.
@@ -14,7 +13,7 @@ var get = Ember.get;
 export default Layer.extend({
   tileUrl: null,
   options: {},
-  _newLayer: function() {
+  _newLayer() {
     return L.tileLayer(get(this, 'tileUrl'), get(this, 'options'));
   },
 

@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-var get = Ember.get, set = Ember.set, setProperties = Ember.setProperties;
+const { get, set, setProperties } = Ember;
 
 /**
  * `DraggableMixin` adds drag and drop functionality to
@@ -13,11 +13,11 @@ export default Ember.Mixin.create({
   isDragging: false,
   isDraggable: true,
 
-  dragstart: function() {
+  dragstart() {
     set(this, 'isDragging', true);
   },
 
-  dragend: function() {
+  dragend() {
     setProperties(this, {
       location: this._layer.getLatLng(),
       isDragging: false
