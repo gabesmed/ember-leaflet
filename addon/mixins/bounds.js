@@ -12,10 +12,10 @@ const { get } = Ember;
 export default Ember.Mixin.create({
 
   /** Calculate bounds, or if object is already a bounds, return it. */
-  bounds: Ember.computed(function() {
+  bounds: Ember.computed('locations', function() {
     const locations = get(this, 'locations');
     if (locations instanceof L.LatLngBounds) { return locations; }
     if(!locations || !get(locations, 'length')) { return null; }
     return L.latLngBounds(locations);
-  }).property('locations').volatile()
+  }).volatile()
 });

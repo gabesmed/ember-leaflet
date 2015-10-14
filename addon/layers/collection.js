@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import ContainerLayer from './container';
 
-const { get } = Ember;
+const { get, computed } = Ember;
 
 /**
  * `CollectionLayer` is the equivalent of `Ember.CollectionView`
@@ -15,9 +15,9 @@ export default ContainerLayer.extend({
   content: [],
   isVirtual: true,
 
-  itemLayerClass: Ember.computed(function() {
+  itemLayerClass: computed(function() {
     throw new Error("itemLayerClass must be defined.");
-  }).property(),
+  }),
 
   didCreateLayer() {
     this._super();
