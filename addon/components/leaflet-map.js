@@ -59,10 +59,15 @@ export default Ember.Component.extend(ContainerLayerMixin, {
     this.willCreateLayer();
     this.propertyWillChange('layer');
     this._layer = L.map(this.get('elementId'), this.get('options'));
-    this._layer.setView(this.get('center'), this.get('zoom'));
+    this.setInitialPosition();
     this._addEventListeners();
     this.propertyDidChange('layer');
     this.didCreateLayer();
+  },
+
+  // override this if you need to set initial position by calling fitBounds() or other method
+  setInitialPosition: function() {
+    this._layer.setView(this.get('center'), this.get('zoom'));
   },
 
   _destroyLayer() {
