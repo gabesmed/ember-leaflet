@@ -2,7 +2,6 @@ import Ember from 'ember';
 import LayerMixin from './layer';
 
 const { get } = Ember;
-const { fmt } = Ember.String;
 
 /**
  * A `ContainerLayerMixin` is a `Layer` mixin that implements
@@ -115,9 +114,9 @@ export default Ember.Mixin.create(
     attrs._parentLayer = this.isVirtual ? this._parentLayer : this;
     let layerInstance;
     const layerType = Ember.typeOf(layerClass);
+    const layerClassName = layerClass ? layerClass.toString() : '<undefined>';
     Ember.assert(
-      fmt("layerClass %@ must be an Ember instance or class.",
-        layerClass ? layerClass.toString() : '<undefined>'),
+      `layerClass ${layerClassName} must be an Ember instance or class.`,
         layerType === 'instance' || layerType === 'class');
     if(layerType === 'instance') {
       layerInstance = layerClass;
