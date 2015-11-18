@@ -1,3 +1,5 @@
+**See version 2.0 at https://github.com/miguelcobain/ember-leaflet!**
+
 ## Ember + Leaflet = Fun with maps! [![Build Status](https://travis-ci.org/gabesmed/ember-leaflet.svg?branch=master)](http://travis-ci.org/gabesmed/ember-leaflet)
 
 EmberLeaflet aims to make working with Leaflet layers in your Ember app as **easy, declarative and composable** as Ember's View classes make working with DOM elements.
